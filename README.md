@@ -1,13 +1,15 @@
-## Position
+![Position](https://raw.github.com/piemonte/Position/master/Position.png)
 
-`Position` is a [Swift](https://developer.apple.com/swift/) and efficient location positioning library for iOS.
+`Position` is a [Swift](https://developer.apple.com/swift/) and efficient location positioning library for iOS. The library is just a simple start but has potential for more interesting features in the future. Contributions are welcome.
 
 ### Features
-- [x] one shot block-based location requesting (more robust than iOS 9 API)
-- [x] low-power location use when backgrounding
-- [ ] low-power activity-based location use
-- [ ] low-power geo-fenced based location tracking
-- [x] simple API
+- [x] simple [Swift](https://developer.apple.com/swift/) API
+- [x] “one shot” block-based location requesting (more robust than iOS 9 Core Location API)
+- [x] distance and time based location filtering
+- [x] automatic low-power location adjustment when backgrounded setting
+- [x] automatic low-power location adjustment from battery monitoring setting
+- [ ] low-power geo-fenced based background location updating (future)
+- [ ] automatic motion-based location adjustment (future)
 
 [![Pod Version](https://img.shields.io/cocoapods/v/Position.svg?style=flat)](http://cocoadocs.org/docsets/Position/)
 
@@ -60,7 +62,72 @@ You can also simply copy the `Position.swift` file into your Xcode project.
 
 The sample project provides an example of how to integrate `Position`, otherwise you can follow these steps.
 
-// TODO
+Ensure your app’s Info.plist file includes both a location usage description, required device capability “location-services”, and  required background mode (if necessary).
+
+See sample project for examples too.
+
+Import the file and setup your component to be a PositionObserver, if you’d like it to be a delegate.
+
+```swift
+import Position
+
+class ViewController: UIViewController, PositionObserver {
+	// ...
+```
+
+Have the component add itself as an observer and configure the appropriate settings.
+
+```swift
+    override fun viewDidLoad() {
+        super.viewDidLoad()
+
+        // ...
+        
+        Position.sharedPosition.addObserver(self)
+        Position.sharedPosition.distanceFilter = 20
+        
+        if Position.sharedPosition.locationServicesStatus == .AllowedWhenInUse ||
+           Position.sharedPosition.locationServicesStatus == .AllowedAlways {
+            Position.sharedPosition.performOneShotLocationUpdateWithDesiredAccuracy(250) { (location, error) -> () in
+                print(location, error)
+            }
+        } else {
+            // request permissions based on the type of location support required.
+            Position.sharedPosition.requestWhenInUseLocationAuthorization()
+            //Position.sharedPosition.requestAlwaysLocationAuthorization()
+        }
+    }
+```
+
+Observe delegation, if necessary.
+
+```swift
+    fun position(position: Position, didChangeLocationAuthorizationStatus status: AuthorizationStatus) {
+        // location authorization did change, often this may even be triggered on application resume if the user updated settings
+    }
+    
+    // error handling
+    fun position(position: Position, didFailWithError error: NSError?) {
+    }
+
+    // location
+    fun position(position: Position, didUpdateOneShotLocation location: CLLocation?) {
+    }
+    
+    fun position(position: Position, didUpdateTrackingLocation locations: [CLLocation]?) {
+    }
+    
+    fun position(position: Position, didUpdateFloor floor: CLFloor) {
+    }
+
+    fun position(position: Position, didVisit visit: CLVisit?) {
+    }
+    
+    fun position(position: Position, didChangeDesiredAccurary desiredAccuracy: Double) {
+    }
+```
+
+**Remember** when creating location-based apps, respect the privacy of your users and be responsible for how you use their location. This is especially true if your application requires location permission `kCLAuthorizationStatusAuthorizedAlways`.
 
 ## Community
 
