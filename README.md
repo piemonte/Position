@@ -78,7 +78,7 @@ class ViewController: UIViewController, PositionObserver {
 Have the component add itself as an observer and configure the appropriate settings.
 
 ```swift
-    override fun viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
 
         // ...
@@ -102,28 +102,28 @@ Have the component add itself as an observer and configure the appropriate setti
 Observe delegation, if necessary.
 
 ```swift
-    fun position(position: Position, didChangeLocationAuthorizationStatus status: AuthorizationStatus) {
+    func position(position: Position, didChangeLocationAuthorizationStatus status: AuthorizationStatus) {
         // location authorization did change, often this may even be triggered on application resume if the user updated settings
     }
     
     // error handling
-    fun position(position: Position, didFailWithError error: NSError?) {
+    func position(position: Position, didFailWithError error: NSError?) {
     }
 
     // location
-    fun position(position: Position, didUpdateOneShotLocation location: CLLocation?) {
+    func position(position: Position, didUpdateOneShotLocation location: CLLocation?) {
     }
     
-    fun position(position: Position, didUpdateTrackingLocation locations: [CLLocation]?) {
+    func position(position: Position, didUpdateTrackingLocation locations: [CLLocation]?) {
     }
     
-    fun position(position: Position, didUpdateFloor floor: CLFloor) {
+    func position(position: Position, didUpdateFloor floor: CLFloor) {
     }
 
-    fun position(position: Position, didVisit visit: CLVisit?) {
+    func position(position: Position, didVisit visit: CLVisit?) {
     }
     
-    fun position(position: Position, didChangeDesiredAccurary desiredAccuracy: Double) {
+    func position(position: Position, didChangeDesiredAccurary desiredAccuracy: Double) {
     }
 ```
 
