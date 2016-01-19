@@ -1,4 +1,4 @@
-![Position](https://raw.github.com/piemonte/Position/master/Position.png)
+![Position](https://raw.github.com/piemonte/blob/Position/master/Position.png)
 
 `Position` is a [Swift](https://developer.apple.com/swift/) and efficient location positioning library for iOS. The library is just a simple start but has potential for more interesting features in the future. Contributions are welcome.
 
