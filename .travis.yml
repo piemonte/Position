@@ -10,3 +10,4 @@ before_install:
 script:
   - xcodebuild -showsdks
   - xctool -project Position/Position.xcodeproj -scheme Debug -sdk iphonesimulator9.2 build analyze
+

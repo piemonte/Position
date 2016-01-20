@@ -11,7 +11,7 @@
 - [ ] low-power geo-fenced based background location updating (future)
 - [ ] automatic motion-based location adjustment (future)
 
-[![Pod Version](https://img.shields.io/cocoapods/v/Position.svg?style=flat)](http://cocoadocs.org/docsets/Position/)
+[![Pod Version](https://img.shields.io/cocoapods/v/Position.svg?style=flat)](http://cocoadocs.org/docsets/Position/) [![Build Status](https://travis-ci.org/piemonte/Position.svg?branch=master)](https://travis-ci.org/piemonte/Position)
 
 ## Installation
 
