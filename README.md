@@ -1,9 +1,10 @@
 ![Position](https://raw.githubusercontent.com/piemonte/Position/master/Position.png)
 
-`Position` is a [Swift](https://developer.apple.com/swift/) and efficient location positioning library for iOS. The library is just a simple start but has potential for more interesting features in the future. Contributions are welcome.
+`Position` is a [Swift](https://developer.apple.com/swift/) and efficient location positioning library for iOS. The library is a simple wrapper around CoreLocation that offers a variety of functionality and offers a path for potentially more interesting features in the future. Contributions are welcome.
 
 ### Features
 - [x] simple [Swift](https://developer.apple.com/swift/) API
+- [x] multi-delegate observer support
 - [x] “one shot” block-based location requesting (more robust than iOS 9 Core Location API)
 - [x] distance and time based location filtering
 - [x] automatic low-power location adjustment when backgrounded setting
