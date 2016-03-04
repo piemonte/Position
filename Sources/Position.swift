@@ -33,8 +33,8 @@ import CoreMotion
 
 // MARK: - Position Types
 
-public enum LocationAuthorizationStatus: Int, CustomStringConvertible {
-    case NotDetermined = 0
+public enum LocationAuthorizationStatus: CustomStringConvertible {
+    case NotDetermined
     case NotAvailable
     case Denied
     case AllowedWhenInUse
@@ -58,8 +58,8 @@ public enum LocationAuthorizationStatus: Int, CustomStringConvertible {
     }
 }
 
-public enum MotionAuthorizationStatus: Int, CustomStringConvertible {
-	case NotDetermined = 0
+public enum MotionAuthorizationStatus: CustomStringConvertible {
+	case NotDetermined
 	case NotAvailable
 	case Allowed
 	
@@ -77,8 +77,8 @@ public enum MotionAuthorizationStatus: Int, CustomStringConvertible {
 	}
 }
 
-public enum MotionActivityType: Int, CustomStringConvertible {
-	case Unknown = 0
+public enum MotionActivityType: CustomStringConvertible {
+	case Unknown
 	case Walking
 	case Running
 	case Automotive
@@ -264,7 +264,7 @@ public class Position: NSObject, PositionLocationCenterDelegate {
     }
 	
     public func removeObserver(observer: PositionObserver?) {
-		if observers.containsObject(observer) {
+		if observers.containsObject(observer) == true {
 			observers.removeObject(observer)
 		}
     }
@@ -358,9 +358,9 @@ public class Position: NSObject, PositionLocationCenterDelegate {
 	public var adjustLocationUseFromActivity: Bool {
 		didSet {
 			if self.motionActivityStatus == .Allowed {
-				if adjustLocationUseFromActivity == true {
+				if self.adjustLocationUseFromActivity == true {
 					self.startUpdatingActivity()
-				} else if self.updatingActivity {
+				} else if self.updatingActivity == true {
 					self.stopUpdatingActivity()
 				}
 			}
@@ -706,7 +706,6 @@ internal class PositionLocationCenter: NSObject, CLLocationManagerDelegate {
             self.locationManager.startMonitoringVisits()
             self.updatingLocation = true
             self.updateLocationManagerStateIfNeeded()
-            break
         default:
             break
         }
@@ -720,7 +719,6 @@ internal class PositionLocationCenter: NSObject, CLLocationManagerDelegate {
             self.locationManager.stopMonitoringVisits()
             self.updatingLocation = false
             self.updateLocationManagerStateIfNeeded()
-            break
         default:
             break
         }
@@ -733,7 +731,6 @@ internal class PositionLocationCenter: NSObject, CLLocationManagerDelegate {
             self.locationManager.startMonitoringSignificantLocationChanges()
             self.updatingLowPowerLocation = true
             self.updateLocationManagerStateIfNeeded()
-            break
         default:
             break
         }
@@ -746,7 +743,6 @@ internal class PositionLocationCenter: NSObject, CLLocationManagerDelegate {
             self.locationManager.stopMonitoringSignificantLocationChanges()
             self.updatingLowPowerLocation = false
             self.updateLocationManagerStateIfNeeded()
-            break
         default:
             break
         }
@@ -761,19 +757,11 @@ internal class PositionLocationCenter: NSObject, CLLocationManagerDelegate {
 		}
 		
 		let completeRequests: [PositionLocationRequest] = locationRequests.filter { (request) -> Bool in
-			// check for expired requests
-			if request.expired == true {
-				return true
-			}
-			
 			// check if desiredAccuracy was met for the request
-			if let location = self.location {
-				if location.horizontalAccuracy < request.desiredAccuracy {
-					return true
-				}
-			}
+			let accuracyMet = self.location != nil && location?.horizontalAccuracy < request.desiredAccuracy
 			
-			return false
+			// return requests that are either expired or meet the desired accuracy
+			return request.expired == true || accuracyMet
 		}
 		
 		for request in completeRequests {
@@ -806,14 +794,11 @@ internal class PositionLocationCenter: NSObject, CLLocationManagerDelegate {
     private func completeLocationRequestsWithError(error: NSError) {
 		for locationRequest in self.locationRequests {
 			locationRequest.cancelRequest()
+			guard let handler = locationRequest.completionHandler else { continue }
 			if let resultingError: NSError? = error {
-				if let handler = locationRequest.completionHandler {
-					handler(location: nil, error: resultingError)
-				}
+				handler(location: nil, error: resultingError)
 			} else {
-				if let handler = locationRequest.completionHandler {
-					handler(location: nil, error: NSError(domain: ErrorDomain, code: ErrorType.Cancelled.rawValue, userInfo: nil))
-				}
+				handler(location: nil, error: NSError(domain: ErrorDomain, code: ErrorType.Cancelled.rawValue, userInfo: nil))
 			}
 		}
     }
