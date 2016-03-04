@@ -48,9 +48,9 @@ Installation is available using the [Swift Package Manager](https://swift.org/pa
 import PackageDescription
 
 let package = Package(
-    name: “HelloWorld”,
+    name: "HelloWorld",
     dependencies: [
-        .Package(url: “https://github.com/piemonte/Position.git”, majorVersion: 0),
+        .Package(url: "https://github.com/piemonte/Position.git", majorVersion: 0),
     ]
 )
 ```
