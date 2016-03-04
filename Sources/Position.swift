@@ -215,10 +215,10 @@ public class Position: NSObject, PositionLocationCenterDelegate {
 
     public var distanceFilter: Double! {
         get {
-            return self.locationCenter.distanceFiler
+            return self.locationCenter.distanceFilter
         }
         set {
-            self.locationCenter.distanceFiler = newValue
+            self.locationCenter.distanceFilter = newValue
         }
     }
 
@@ -330,7 +330,7 @@ public class Position: NSObject, PositionLocationCenterDelegate {
     func applicationDidBecomeActive(notification: NSNotification) {
         self.checkAuthorizationStatusForServices()
         
-        // if locus is not updating, don't modify state
+        // if position is not updating, don't modify state
         if (self.updatingPosition == false) {
             return
         }
@@ -384,7 +384,7 @@ internal class PositionLocationCenter: NSObject, CLLocationManagerDelegate {
 
     weak var delegate: PositionLocationCenterDelegate!
     
-    var distanceFiler: Double! {
+    var distanceFilter: Double! {
         didSet {
             self.updateLocationManagerStateIfNeeded()
         }
@@ -641,7 +641,7 @@ internal class PositionLocationCenter: NSObject, CLLocationManagerDelegate {
                     self.locationManager.desiredAccuracy = trackingDesiredAccuracyBackground
                 }
                 
-                self.locationManager.distanceFilter = self.distanceFiler
+                self.locationManager.distanceFilter = self.distanceFilter
             }
         }
     }
