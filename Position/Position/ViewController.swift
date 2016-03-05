@@ -106,11 +106,16 @@ class ViewController: UIViewController, PositionObserver {
     
     // MARK: PositionObserver
     
-    func position(position: Position, didChangeLocationAuthorizationStatus status: AuthorizationStatus) {
+    func position(position: Position, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
         // location authorization did change, often this may even be triggered on application resume if the user updated settings
-        print("authorization status \(status)")
+        print("location authorization status \(status)")
     }
-    
+	
+	func position(position: Position, didChangeMotionAuthorizationStatus status: MotionAuthorizationStatus) {
+		// motion authorization did change, often this may even be triggered on application resume if the user updated settings
+		print("motion authorization status \(status)")
+	}
+	
     // error handling
     func position(position: Position, didFailWithError error: NSError?) {
         print("failed with error \(error)")
@@ -132,4 +137,8 @@ class ViewController: UIViewController, PositionObserver {
     
     func position(position: Position, didChangeDesiredAccurary desiredAccuracy: Double) {
     }
+	
+	// motion
+	func position(position: Position, didChangeActivity activity: MotionActivityType) {
+	}
 }

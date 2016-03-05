@@ -9,8 +9,8 @@
 - [x] distance and time based location filtering
 - [x] automatic low-power location adjustment when backgrounded setting
 - [x] automatic low-power location adjustment from battery monitoring setting
+- [x] automatic motion-based location adjustment
 - [ ] low-power geo-fenced based background location updating (future)
-- [ ] automatic motion-based location adjustment (future)
 
 [![Pod Version](https://img.shields.io/cocoapods/v/Position.svg?style=flat)](http://cocoadocs.org/docsets/Position/) [![Build Status](https://travis-ci.org/piemonte/Position.svg?branch=master)](https://travis-ci.org/piemonte/Position)
 
@@ -48,9 +48,9 @@ Installation is available using the [Swift Package Manager](https://swift.org/pa
 import PackageDescription
 
 let package = Package(
-    name: “HelloWorld”,
+    name: "HelloWorld",
     dependencies: [
-        .Package(url: “https://github.com/piemonte/Position.git”, majorVersion: 0),
+        .Package(url: "https://github.com/piemonte/Position.git", majorVersion: 0),
     ]
 )
 ```
@@ -95,18 +95,32 @@ Have the component add itself as an observer and configure the appropriate setti
         } else {
             // request permissions based on the type of location support required.
             Position.sharedPosition.requestWhenInUseLocationAuthorization()
-            //Position.sharedPosition.requestAlwaysLocationAuthorization()
+            // Position.sharedPosition.requestAlwaysLocationAuthorization()
         }
+    }
+```
+
+If desired, begin tracking changes in motion activity.
+
+```swift
+    if Position.sharedPosition.motionActivityStatus == .Allowed {
+        Position.sharedPosition.startUpdatingActivity()
+    } else {
+        Position.sharedPosition.requestMotionActivityAuthorization()
     }
 ```
 
 Observe delegation, if necessary.
 
 ```swift
-    func position(position: Position, didChangeLocationAuthorizationStatus status: AuthorizationStatus) {
+    func position(position: Position, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
         // location authorization did change, often this may even be triggered on application resume if the user updated settings
     }
-    
+
+    func position(position: Position, didChangeMotionAuthorizationStatus status: MotionAuthorizationStatus) {
+        // motion authorization did change, often this may even be triggered on application resume if the user updated settings
+    }
+
     // error handling
     func position(position: Position, didFailWithError error: NSError?) {
     }
@@ -114,17 +128,21 @@ Observe delegation, if necessary.
     // location
     func position(position: Position, didUpdateOneShotLocation location: CLLocation?) {
     }
-    
+
     func position(position: Position, didUpdateTrackingLocation locations: [CLLocation]?) {
     }
-    
+
     func position(position: Position, didUpdateFloor floor: CLFloor) {
     }
 
     func position(position: Position, didVisit visit: CLVisit?) {
     }
-    
+
     func position(position: Position, didChangeDesiredAccurary desiredAccuracy: Double) {
+    }
+    
+    // motion
+    func position(position: Position, didChangeActivity activity: MotionActivityType) {
     }
 ```
 
