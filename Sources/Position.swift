@@ -101,16 +101,16 @@ public enum MotionActivityType: CustomStringConvertible {
 	public var description: String {
 		get {
 			switch self {
-			case Unknown:
-				return "Unknown"
-			case Walking:
-				return "Walking"
-			case Running:
-				return "Running"
-			case Automotive:
-				return "Automotive"
-			case Cycling:
-				return "Cycling"
+                case Unknown:
+                    return "Unknown"
+                case Walking:
+                    return "Walking"
+                case Running:
+                    return "Running"
+                case Automotive:
+                    return "Automotive"
+                case Cycling:
+                    return "Cycling"
 			}
 		}
 	}
@@ -180,9 +180,11 @@ public class Position: NSObject, PositionLocationCenterDelegate {
 
     private var observers: NSHashTable
 	
+    // location types
     private let locationCenter: PositionLocationCenter
     private var updatingPosition: Bool
 	
+    // motion types
 	private let activityManager: CMMotionActivityManager
 	private let activityQueue: NSOperationQueue
 	private var lastActivity: MotionActivityType
@@ -267,6 +269,9 @@ public class Position: NSObject, PositionLocationCenterDelegate {
 		if observers.containsObject(observer) == true {
 			observers.removeObject(observer)
 		}
+        if observers.count == 0 {
+            self.observers = NSHashTable.weakObjectsHashTable()
+        }
     }
 
     // MARK: - settings
@@ -638,18 +643,18 @@ internal class PositionLocationCenter: NSObject, CLLocationManagerDelegate {
             
             var status: LocationAuthorizationStatus = .NotDetermined
             switch CLLocationManager.authorizationStatus() {
-            case .AuthorizedAlways:
-                status = .AllowedAlways
-                break
-            case .AuthorizedWhenInUse:
-                status = .AllowedWhenInUse
-                break
-            case .Denied, .Restricted:
-                status = .Denied
-                break
-            case .NotDetermined:
-                status = .NotDetermined
-                break
+                case .AuthorizedAlways:
+                    status = .AllowedAlways
+                    break
+                case .AuthorizedWhenInUse:
+                    status = .AllowedWhenInUse
+                    break
+                case .Denied, .Restricted:
+                    status = .Denied
+                    break
+                case .NotDetermined:
+                    status = .NotDetermined
+                    break
             }
             return status
         }
@@ -701,50 +706,50 @@ internal class PositionLocationCenter: NSObject, CLLocationManagerDelegate {
     func startUpdating() {
         let status: LocationAuthorizationStatus = self.locationServicesStatus
         switch status {
-        case .AllowedAlways, .AllowedWhenInUse:
-            self.locationManager.startUpdatingLocation()
-            self.locationManager.startMonitoringVisits()
-            self.updatingLocation = true
-            self.updateLocationManagerStateIfNeeded()
-        default:
-            break
+            case .AllowedAlways, .AllowedWhenInUse:
+                self.locationManager.startUpdatingLocation()
+                self.locationManager.startMonitoringVisits()
+                self.updatingLocation = true
+                self.updateLocationManagerStateIfNeeded()
+            default:
+                break
         }
     }
 
     func stopUpdating() {
         let status: LocationAuthorizationStatus = self.locationServicesStatus
         switch status {
-        case .AllowedAlways, .AllowedWhenInUse:
-            self.locationManager.stopUpdatingLocation()
-            self.locationManager.stopMonitoringVisits()
-            self.updatingLocation = false
-            self.updateLocationManagerStateIfNeeded()
-        default:
-            break
+            case .AllowedAlways, .AllowedWhenInUse:
+                self.locationManager.stopUpdatingLocation()
+                self.locationManager.stopMonitoringVisits()
+                self.updatingLocation = false
+                self.updateLocationManagerStateIfNeeded()
+            default:
+                break
         }
     }
     
     func startLowPowerUpdating() {
         let status: LocationAuthorizationStatus = self.locationServicesStatus
         switch status {
-        case .AllowedAlways, .AllowedWhenInUse:
-            self.locationManager.startMonitoringSignificantLocationChanges()
-            self.updatingLowPowerLocation = true
-            self.updateLocationManagerStateIfNeeded()
-        default:
-            break
+            case .AllowedAlways, .AllowedWhenInUse:
+                self.locationManager.startMonitoringSignificantLocationChanges()
+                self.updatingLowPowerLocation = true
+                self.updateLocationManagerStateIfNeeded()
+            default:
+                break
         }
     }
 
     func stopLowPowerUpdating() {
         let status: LocationAuthorizationStatus = self.locationServicesStatus
         switch status {
-        case .AllowedAlways, .AllowedWhenInUse:
-            self.locationManager.stopMonitoringSignificantLocationChanges()
-            self.updatingLowPowerLocation = false
-            self.updateLocationManagerStateIfNeeded()
-        default:
-            break
+            case .AllowedAlways, .AllowedWhenInUse:
+                self.locationManager.stopMonitoringSignificantLocationChanges()
+                self.updatingLowPowerLocation = false
+                self.updateLocationManagerStateIfNeeded()
+            default:
+                break
         }
     }
     
@@ -757,11 +762,19 @@ internal class PositionLocationCenter: NSObject, CLLocationManagerDelegate {
 		}
 		
 		let completeRequests: [PositionLocationRequest] = locationRequests.filter { (request) -> Bool in
-			// check if desiredAccuracy was met for the request
-			let accuracyMet = self.location != nil && location?.horizontalAccuracy < request.desiredAccuracy
+            // check for expired requests
+			if request.expired == true {
+				return true
+			}
 			
-			// return requests that are either expired or meet the desired accuracy
-			return request.expired == true || accuracyMet
+			// check if desiredAccuracy was met for the request
+			if let location = self.location {
+				if location.horizontalAccuracy < request.desiredAccuracy {
+					return true
+				}
+			}
+			
+            return false
 		}
 		
 		for request in completeRequests {
