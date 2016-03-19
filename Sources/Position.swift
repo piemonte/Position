@@ -176,7 +176,7 @@ public protocol PositionObserver: NSObjectProtocol {
 
 // MARK: - Position
 
-public class Position: NSObject, PositionLocationCenterDelegate {
+public class Position: NSObject {
 
     private var observers: NSHashTable
 	
@@ -475,51 +475,7 @@ public class Position: NSObject, PositionLocationCenterDelegate {
 			}
 		}
     }
-	
-    // MARK: - PositionLocationCenterDelegate
 
-    func positionLocationCenter(positionLocationCenter: PositionLocationCenter, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
-        let enumerator = self.observers.objectEnumerator()
-        while let observer: PositionObserver = enumerator.nextObject() as? PositionObserver {
-            observer.position(self, didChangeLocationAuthorizationStatus: status)
-        }
-    }
-    
-    func positionLocationCenter(positionLocationCenter: PositionLocationCenter, didFailWithError error: NSError?) {
-        let enumerator = self.observers.objectEnumerator()
-        while let observer: PositionObserver = enumerator.nextObject() as? PositionObserver {
-            observer.position(self, didFailWithError : error)
-        }
-    }
-    
-    func positionLocationCenter(positionLocationCenter: PositionLocationCenter, didUpdateOneShotLocation location: CLLocation?) {
-        let enumerator = self.observers.objectEnumerator()
-        while let observer: PositionObserver = enumerator.nextObject() as? PositionObserver {
-            observer.position(self, didUpdateOneShotLocation: location)
-        }
-    }
-    
-    func positionLocationCenter(positionLocationCenter: PositionLocationCenter, didUpdateTrackingLocations locations: [CLLocation]?) {
-        let enumerator = self.observers.objectEnumerator()
-        while let observer: PositionObserver = enumerator.nextObject() as? PositionObserver {
-            observer.position(self, didUpdateTrackingLocations: locations)
-        }
-    }
-    
-    func positionLocationCenter(positionLocationCenter: PositionLocationCenter, didUpdateFloor floor: CLFloor) {
-        let enumerator = self.observers.objectEnumerator()
-        while let observer: PositionObserver = enumerator.nextObject() as? PositionObserver {
-            observer.position(self, didUpdateFloor: floor)
-        }
-    }
-
-    func positionLocationCenter(positionLocationCenter: PositionLocationCenter, didVisit visit: CLVisit?) {
-        let enumerator = self.observers.objectEnumerator()
-        while let observer: PositionObserver = enumerator.nextObject() as? PositionObserver {
-            observer.position(self, didVisit: visit)
-        }
-    }
-    
     // MARK: - NSNotifications
 
     func applicationDidEnterBackground(notification: NSNotification) {
@@ -562,6 +518,54 @@ public class Position: NSObject, PositionLocationCenterDelegate {
     func batteryStateChanged(notification: NSNotification) {
         self.updateLocationAccuracyIfNecessary()
     }
+    
+}
+
+// MARK: - PositionLocationCenterDelegate
+
+extension Position: PositionLocationCenterDelegate {
+
+    func positionLocationCenter(positionLocationCenter: PositionLocationCenter, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
+        let enumerator = self.observers.objectEnumerator()
+        while let observer: PositionObserver = enumerator.nextObject() as? PositionObserver {
+            observer.position(self, didChangeLocationAuthorizationStatus: status)
+        }
+    }
+    
+    func positionLocationCenter(positionLocationCenter: PositionLocationCenter, didFailWithError error: NSError?) {
+        let enumerator = self.observers.objectEnumerator()
+        while let observer: PositionObserver = enumerator.nextObject() as? PositionObserver {
+            observer.position(self, didFailWithError : error)
+        }
+    }
+    
+    func positionLocationCenter(positionLocationCenter: PositionLocationCenter, didUpdateOneShotLocation location: CLLocation?) {
+        let enumerator = self.observers.objectEnumerator()
+        while let observer: PositionObserver = enumerator.nextObject() as? PositionObserver {
+            observer.position(self, didUpdateOneShotLocation: location)
+        }
+    }
+    
+    func positionLocationCenter(positionLocationCenter: PositionLocationCenter, didUpdateTrackingLocations locations: [CLLocation]?) {
+        let enumerator = self.observers.objectEnumerator()
+        while let observer: PositionObserver = enumerator.nextObject() as? PositionObserver {
+            observer.position(self, didUpdateTrackingLocations: locations)
+        }
+    }
+    
+    func positionLocationCenter(positionLocationCenter: PositionLocationCenter, didUpdateFloor floor: CLFloor) {
+        let enumerator = self.observers.objectEnumerator()
+        while let observer: PositionObserver = enumerator.nextObject() as? PositionObserver {
+            observer.position(self, didUpdateFloor: floor)
+        }
+    }
+
+    func positionLocationCenter(positionLocationCenter: PositionLocationCenter, didVisit visit: CLVisit?) {
+        let enumerator = self.observers.objectEnumerator()
+        while let observer: PositionObserver = enumerator.nextObject() as? PositionObserver {
+            observer.position(self, didVisit: visit)
+        }
+    }
 }
 
 // MARK: - PositionLocationCenter
@@ -578,7 +582,7 @@ internal protocol PositionLocationCenterDelegate: NSObjectProtocol {
     func positionLocationCenter(positionLocationCenter: PositionLocationCenter, didVisit visit: CLVisit?)
 }
 
-internal class PositionLocationCenter: NSObject, CLLocationManagerDelegate {
+internal class PositionLocationCenter: NSObject {
 
     weak var delegate: PositionLocationCenterDelegate?
     
@@ -828,8 +832,11 @@ internal class PositionLocationCenter: NSObject, CLLocationManagerDelegate {
 			self.locationManager.distanceFilter = self.distanceFilter
 		}
     }
-	
-    // MARK: - CLLocationManagerDelegate
+}
+
+// MARK: - CLLocationManagerDelegate
+
+extension PositionLocationCenter: CLLocationManagerDelegate {
 	
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         self.location = locations.last
