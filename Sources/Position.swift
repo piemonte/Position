@@ -244,15 +244,18 @@ public class Position: NSObject {
     }
 	
 	public func requestMotionActivityAuthorization() {
-		self.activityManager.startActivityUpdatesToQueue(NSOperationQueue()) { (activity) in
-			self.activityManager.stopActivityUpdates()
-			
-			let enumerator = self.observers?.objectEnumerator()
-			while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
-				self.motionActivityStatus = .Allowed
-				observer.position(self, didChangeMotionAuthorizationStatus: self.motionActivityStatus)
-			}
-		}
+        guard self.motionActivityStatus == .Allowed else {
+            self.activityManager.startActivityUpdatesToQueue(NSOperationQueue()) { (activity) in
+                self.activityManager.stopActivityUpdates()
+                
+                let enumerator = self.observers?.objectEnumerator()
+                while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
+                    self.motionActivityStatus = .Allowed
+                    observer.position(self, didChangeMotionAuthorizationStatus: self.motionActivityStatus)
+                }
+            }
+            return;
+        }
 	}
 	
     // MARK: - observers
