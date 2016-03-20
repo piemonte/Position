@@ -762,25 +762,18 @@ internal class PositionLocationCenter: NSObject {
     // MARK - private methods
     
     private func processLocationRequests() {
-		if self.locationRequests.count == 0 {
-			self.delegate?.positionLocationCenter(self, didUpdateTrackingLocations: self.locations)
+        guard self.locationRequests.count > 0 else {
+            self.delegate?.positionLocationCenter(self, didUpdateTrackingLocations: self.locations)
 			return
-		}
+        }
 		
 		let completeRequests: [PositionLocationRequest] = locationRequests.filter { (request) -> Bool in
-            // check for expired requests
-			if request.expired == true {
-				return true
-			}
+            // check if a request completed, meaning expired or met horizontal accuracy
+            guard request.expired == true || request.desiredAccuracy <= self.location?.horizontalAccuracy else {
+                return false
+            }
 			
-			// check if desiredAccuracy was met for the request
-			if let location = self.location {
-				if location.horizontalAccuracy < request.desiredAccuracy {
-					return true
-				}
-			}
-			
-            return false
+            return true
 		}
 		
 		for request in completeRequests {
@@ -811,15 +804,17 @@ internal class PositionLocationCenter: NSObject {
     }
 	
     private func completeLocationRequestsWithError(error: NSError) {
-		for locationRequest in self.locationRequests {
-			locationRequest.cancelRequest()
-			guard let handler = locationRequest.completionHandler else { continue }
-			if let resultingError: NSError? = error {
-				handler(location: nil, error: resultingError)
-			} else {
-				handler(location: nil, error: NSError(domain: ErrorDomain, code: ErrorType.Cancelled.rawValue, userInfo: nil))
-			}
-		}
+        if let locationRequests = self.locationRequests {
+            for locationRequest in locationRequests {
+                locationRequest.cancelRequest()
+                guard let handler = locationRequest.completionHandler else { continue }
+                if let resultingError: NSError? = error {
+                    handler(location: nil, error: resultingError)
+                } else {
+                    handler(location: nil, error: NSError(domain: ErrorDomain, code: ErrorType.Cancelled.rawValue, userInfo: nil))
+                }
+            }
+        }
     }
 
     private func updateLocationManagerStateIfNeeded() {
