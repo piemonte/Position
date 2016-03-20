@@ -686,6 +686,9 @@ internal class PositionLocationCenter: NSObject {
             let request: PositionLocationRequest = PositionLocationRequest()
             request.desiredAccuracy = desiredAccuracy
             request.expiration = PositionOneShotRequestTimeOut
+            request.timeOutHandler = {
+                self.processLocationRequests()
+            }
             request.completionHandler = completionHandler
 
             if (self.locationRequests == nil) {
@@ -892,10 +895,13 @@ extension PositionLocationCenter: CLLocationManagerDelegate {
 
 // MARK: - PositionLocationRequest
 
+internal typealias TimeOutCompletionHandler = () -> ()
+
 internal class PositionLocationRequest: NSObject {
 
     var desiredAccuracy: Double!
     var expired: Bool
+    var timeOutHandler: TimeOutCompletionHandler?
     var completionHandler: OneShotCompletionHandler?
 
     private var expirationTimer: NSTimer?
@@ -921,6 +927,7 @@ internal class PositionLocationRequest: NSObject {
         self.expired = true
         self.expirationTimer?.invalidate()
         self.expirationTimer = nil
+        self.timeOutHandler = nil
         self.completionHandler = nil
     }
 
@@ -929,15 +936,22 @@ internal class PositionLocationRequest: NSObject {
     func cancelRequest() {
         self.expired = true
         self.expirationTimer?.invalidate()
+        self.timeOutHandler = nil
         self.expirationTimer = nil
     }
 
     // MARK - NSTimer
     
     func handleTimerFired(timer: NSTimer) {
-        self.expired = true
-        self.expirationTimer?.invalidate()
-        self.expirationTimer = nil
+        dispatch_async(dispatch_get_main_queue(), {
+            self.expired = true
+            self.expirationTimer?.invalidate()
+            self.expirationTimer = nil
+            
+            if let timeOutHandler = self.timeOutHandler {
+                timeOutHandler()
+                self.timeOutHandler = nil
+            }
+        })
     }
-
 }
