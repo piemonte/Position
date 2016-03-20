@@ -620,7 +620,7 @@ internal class PositionLocationCenter: NSObject {
     var locations: [CLLocation]?
     
     private var locationManager: CLLocationManager
-    private var locationRequests: [PositionLocationRequest]
+    private var locationRequests: [PositionLocationRequest]?
     private var updatingLocation: Bool
     private var updatingLowPowerLocation: Bool
     
@@ -631,7 +631,6 @@ internal class PositionLocationCenter: NSObject {
         self.updatingLocation = false
         self.updatingLowPowerLocation = false
 		self.activityType = .Unknown
-		self.locationRequests = []
         super.init()
 		
         self.locationManager.delegate = self
@@ -772,7 +771,8 @@ internal class PositionLocationCenter: NSObject {
 		
 		let completeRequests: [PositionLocationRequest] = locationRequests.filter { (request) -> Bool in
             // check if a request completed, meaning expired or met horizontal accuracy
-            guard request.expired == true || request.desiredAccuracy <= self.location?.horizontalAccuracy else {
+            //print("desiredAccuracy \(request.desiredAccuracy) horizontal \(self.location?.horizontalAccuracy)")
+            guard request.expired == true || self.location?.horizontalAccuracy < request.desiredAccuracy else {
                 return false
             }
 			
