@@ -575,7 +575,7 @@ extension Position: PositionLocationCenterDelegate {
 
 // MARK: - PositionLocationCenter
 
-let PositionOneShotRequestTimeOut: NSTimeInterval = 1.0 * 60.0
+let PositionOneShotRequestTimeOut: NSTimeInterval = 0.5 * 60.0
 
 internal protocol PositionLocationCenterDelegate: NSObjectProtocol {
     func positionLocationCenter(positionLocationCenter: PositionLocationCenter, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus)
