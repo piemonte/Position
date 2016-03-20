@@ -178,7 +178,7 @@ public protocol PositionObserver: NSObjectProtocol {
 
 public class Position: NSObject {
 
-    private var observers: NSHashTable
+    private var observers: NSHashTable?
 	
     // location types
     private let locationCenter: PositionLocationCenter
@@ -209,9 +209,7 @@ public class Position: NSObject {
 		self.activityQueue = NSOperationQueue()
 		self.motionActivityStatus = CMMotionActivityManager.isActivityAvailable() ? .NotDetermined : .NotAvailable
 		self.lastActivity = .Unknown
-		
-		self.observers = NSHashTable.weakObjectsHashTable()
-		
+				
         super.init()
 		
         locationCenter.delegate = self
@@ -249,8 +247,8 @@ public class Position: NSObject {
 		self.activityManager.startActivityUpdatesToQueue(NSOperationQueue()) { (activity) in
 			self.activityManager.stopActivityUpdates()
 			
-			let enumerator = self.observers.objectEnumerator()
-			while let observer: PositionObserver = enumerator.nextObject() as? PositionObserver {
+			let enumerator = self.observers?.objectEnumerator()
+			while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
 				self.motionActivityStatus = .Allowed
 				observer.position(self, didChangeMotionAuthorizationStatus: self.motionActivityStatus)
 			}
@@ -260,17 +258,21 @@ public class Position: NSObject {
     // MARK: - observers
 
     public func addObserver(observer: PositionObserver?) {
-		if observers.containsObject(observer) == false {
-			observers.addObject(observer)
-		}
+        if self.observers == nil {
+            self.observers = NSHashTable.weakObjectsHashTable()
+        }
+         
+        if self.observers?.containsObject(observer) == false {
+            self.observers?.addObject(observer)
+        }
     }
 	
     public func removeObserver(observer: PositionObserver?) {
-		if observers.containsObject(observer) == true {
-			observers.removeObject(observer)
+		if self.observers?.containsObject(observer) == true {
+			self.observers?.removeObject(observer)
 		}
-        if observers.count == 0 {
-            self.observers = NSHashTable.weakObjectsHashTable()
+        if self.observers?.count == 0 {
+            self.observers = nil;
         }
     }
 
@@ -383,8 +385,8 @@ public class Position: NSObject {
 				}
 				if self.lastActivity != activity {
 					self.lastActivity = activity
-					let enumerator = self.observers.objectEnumerator()
-					while let observer: PositionObserver = enumerator.nextObject() as? PositionObserver {
+					let enumerator = self.observers?.objectEnumerator()
+					while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
 						observer.position(self, didChangeActivity: activity)
 					}
 				}
@@ -401,8 +403,8 @@ public class Position: NSObject {
     
     private func checkAuthorizationStatusForServices() {
         if self.locationCenter.locationServicesStatus == .Denied {
-            let enumerator = self.observers.objectEnumerator()
-            while let observer: PositionObserver = enumerator.nextObject() as? PositionObserver {
+            let enumerator = self.observers?.objectEnumerator()
+            while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
                 observer.position(self, didChangeLocationAuthorizationStatus: .Denied)
             }
         }
@@ -412,8 +414,8 @@ public class Position: NSObject {
 				self.activityManager.stopActivityUpdates()
 				self.motionActivityStatus = .Allowed
 				
-				let enumerator = self.observers.objectEnumerator()
-				while let observer: PositionObserver = enumerator.nextObject() as? PositionObserver {
+				let enumerator = self.observers?.objectEnumerator()
+				while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
 					observer.position(self, didChangeMotionAuthorizationStatus: self.motionActivityStatus)
 				}
 			}
@@ -526,43 +528,43 @@ public class Position: NSObject {
 extension Position: PositionLocationCenterDelegate {
 
     func positionLocationCenter(positionLocationCenter: PositionLocationCenter, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
-        let enumerator = self.observers.objectEnumerator()
-        while let observer: PositionObserver = enumerator.nextObject() as? PositionObserver {
+        let enumerator = self.observers?.objectEnumerator()
+        while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
             observer.position(self, didChangeLocationAuthorizationStatus: status)
         }
     }
     
     func positionLocationCenter(positionLocationCenter: PositionLocationCenter, didFailWithError error: NSError?) {
-        let enumerator = self.observers.objectEnumerator()
-        while let observer: PositionObserver = enumerator.nextObject() as? PositionObserver {
+        let enumerator = self.observers?.objectEnumerator()
+        while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
             observer.position(self, didFailWithError : error)
         }
     }
     
     func positionLocationCenter(positionLocationCenter: PositionLocationCenter, didUpdateOneShotLocation location: CLLocation?) {
-        let enumerator = self.observers.objectEnumerator()
-        while let observer: PositionObserver = enumerator.nextObject() as? PositionObserver {
+        let enumerator = self.observers?.objectEnumerator()
+        while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
             observer.position(self, didUpdateOneShotLocation: location)
         }
     }
     
     func positionLocationCenter(positionLocationCenter: PositionLocationCenter, didUpdateTrackingLocations locations: [CLLocation]?) {
-        let enumerator = self.observers.objectEnumerator()
-        while let observer: PositionObserver = enumerator.nextObject() as? PositionObserver {
+        let enumerator = self.observers?.objectEnumerator()
+        while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
             observer.position(self, didUpdateTrackingLocations: locations)
         }
     }
     
     func positionLocationCenter(positionLocationCenter: PositionLocationCenter, didUpdateFloor floor: CLFloor) {
-        let enumerator = self.observers.objectEnumerator()
-        while let observer: PositionObserver = enumerator.nextObject() as? PositionObserver {
+        let enumerator = self.observers?.objectEnumerator()
+        while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
             observer.position(self, didUpdateFloor: floor)
         }
     }
 
     func positionLocationCenter(positionLocationCenter: PositionLocationCenter, didVisit visit: CLVisit?) {
-        let enumerator = self.observers.objectEnumerator()
-        while let observer: PositionObserver = enumerator.nextObject() as? PositionObserver {
+        let enumerator = self.observers?.objectEnumerator()
+        while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
             observer.position(self, didVisit: visit)
         }
     }
