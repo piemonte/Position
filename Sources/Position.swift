@@ -688,7 +688,10 @@ internal class PositionLocationCenter: NSObject {
             request.expiration = PositionOneShotRequestTimeOut
             request.completionHandler = completionHandler
 
-            self.locationRequests.append(request)
+            if (self.locationRequests == nil) {
+                self.locationRequests = []
+            }
+            self.locationRequests!.append(request)
 
             self.startLowPowerUpdating()
             self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -764,21 +767,20 @@ internal class PositionLocationCenter: NSObject {
     // MARK - private methods
     
     private func processLocationRequests() {
-        guard self.locationRequests.count > 0 else {
+        guard self.locationRequests != nil && self.locationRequests?.count > 0 else {
             self.delegate?.positionLocationCenter(self, didUpdateTrackingLocations: self.locations)
 			return
         }
 		
-		let completeRequests: [PositionLocationRequest] = locationRequests.filter { (request) -> Bool in
+		let completeRequests: [PositionLocationRequest] = self.locationRequests!.filter { (request) -> Bool in
             // check if a request completed, meaning expired or met horizontal accuracy
             //print("desiredAccuracy \(request.desiredAccuracy) horizontal \(self.location?.horizontalAccuracy)")
             guard request.expired == true || self.location?.horizontalAccuracy < request.desiredAccuracy else {
                 return false
             }
-			
             return true
 		}
-		
+        
 		for request in completeRequests {
 			if let handler = request.completionHandler {
 				if request.expired == true {
@@ -788,12 +790,13 @@ internal class PositionLocationCenter: NSObject {
 					handler(location: self.location, error: nil)
 				}
 			}
-			if let index = locationRequests.indexOf(request) {
-				locationRequests.removeAtIndex(index)
+			if let index = self.locationRequests!.indexOf(request) {
+				self.locationRequests!.removeAtIndex(index)
 			}
 		}
 		
-		if locationRequests.count == 0 {
+		if self.locationRequests!.count == 0 {
+            self.locationRequests = nil
 			self.updateLocationManagerStateIfNeeded()
 			
 			if self.updatingLocation == false {
@@ -822,15 +825,17 @@ internal class PositionLocationCenter: NSObject {
 
     private func updateLocationManagerStateIfNeeded() {
         // when not processing requests, set desired accuracy appropriately
-		if self.locationRequests.count > 0 {
-			if self.updatingLocation == true {
-				self.locationManager.desiredAccuracy = trackingDesiredAccuracyActive
-			} else if self.updatingLowPowerLocation == true {
-				self.locationManager.desiredAccuracy = trackingDesiredAccuracyBackground
-			}
-			
-			self.locationManager.distanceFilter = self.distanceFilter
-		}
+        if let locationRequests = self.locationRequests {
+            if locationRequests.count > 0 {
+                if self.updatingLocation == true {
+                    self.locationManager.desiredAccuracy = trackingDesiredAccuracyActive
+                } else if self.updatingLowPowerLocation == true {
+                    self.locationManager.desiredAccuracy = trackingDesiredAccuracyBackground
+                }
+                
+                self.locationManager.distanceFilter = self.distanceFilter
+            }
+        }
     }
 }
 
