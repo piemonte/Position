@@ -216,15 +216,15 @@ public class Position: NSObject {
         
         UIDevice.currentDevice().batteryMonitoringEnabled = true
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidEnterBackground:", name: UIApplicationDidEnterBackgroundNotification, object: UIApplication.sharedApplication())
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(UIApplicationDelegate.applicationDidEnterBackground(_:)), name: UIApplicationDidEnterBackgroundNotification, object: UIApplication.sharedApplication())
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidBecomeActive:", name: UIApplicationDidBecomeActiveNotification, object: UIApplication.sharedApplication())
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(UIApplicationDelegate.applicationDidBecomeActive(_:)), name: UIApplicationDidBecomeActiveNotification, object: UIApplication.sharedApplication())
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationWillResignActive:", name: UIApplicationWillResignActiveNotification, object: UIApplication.sharedApplication())
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(UIApplicationDelegate.applicationWillResignActive(_:)), name: UIApplicationWillResignActiveNotification, object: UIApplication.sharedApplication())
 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "batteryLevelChanged:", name:UIDeviceBatteryLevelDidChangeNotification, object: UIApplication.sharedApplication())
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(Position.batteryLevelChanged(_:)), name:UIDeviceBatteryLevelDidChangeNotification, object: UIApplication.sharedApplication())
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "batteryStateChanged:", name:UIDeviceBatteryStateDidChangeNotification, object: UIApplication.sharedApplication())
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(Position.batteryStateChanged(_:)), name:UIDeviceBatteryStateDidChangeNotification, object: UIApplication.sharedApplication())
     }
 
     // MARK: - permissions and access
@@ -912,7 +912,7 @@ internal class PositionLocationRequest: NSObject {
                 self.expired = false
                 timer.invalidate()
             }
-            self.expirationTimer = NSTimer.scheduledTimerWithTimeInterval(self.expiration, target: self, selector: "handleTimerFired:", userInfo: nil, repeats: false)
+            self.expirationTimer = NSTimer.scheduledTimerWithTimeInterval(self.expiration, target: self, selector: #selector(PositionLocationRequest.handleTimerFired(_:)), userInfo: nil, repeats: false)
         }
     }
     

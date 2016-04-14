@@ -73,7 +73,7 @@ class ViewController: UIViewController {
         permissionLocationButton.titleLabel!.font = UIFont(name: "AvenirNext-Regular", size: 20)
         permissionLocationButton.backgroundColor = UIColor(red: 115/255, green: 252/255, blue: 214/255, alpha: 1)
         permissionLocationButton.layer.cornerRadius = 6.0
-        permissionLocationButton.addTarget(self, action: "handleLocationPermissionButton:", forControlEvents: .TouchUpInside)
+        permissionLocationButton.addTarget(self, action: #selector(ViewController.handleLocationPermissionButton(_:)), forControlEvents: .TouchUpInside)
         self.view.addSubview(permissionLocationButton)
 
         let permissionMotionButton: UIButton = UIButton(frame: CGRectMake(0, 0, 240, 50))
@@ -82,7 +82,7 @@ class ViewController: UIViewController {
         permissionMotionButton.titleLabel!.font = UIFont(name: "AvenirNext-Regular", size: 20)
         permissionMotionButton.backgroundColor = UIColor(red: 115/255, green: 252/255, blue: 214/255, alpha: 1)
         permissionMotionButton.layer.cornerRadius = 6.0
-        permissionMotionButton.addTarget(self, action: "handleMotionPermissionButton:", forControlEvents: .TouchUpInside)
+        permissionMotionButton.addTarget(self, action: #selector(ViewController.handleMotionPermissionButton(_:)), forControlEvents: .TouchUpInside)
         self.view.addSubview(permissionMotionButton)
         
         let locationButton: UIButton = UIButton(frame: CGRectMake(0, 0, 240, 50))
@@ -91,7 +91,7 @@ class ViewController: UIViewController {
         locationButton.titleLabel!.font = UIFont(name: "AvenirNext-Regular", size: 20)
         locationButton.backgroundColor = UIColor(red: 115/255, green: 252/255, blue: 214/255, alpha: 1)
         locationButton.layer.cornerRadius = 6.0
-        locationButton.addTarget(self, action: "handleOneShotLocationButton:", forControlEvents: .TouchUpInside)
+        locationButton.addTarget(self, action: #selector(ViewController.handleOneShotLocationButton(_:)), forControlEvents: .TouchUpInside)
         self.view.addSubview(locationButton)
     }
     
