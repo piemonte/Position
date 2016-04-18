@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'Position'
-  s.version = '0.0.3'
+  s.version = '0.0.4'
   s.license = 'MIT'
   s.summary = 'Swift and efficient location positioning for iOS'
   s.homepage = 'https://github.com/piemonte/Position'
