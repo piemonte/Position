@@ -41,7 +41,7 @@ class ViewController: UIViewController {
         super.init(coder: aDecoder)!
     }
 
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
 
@@ -50,8 +50,8 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.view.autoresizingMask = ([UIViewAutoresizing.FlexibleWidth, UIViewAutoresizing.FlexibleHeight])
-        self.view.backgroundColor = UIColor.whiteColor()
+        self.view.autoresizingMask = ([UIViewAutoresizing.flexibleWidth, UIViewAutoresizing.flexibleHeight])
+        self.view.backgroundColor = UIColor.white()
 
         let position: Position! = Position.sharedPosition
         position.addObserver(self)
@@ -67,54 +67,54 @@ class ViewController: UIViewController {
 //              position.startUpdating()
 //        }
         
-        let permissionLocationButton: UIButton = UIButton(frame: CGRectMake(0, 0, 240, 50))
-        permissionLocationButton.center = CGPointMake(self.view.center.x, self.view.center.y - 120)
-        permissionLocationButton.setTitle("Location Permission", forState: .Normal)
+        let permissionLocationButton: UIButton = UIButton(frame: CGRect(x: 0, y: 0, width: 240, height: 50))
+        permissionLocationButton.center = CGPoint(x: self.view.center.x, y: self.view.center.y - 120)
+        permissionLocationButton.setTitle("Location Permission", for: UIControlState())
         permissionLocationButton.titleLabel!.font = UIFont(name: "AvenirNext-Regular", size: 20)
         permissionLocationButton.backgroundColor = UIColor(red: 115/255, green: 252/255, blue: 214/255, alpha: 1)
         permissionLocationButton.layer.cornerRadius = 6.0
-        permissionLocationButton.addTarget(self, action: #selector(ViewController.handleLocationPermissionButton(_:)), forControlEvents: .TouchUpInside)
+        permissionLocationButton.addTarget(self, action: #selector(ViewController.handleLocationPermissionButton(_:)), for: .touchUpInside)
         self.view.addSubview(permissionLocationButton)
 
-        let permissionMotionButton: UIButton = UIButton(frame: CGRectMake(0, 0, 240, 50))
-        permissionMotionButton.center = CGPointMake(self.view.center.x, self.view.center.y - 30)
-        permissionMotionButton.setTitle("Motion Permission", forState: .Normal)
+        let permissionMotionButton: UIButton = UIButton(frame: CGRect(x: 0, y: 0, width: 240, height: 50))
+        permissionMotionButton.center = CGPoint(x: self.view.center.x, y: self.view.center.y - 30)
+        permissionMotionButton.setTitle("Motion Permission", for: UIControlState())
         permissionMotionButton.titleLabel!.font = UIFont(name: "AvenirNext-Regular", size: 20)
         permissionMotionButton.backgroundColor = UIColor(red: 115/255, green: 252/255, blue: 214/255, alpha: 1)
         permissionMotionButton.layer.cornerRadius = 6.0
-        permissionMotionButton.addTarget(self, action: #selector(ViewController.handleMotionPermissionButton(_:)), forControlEvents: .TouchUpInside)
+        permissionMotionButton.addTarget(self, action: #selector(ViewController.handleMotionPermissionButton(_:)), for: .touchUpInside)
         self.view.addSubview(permissionMotionButton)
         
-        let locationButton: UIButton = UIButton(frame: CGRectMake(0, 0, 240, 50))
-        locationButton.center = CGPointMake(self.view.center.x, self.view.center.y + 60)
-        locationButton.setTitle("Request Location", forState: .Normal)
+        let locationButton: UIButton = UIButton(frame: CGRect(x: 0, y: 0, width: 240, height: 50))
+        locationButton.center = CGPoint(x: self.view.center.x, y: self.view.center.y + 60)
+        locationButton.setTitle("Request Location", for: UIControlState())
         locationButton.titleLabel!.font = UIFont(name: "AvenirNext-Regular", size: 20)
         locationButton.backgroundColor = UIColor(red: 115/255, green: 252/255, blue: 214/255, alpha: 1)
         locationButton.layer.cornerRadius = 6.0
-        locationButton.addTarget(self, action: #selector(ViewController.handleOneShotLocationButton(_:)), forControlEvents: .TouchUpInside)
+        locationButton.addTarget(self, action: #selector(ViewController.handleOneShotLocationButton(_:)), for: .touchUpInside)
         self.view.addSubview(locationButton)
     }
     
     // MARK: UIButton
     
-    func handleLocationPermissionButton(button: UIButton!) {
+    func handleLocationPermissionButton(_ button: UIButton!) {
         // request permissions based on the type of location support required.
         Position.sharedPosition.requestWhenInUseLocationAuthorization()
         //Position.sharedPosition.requestAlwaysLocationAuthorization()
     }
     
-    func handleMotionPermissionButton(button: UIButton!) {
+    func handleMotionPermissionButton(_ button: UIButton!) {
         Position.sharedPosition.requestMotionActivityAuthorization()
     }
     
-    func handleOneShotLocationButton(button: UIButton!) {
+    func handleOneShotLocationButton(_ button: UIButton!) {
         let position: Position! = Position.sharedPosition
-        if position.locationServicesStatus == .AllowedWhenInUse ||
-           position.locationServicesStatus == .AllowedAlways {
+        if position.locationServicesStatus == .allowedWhenInUse ||
+           position.locationServicesStatus == .allowedAlways {
             position.performOneShotLocationUpdateWithDesiredAccuracy(150) { (location, error) -> () in
                 print("one shot location update \(location) error \(error)")
             }
-        } else if position.locationServicesStatus == .NotAvailable {
+        } else if position.locationServicesStatus == .notAvailable {
             print("location is not available")
         }
     }
@@ -124,39 +124,39 @@ class ViewController: UIViewController {
 
 extension ViewController: PositionObserver {
 
-    func position(position: Position, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
+    func position(_ position: Position, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
         // location authorization did change, often this may even be triggered on application resume if the user updated settings
         print("location authorization status \(status)")
     }
 	
-	func position(position: Position, didChangeMotionAuthorizationStatus status: MotionAuthorizationStatus) {
+	func position(_ position: Position, didChangeMotionAuthorizationStatus status: MotionAuthorizationStatus) {
 		// motion authorization did change, often this may even be triggered on application resume if the user updated settings
 		print("motion authorization status \(status)")
 	}
 	
     // error handling
-    func position(position: Position, didFailWithError error: NSError?) {
+    func position(_ position: Position, didFailWithError error: NSError?) {
         print("failed with error \(error)")
     }
 
     // location
-    func position(position: Position, didUpdateOneShotLocation location: CLLocation?) {
+    func position(_ position: Position, didUpdateOneShotLocation location: CLLocation?) {
     }
     
-    func position(position: Position, didUpdateTrackingLocations locations: [CLLocation]?) {
+    func position(_ position: Position, didUpdateTrackingLocations locations: [CLLocation]?) {
         print("tracking location update \(locations?.last)")
     }
     
-    func position(position: Position, didUpdateFloor floor: CLFloor) {
+    func position(_ position: Position, didUpdateFloor floor: CLFloor) {
     }
     
-    func position(position: Position, didVisit visit: CLVisit?) {
+    func position(_ position: Position, didVisit visit: CLVisit?) {
     }
     
-    func position(position: Position, didChangeDesiredAccurary desiredAccuracy: Double) {
+    func position(_ position: Position, didChangeDesiredAccurary desiredAccuracy: Double) {
     }
 	
 	// motion
-	func position(position: Position, didChangeActivity activity: MotionActivityType) {
+	func position(_ position: Position, didChangeActivity activity: MotionActivityType) {
 	}
 }
