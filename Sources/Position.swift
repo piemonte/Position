@@ -26,8 +26,8 @@
 //  SOFTWARE.
 //
 
-import Foundation
 import UIKit
+import Foundation
 import CoreLocation
 import CoreMotion
 
@@ -43,15 +43,15 @@ public enum LocationAuthorizationStatus: CustomStringConvertible {
     public var description: String {
         get {
             switch self {
-            case notDetermined:
+            case .notDetermined:
                 return "Not Determined"
-            case notAvailable:
+            case .notAvailable:
                 return "Not Available"
-            case denied:
+            case .denied:
                 return "Denied"
-            case allowedWhenInUse:
+            case .allowedWhenInUse:
                 return "When In Use"
-            case allowedAlways:
+            case .allowedAlways:
                 return "Allowed Always"
             }
         }
@@ -66,11 +66,11 @@ public enum MotionAuthorizationStatus: CustomStringConvertible {
 	public var description: String {
 		get {
 			switch self {
-			case notDetermined:
+			case .notDetermined:
 				return "Not Determined"
-			case notAvailable:
+			case .notAvailable:
 				return "Not Available"
-			case allowed:
+			case .allowed:
 				return "Allowed"
 			}
 		}
@@ -101,15 +101,15 @@ public enum MotionActivityType: CustomStringConvertible {
 	public var description: String {
 		get {
 			switch self {
-                case unknown:
+                case .unknown:
                     return "Unknown"
-                case walking:
+                case .walking:
                     return "Walking"
-                case running:
+                case .running:
                     return "Running"
-                case automotive:
+                case .automotive:
                     return "Automotive"
-                case cycling:
+                case .cycling:
                     return "Cycling"
 			}
 		}
@@ -137,11 +137,11 @@ public enum ErrorType: Int, CustomStringConvertible {
     public var description: String {
         get {
             switch self {
-                case timedOut:
+                case .timedOut:
                     return "Timed out"
-                case restricted:
+                case .restricted:
                     return "Restricted"
-                case cancelled:
+                case .cancelled:
                     return "Cancelled"
             }
         }
@@ -178,7 +178,7 @@ public protocol PositionObserver: NSObjectProtocol {
 
 public class Position: NSObject {
 
-    private var observers: HashTable<AnyObject>?
+    private var observers: NSHashTable<AnyObject>?
 	
     // location types
     private let locationCenter: PositionLocationCenter
@@ -214,17 +214,17 @@ public class Position: NSObject {
 		
         locationCenter.delegate = self
         
-        UIDevice.current().isBatteryMonitoringEnabled = true
+        UIDevice.current.isBatteryMonitoringEnabled = true
         
-        NotificationCenter.default().addObserver(self, selector: #selector(UIApplicationDelegate.applicationDidEnterBackground(_:)), name: NSNotification.Name.UIApplicationDidEnterBackground, object: UIApplication.shared())
+        NotificationCenter.default.addObserver(self, selector: #selector(UIApplicationDelegate.applicationDidEnterBackground(_:)), name: NSNotification.Name.UIApplicationDidEnterBackground, object: UIApplication.shared)
         
-        NotificationCenter.default().addObserver(self, selector: #selector(UIApplicationDelegate.applicationDidBecomeActive(_:)), name: NSNotification.Name.UIApplicationDidBecomeActive, object: UIApplication.shared())
+        NotificationCenter.default.addObserver(self, selector: #selector(UIApplicationDelegate.applicationDidBecomeActive(_:)), name: NSNotification.Name.UIApplicationDidBecomeActive, object: UIApplication.shared)
         
-        NotificationCenter.default().addObserver(self, selector: #selector(UIApplicationDelegate.applicationWillResignActive(_:)), name: NSNotification.Name.UIApplicationWillResignActive, object: UIApplication.shared())
+        NotificationCenter.default.addObserver(self, selector: #selector(UIApplicationDelegate.applicationWillResignActive(_:)), name: NSNotification.Name.UIApplicationWillResignActive, object: UIApplication.shared)
 
-        NotificationCenter.default().addObserver(self, selector: #selector(Position.batteryLevelChanged(_:)), name:NSNotification.Name.UIDeviceBatteryLevelDidChange, object: UIApplication.shared())
+        NotificationCenter.default.addObserver(self, selector: #selector(Position.batteryLevelChanged(_:)), name:NSNotification.Name.UIDeviceBatteryLevelDidChange, object: UIApplication.shared)
         
-        NotificationCenter.default().addObserver(self, selector: #selector(Position.batteryStateChanged(_:)), name:NSNotification.Name.UIDeviceBatteryStateDidChange, object: UIApplication.shared())
+        NotificationCenter.default.addObserver(self, selector: #selector(Position.batteryStateChanged(_:)), name:NSNotification.Name.UIDeviceBatteryStateDidChange, object: UIApplication.shared)
     }
 
     // MARK: - permissions and access
@@ -262,7 +262,7 @@ public class Position: NSObject {
 
     public func addObserver(_ observer: PositionObserver?) {
         if self.observers == nil {
-            self.observers = HashTable.weakObjects()
+            self.observers = NSHashTable.weakObjects()
         }
          
         if self.observers?.contains(observer) == false {
@@ -427,7 +427,7 @@ public class Position: NSObject {
     
     private func updateLocationAccuracyIfNecessary() {
         if self.adjustLocationUseFromBatteryLevel == true {
-            let currentState: UIDeviceBatteryState = UIDevice.current().batteryState
+            let currentState: UIDeviceBatteryState = UIDevice.current.batteryState
             
             switch currentState {
                 case .full, .charging:
@@ -445,7 +445,7 @@ public class Position: NSObject {
 					}
 					
                 case .unplugged, .unknown:
-                    let batteryLevel: Float = UIDevice.current().batteryLevel
+                    let batteryLevel: Float = UIDevice.current.batteryLevel
                     if batteryLevel < 0.15 {
                         self.locationCenter.trackingDesiredAccuracyActive = kCLLocationAccuracyThreeKilometers
                         self.locationCenter.trackingDesiredAccuracyBackground = kCLLocationAccuracyThreeKilometers
@@ -513,8 +513,8 @@ public class Position: NSObject {
     }
 
     func batteryLevelChanged(_ notification: Notification) {
-        let batteryLevel: Float = UIDevice.current().batteryLevel
-        if batteryLevel < 0.0 {
+        let batteryLevel: Float = UIDevice.current.batteryLevel
+        if batteryLevel < 0 {
             return
         }
         self.updateLocationAccuracyIfNecessary()
@@ -854,7 +854,7 @@ extension PositionLocationCenter: CLLocationManagerDelegate {
         self.processLocationRequests()
     }
     
-    @objc(locationManager:didFailWithError:) func locationManager(_ manager: CLLocationManager, didFailWithError error: NSError) {
+    @objc(locationManager:didFailWithError:) func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         self.completeLocationRequestsWithError(error)
         self.delegate?.positionLocationCenter(self, didFailWithError: error)
     }
@@ -888,7 +888,7 @@ extension PositionLocationCenter: CLLocationManagerDelegate {
     @objc(locationManager:didStartMonitoringForRegion:) func locationManager(_ manager: CLLocationManager, didStartMonitoringFor region: CLRegion) {
     }
 
-    @objc(locationManager:monitoringDidFailForRegion:withError:) func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: NSError) {
+    @objc(locationManager:monitoringDidFailForRegion:withError:) func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
         self.delegate?.positionLocationCenter(self, didFailWithError: error)
     }
 }

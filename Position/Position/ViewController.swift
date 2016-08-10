@@ -51,7 +51,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
 
         self.view.autoresizingMask = ([UIViewAutoresizing.flexibleWidth, UIViewAutoresizing.flexibleHeight])
-        self.view.backgroundColor = UIColor.white()
+        self.view.backgroundColor = UIColor.white
 
         let position: Position! = Position.sharedPosition
         position.addObserver(self)
