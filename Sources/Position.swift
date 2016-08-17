@@ -127,6 +127,8 @@ public enum MotionActivityType: CustomStringConvertible {
     }
 }
 
+// MARK: - Position Errors
+
 public let ErrorDomain = "PositionErrorDomain"
 
 public enum ErrorType: Int, CustomStringConvertible {
@@ -148,11 +150,15 @@ public enum ErrorType: Int, CustomStringConvertible {
     }
 }
 
-public let TimeFilterNone : TimeInterval = 0.0
-public let TimeFilter5Minutes : TimeInterval = 5.0 * 60.0
-public let TimeFilter10Minutes : TimeInterval = 10.0 * 60.0
+// MARK: - constants
 
-public typealias OneShotCompletionHandler = (location: CLLocation?, error: NSError?) -> ()
+public let TimeFilterNone: TimeInterval = 0.0
+public let TimeFilter5Minutes: TimeInterval = 5.0 * 60.0
+public let TimeFilter10Minutes: TimeInterval = 10.0 * 60.0
+
+public typealias OneShotCompletionHandler = (_: CLLocation?, _: Error?) -> ()
+
+// MARK: - PositionObserver
 
 public protocol PositionObserver: NSObjectProtocol {
     // permission
@@ -160,7 +166,7 @@ public protocol PositionObserver: NSObjectProtocol {
     func position(_ position: Position, didChangeMotionAuthorizationStatus status: MotionAuthorizationStatus)
     
     // error handling
-    func position(_ position: Position, didFailWithError error: NSError?)
+    func position(_ position: Position, didFailWithError error: Error?)
     
     // location
     func position(_ position: Position, didUpdateOneShotLocation location: CLLocation?)
@@ -178,11 +184,11 @@ public protocol PositionObserver: NSObjectProtocol {
 
 public class Position: NSObject {
 
-    private var observers: NSHashTable<AnyObject>?
+    internal var observers: NSHashTable<AnyObject>?
     
     // location types
-    private let locationCenter: PositionLocationCenter
-    private var updatingPosition: Bool
+    internal let locationCenter: PositionLocationCenter
+    internal var updatingPosition: Bool
     
     // motion types
     private let activityManager: CMMotionActivityManager
@@ -212,22 +218,18 @@ public class Position: NSObject {
                 
         super.init()
         
-        locationCenter.delegate = self
+        self.locationCenter.delegate = self
         
         UIDevice.current.isBatteryMonitoringEnabled = true
         
         NotificationCenter.default.addObserver(self, selector: #selector(UIApplicationDelegate.applicationDidEnterBackground(_:)), name: NSNotification.Name.UIApplicationDidEnterBackground, object: UIApplication.shared)
-        
         NotificationCenter.default.addObserver(self, selector: #selector(UIApplicationDelegate.applicationDidBecomeActive(_:)), name: NSNotification.Name.UIApplicationDidBecomeActive, object: UIApplication.shared)
-        
         NotificationCenter.default.addObserver(self, selector: #selector(UIApplicationDelegate.applicationWillResignActive(_:)), name: NSNotification.Name.UIApplicationWillResignActive, object: UIApplication.shared)
-
         NotificationCenter.default.addObserver(self, selector: #selector(Position.batteryLevelChanged(_:)), name:NSNotification.Name.UIDeviceBatteryLevelDidChange, object: UIApplication.shared)
-        
         NotificationCenter.default.addObserver(self, selector: #selector(Position.batteryStateChanged(_:)), name:NSNotification.Name.UIDeviceBatteryStateDidChange, object: UIApplication.shared)
     }
 
-    // MARK: - permissions and access
+    // MARK: - Position permissions and access
 
     public var locationServicesStatus: LocationAuthorizationStatus? {
         get {
@@ -258,7 +260,7 @@ public class Position: NSObject {
         }
     }
     
-    // MARK: - observers
+    // MARK: - Position observers
 
     public func addObserver(_ observer: PositionObserver?) {
         if self.observers == nil {
@@ -279,8 +281,8 @@ public class Position: NSObject {
         }
     }
 
-    // MARK: - settings
-
+    // MARK: - Position properties
+    
     public var adjustLocationUseWhenBackgrounded: Bool {
         didSet {
             if self.locationCenter.updatingLowPowerLocation == true {
@@ -292,16 +294,14 @@ public class Position: NSObject {
 
     public var adjustLocationUseFromBatteryLevel: Bool
     
-    // MARK: - status
-    
     public var updatingLocation: Bool {
         get {
             return self.locationCenter.updatingLocation == true || self.locationCenter.updatingLowPowerLocation == true
         }
     }
-    
-    // MARK: - positioning
 
+    // MARK: - location lookup
+    
     public var location: CLLocation? {
         get {
             return locationCenter.location
@@ -402,9 +402,9 @@ public class Position: NSObject {
         self.activityManager.stopActivityUpdates()
     }
     
-    // MARK: - private
+    // MARK: - private functions
     
-    private func checkAuthorizationStatusForServices() {
+    internal func checkAuthorizationStatusForServices() {
         if self.locationCenter.locationServicesStatus == .denied {
             let enumerator = self.observers?.objectEnumerator()
             while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
@@ -425,7 +425,7 @@ public class Position: NSObject {
         }
     }
     
-    private func updateLocationAccuracyIfNecessary() {
+    internal func updateLocationAccuracyIfNecessary() {
         if self.adjustLocationUseFromBatteryLevel == true {
             let currentState: UIDeviceBatteryState = UIDevice.current.batteryState
             
@@ -480,9 +480,12 @@ public class Position: NSObject {
             }
         }
     }
+}
 
-    // MARK: - NSNotifications
+// MARK: - NSNotifications
 
+extension Position {
+    
     func applicationDidEnterBackground(_ notification: Notification) {
     }
     
@@ -530,42 +533,42 @@ public class Position: NSObject {
 
 extension Position: PositionLocationCenterDelegate {
 
-    func positionLocationCenter(_ positionLocationCenter: PositionLocationCenter, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
+    internal func positionLocationCenter(_ positionLocationCenter: PositionLocationCenter, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
         let enumerator = self.observers?.objectEnumerator()
         while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
             observer.position(self, didChangeLocationAuthorizationStatus: status)
         }
     }
     
-    func positionLocationCenter(_ positionLocationCenter: PositionLocationCenter, didFailWithError error: NSError?) {
+    internal func positionLocationCenter(_ positionLocationCenter: PositionLocationCenter, didFailWithError error: Error?) {
         let enumerator = self.observers?.objectEnumerator()
         while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
             observer.position(self, didFailWithError : error)
         }
     }
     
-    func positionLocationCenter(_ positionLocationCenter: PositionLocationCenter, didUpdateOneShotLocation location: CLLocation?) {
+    internal func positionLocationCenter(_ positionLocationCenter: PositionLocationCenter, didUpdateOneShotLocation location: CLLocation?) {
         let enumerator = self.observers?.objectEnumerator()
         while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
             observer.position(self, didUpdateOneShotLocation: location)
         }
     }
     
-    func positionLocationCenter(_ positionLocationCenter: PositionLocationCenter, didUpdateTrackingLocations locations: [CLLocation]?) {
+    internal func positionLocationCenter(_ positionLocationCenter: PositionLocationCenter, didUpdateTrackingLocations locations: [CLLocation]?) {
         let enumerator = self.observers?.objectEnumerator()
         while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
             observer.position(self, didUpdateTrackingLocations: locations)
         }
     }
     
-    func positionLocationCenter(_ positionLocationCenter: PositionLocationCenter, didUpdateFloor floor: CLFloor) {
+    internal func positionLocationCenter(_ positionLocationCenter: PositionLocationCenter, didUpdateFloor floor: CLFloor) {
         let enumerator = self.observers?.objectEnumerator()
         while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
             observer.position(self, didUpdateFloor: floor)
         }
     }
 
-    func positionLocationCenter(_ positionLocationCenter: PositionLocationCenter, didVisit visit: CLVisit?) {
+    internal func positionLocationCenter(_ positionLocationCenter: PositionLocationCenter, didVisit visit: CLVisit?) {
         let enumerator = self.observers?.objectEnumerator()
         while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
             observer.position(self, didVisit: visit)
@@ -579,7 +582,7 @@ let PositionOneShotRequestTimeOut: TimeInterval = 0.5 * 60.0
 
 internal protocol PositionLocationCenterDelegate: NSObjectProtocol {
     func positionLocationCenter(_ positionLocationCenter: PositionLocationCenter, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus)
-    func positionLocationCenter(_ positionLocationCenter: PositionLocationCenter, didFailWithError error: NSError?)
+    func positionLocationCenter(_ positionLocationCenter: PositionLocationCenter, didFailWithError error: Error?)
 
     func positionLocationCenter(_ positionLocationCenter: PositionLocationCenter, didUpdateOneShotLocation location: CLLocation?)
     func positionLocationCenter(_ positionLocationCenter: PositionLocationCenter, didUpdateTrackingLocations location: [CLLocation]?)
@@ -621,8 +624,8 @@ internal class PositionLocationCenter: NSObject {
     
     private var locationManager: CLLocationManager
     private var locationRequests: [PositionLocationRequest]?
-    private var updatingLocation: Bool
-    private var updatingLowPowerLocation: Bool
+    internal var updatingLocation: Bool
+    internal var updatingLowPowerLocation: Bool
     
     // MARK: - object lifecycle
     
@@ -709,9 +712,9 @@ internal class PositionLocationCenter: NSObject {
             
         } else {
             DispatchQueue.main.async(execute: {
-                guard let handler: OneShotCompletionHandler = completionHandler else { return }
-                let error: NSError = NSError(domain: ErrorDomain, code: ErrorType.restricted.rawValue, userInfo: nil)
-                handler(location: nil, error: error)
+                let handler: OneShotCompletionHandler = completionHandler
+                let error = NSError(domain: ErrorDomain, code: ErrorType.restricted.rawValue, userInfo: nil)
+                handler(nil, error)
             })
         }
 
@@ -769,8 +772,8 @@ internal class PositionLocationCenter: NSObject {
     
     // MARK - private methods
     
-    private func processLocationRequests() {
-        guard self.locationRequests != nil && self.locationRequests?.count > 0 else {
+    internal func processLocationRequests() {
+        guard self.locationRequests != nil && self.locationRequests!.count > 0 else {
             self.delegate?.positionLocationCenter(self, didUpdateTrackingLocations: self.locations)
             return
         }
@@ -778,7 +781,7 @@ internal class PositionLocationCenter: NSObject {
         let completeRequests: [PositionLocationRequest] = self.locationRequests!.filter { (request) -> Bool in
             // check if a request completed, meaning expired or met horizontal accuracy
             //print("desiredAccuracy \(request.desiredAccuracy) horizontal \(self.location?.horizontalAccuracy)")
-            guard request.expired == true || self.location?.horizontalAccuracy < request.desiredAccuracy else {
+            guard request.expired == true || (self.location != nil && self.location!.horizontalAccuracy < request.desiredAccuracy) else {
                 return false
             }
             return true
@@ -788,9 +791,9 @@ internal class PositionLocationCenter: NSObject {
             if let handler = request.completionHandler {
                 if request.expired == true {
                     let error: NSError = NSError(domain: ErrorDomain, code: ErrorType.timedOut.rawValue, userInfo: nil)
-                    handler(location: nil, error: error)
+                    handler(nil, error)
                 } else {
-                    handler(location: self.location, error: nil)
+                    handler(self.location, nil)
                 }
             }
             if let index = self.locationRequests!.index(of: request) {
@@ -812,21 +815,21 @@ internal class PositionLocationCenter: NSObject {
         }
     }
     
-    private func completeLocationRequestsWithError(_ error: NSError) {
+    internal func completeLocationRequestsWithError(_ error: Error?) {
         if let locationRequests = self.locationRequests {
             for locationRequest in locationRequests {
                 locationRequest.cancelRequest()
                 guard let handler = locationRequest.completionHandler else { continue }
-                if let resultingError: NSError? = error {
-                    handler(location: nil, error: resultingError)
+                if let resultingError = error {
+                    handler(nil, resultingError)
                 } else {
-                    handler(location: nil, error: NSError(domain: ErrorDomain, code: ErrorType.cancelled.rawValue, userInfo: nil))
+                    handler(nil, NSError(domain: ErrorDomain, code: ErrorType.cancelled.rawValue, userInfo: nil))
                 }
             }
         }
     }
 
-    private func updateLocationManagerStateIfNeeded() {
+    internal func updateLocationManagerStateIfNeeded() {
         // when not processing requests, set desired accuracy appropriately
         if let locationRequests = self.locationRequests {
             if locationRequests.count > 0 {
@@ -931,7 +934,7 @@ internal class PositionLocationRequest: NSObject {
         self.completionHandler = nil
     }
 
-    // MARK - methods
+    // MARK - functions
 
     func cancelRequest() {
         self.expired = true

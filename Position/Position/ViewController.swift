@@ -135,7 +135,7 @@ extension ViewController: PositionObserver {
 	}
 	
     // error handling
-    func position(_ position: Position, didFailWithError error: NSError?) {
+    func position(_ position: Position, didFailWithError error: Error?) {
         print("failed with error \(error)")
     }
 
