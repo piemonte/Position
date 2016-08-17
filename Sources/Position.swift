@@ -314,9 +314,23 @@ public class Position: NSObject {
 
     // MARK: - location tracking
 
-    public var trackingDesiredAccuracyWhenActive: Double!
+    public var trackingDesiredAccuracyWhenActive: Double {
+        get {
+            return self.locationCenter.trackingDesiredAccuracyActive
+        }
+        set {
+            self.locationCenter.trackingDesiredAccuracyActive = newValue
+        }
+    }
     
-    public var trackingDesiredAccuracyWhenInBackground: Double!
+    public var trackingDesiredAccuracyWhenInBackground: Double {
+        get {
+            return self.locationCenter.trackingDesiredAccuracyBackground
+        }
+        set {
+            self.locationCenter.trackingDesiredAccuracyBackground = newValue
+        }
+    }
 
     public var distanceFilter: Double {
         get {
@@ -602,12 +616,12 @@ internal class PositionLocationCenter: NSObject {
     
     var timeFilter: TimeInterval!
     
-    var trackingDesiredAccuracyActive: Double! {
+    var trackingDesiredAccuracyActive: Double {
         didSet {
             self.updateLocationManagerStateIfNeeded()
         }
     }
-    var trackingDesiredAccuracyBackground: Double! {
+    var trackingDesiredAccuracyBackground: Double {
         didSet {
             self.updateLocationManagerStateIfNeeded()
         }
@@ -634,14 +648,15 @@ internal class PositionLocationCenter: NSObject {
         self.updatingLocation = false
         self.updatingLowPowerLocation = false
         self.activityType = .unknown
+        
+        self.trackingDesiredAccuracyActive = kCLLocationAccuracyHundredMeters
+        self.trackingDesiredAccuracyBackground = kCLLocationAccuracyKilometer
+
         super.init()
         
         self.locationManager.delegate = self
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
         self.locationManager.pausesLocationUpdatesAutomatically = false
-        
-        self.trackingDesiredAccuracyActive = kCLLocationAccuracyHundredMeters
-        self.trackingDesiredAccuracyBackground = kCLLocationAccuracyKilometer
     }
     
     // MARK: - permission
@@ -834,9 +849,9 @@ internal class PositionLocationCenter: NSObject {
         if let locationRequests = self.locationRequests {
             if locationRequests.count > 0 {
                 if self.updatingLocation == true {
-                    self.locationManager.desiredAccuracy = trackingDesiredAccuracyActive
+                    self.locationManager.desiredAccuracy = self.trackingDesiredAccuracyActive
                 } else if self.updatingLowPowerLocation == true {
-                    self.locationManager.desiredAccuracy = trackingDesiredAccuracyBackground
+                    self.locationManager.desiredAccuracy = self.trackingDesiredAccuracyBackground
                 }
                 
                 self.locationManager.distanceFilter = self.distanceFilter
