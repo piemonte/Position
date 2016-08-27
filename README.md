@@ -1,6 +1,6 @@
 ![Position](https://raw.githubusercontent.com/piemonte/Position/master/Position.png)
 
-`Position` is a [Swift](https://developer.apple.com/swift/) and efficient location positioning library for iOS. The library is a simple wrapper around CoreLocation that offers a variety of functionality and offers a path for potentially more interesting features in the future. Contributions are welcome.
+`Position` is a [Swift](https://developer.apple.com/swift/) and efficient location positioning library for iOS. The library is a simple wrapper around CoreLocation that offers a variety of functionality and paths for potentially more interesting features in the future.
 
 ### Features
 - [x] simple [Swift](https://developer.apple.com/swift/) API
@@ -27,7 +27,7 @@ source ‘https://github.com/CocoaPods/Specs.git'
 platform :iOS, ‘9.0’
 use_frameworks!
 
-pod ‘Position’
+pod ‘Position’, '~> 0.0.4'
 ```	
 
 ### Carthage
@@ -37,7 +37,7 @@ Installation is also available using the dependency manager [Carthage](https://g
 To integrate, add the following line to your `Cartfile`:
 
 ```ogdl
-github “piemonte/Position” >= 0.0.1
+github “piemonte/Position” >= 0.0.4
 ```
 
 ### Swift Package Manager
@@ -63,7 +63,7 @@ You can also simply copy the `Position.swift` file into your Xcode project.
 
 The sample project provides an example of how to integrate `Position`, otherwise you can follow these steps.
 
-Ensure your app’s Info.plist file includes both a location usage description, required device capability “location-services”, and  required background mode (if necessary).
+Ensure your app’s `Info.plist` file includes both a location usage description, required device capability “location-services”, and  required background mode (if necessary).
 
 See sample project for examples too.
 
@@ -119,30 +119,6 @@ Observe delegation, if necessary.
 
     func position(position: Position, didChangeMotionAuthorizationStatus status: MotionAuthorizationStatus) {
         // motion authorization did change, often this may even be triggered on application resume if the user updated settings
-    }
-
-    // error handling
-    func position(position: Position, didFailWithError error: NSError?) {
-    }
-
-    // location
-    func position(position: Position, didUpdateOneShotLocation location: CLLocation?) {
-    }
-
-    func position(position: Position, didUpdateTrackingLocation locations: [CLLocation]?) {
-    }
-
-    func position(position: Position, didUpdateFloor floor: CLFloor) {
-    }
-
-    func position(position: Position, didVisit visit: CLVisit?) {
-    }
-
-    func position(position: Position, didChangeDesiredAccurary desiredAccuracy: Double) {
-    }
-    
-    // motion
-    func position(position: Position, didChangeActivity activity: MotionActivityType) {
     }
 ```
 
