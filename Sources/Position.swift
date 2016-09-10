@@ -308,7 +308,7 @@ public class Position: NSObject {
         }
     }
     
-    public func performOneShotLocationUpdateWithDesiredAccuracy(_ desiredAccuracy: Double, completionHandler: OneShotCompletionHandler) {
+    public func performOneShotLocationUpdateWithDesiredAccuracy(_ desiredAccuracy: Double, completionHandler: @escaping OneShotCompletionHandler) {
         self.locationCenter.performOneShotLocationUpdateWithDesiredAccuracy(desiredAccuracy, completionHandler: completionHandler)
     }
 
@@ -696,7 +696,7 @@ internal class PositionLocationCenter: NSObject {
     
     // MARK: - methods
     
-    func performOneShotLocationUpdateWithDesiredAccuracy(_ desiredAccuracy: Double, completionHandler: OneShotCompletionHandler) {
+    func performOneShotLocationUpdateWithDesiredAccuracy(_ desiredAccuracy: Double, completionHandler: @escaping OneShotCompletionHandler) {
     
         if self.locationServicesStatus == .allowedAlways ||
             self.locationServicesStatus == .allowedWhenInUse {
