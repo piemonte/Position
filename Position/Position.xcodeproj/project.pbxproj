@@ -63,8 +63,6 @@
 			children = (
 				06070F1A1C375A69000C09A6 /* AppDelegate.swift */,
 				06070F1C1C375A69000C09A6 /* ViewController.swift */,
-				06070F211C375A69000C09A6 /* Assets.xcassets */,
-				06070F231C375A69000C09A6 /* LaunchScreen.storyboard */,
 				06223E7F1C48C15800AD804F /* Frameworks */,
 				06070F2F1C375D25000C09A6 /* Supporting Files */,
 			);
@@ -86,6 +84,8 @@
 				06070F301C375D71000C09A6 /* Base.xcconfig */,
 				06070F311C375D71000C09A6 /* Debug.xcconfig */,
 				06070F321C375D71000C09A6 /* Release.xcconfig */,
+				06070F211C375A69000C09A6 /* Assets.xcassets */,
+				06070F231C375A69000C09A6 /* LaunchScreen.storyboard */,
 				06070F261C375A69000C09A6 /* Info.plist */,
 			);
 			name = "Supporting Files";
