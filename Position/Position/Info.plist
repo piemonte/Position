@@ -26,6 +26,8 @@
 	<string>Position library uses your location as a demonstration for the example app.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Position library uses your location as a demonstration for the example app.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Position library uses your motion to determine when to active location services.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>
