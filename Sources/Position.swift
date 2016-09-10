@@ -221,12 +221,8 @@ public class Position: NSObject {
         self.locationCenter.delegate = self
         
         UIDevice.current.isBatteryMonitoringEnabled = true
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(UIApplicationDelegate.applicationDidEnterBackground(_:)), name: NSNotification.Name.UIApplicationDidEnterBackground, object: UIApplication.shared)
-        NotificationCenter.default.addObserver(self, selector: #selector(UIApplicationDelegate.applicationDidBecomeActive(_:)), name: NSNotification.Name.UIApplicationDidBecomeActive, object: UIApplication.shared)
-        NotificationCenter.default.addObserver(self, selector: #selector(UIApplicationDelegate.applicationWillResignActive(_:)), name: NSNotification.Name.UIApplicationWillResignActive, object: UIApplication.shared)
-        NotificationCenter.default.addObserver(self, selector: #selector(Position.batteryLevelChanged(_:)), name:NSNotification.Name.UIDeviceBatteryLevelDidChange, object: UIApplication.shared)
-        NotificationCenter.default.addObserver(self, selector: #selector(Position.batteryStateChanged(_:)), name:NSNotification.Name.UIDeviceBatteryStateDidChange, object: UIApplication.shared)
+        self.addBatteryObservers()
+        self.addApplicationObservers()
     }
 
     // MARK: - Position permissions and access
@@ -500,10 +496,18 @@ public class Position: NSObject {
 
 extension Position {
     
-    func applicationDidEnterBackground(_ notification: Notification) {
+    // application
+    
+    internal func addApplicationObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(UIApplicationDelegate.applicationDidEnterBackground(_:)), name: NSNotification.Name.UIApplicationDidEnterBackground, object: UIApplication.shared)
+        NotificationCenter.default.addObserver(self, selector: #selector(UIApplicationDelegate.applicationDidBecomeActive(_:)), name: NSNotification.Name.UIApplicationDidBecomeActive, object: UIApplication.shared)
+        NotificationCenter.default.addObserver(self, selector: #selector(UIApplicationDelegate.applicationWillResignActive(_:)), name: NSNotification.Name.UIApplicationWillResignActive, object: UIApplication.shared)
     }
     
-    func applicationDidBecomeActive(_ notification: Notification) {
+    internal func applicationDidEnterBackground(_ notification: Notification) {
+    }
+    
+    internal func applicationDidBecomeActive(_ notification: Notification) {
         self.checkAuthorizationStatusForServices()
         
         // if position is not updating, don't modify state
@@ -517,7 +521,7 @@ extension Position {
         }        
     }
 
-    func applicationWillResignActive(_ notification: Notification) {
+    internal func applicationWillResignActive(_ notification: Notification) {
         if self.updatingPosition == true {
             return
         }
@@ -528,8 +532,15 @@ extension Position {
         
         self.updateLocationAccuracyIfNecessary()
     }
+    
+    // battery
+    
+    internal func addBatteryObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(Position.batteryLevelChanged(_:)), name:NSNotification.Name.UIDeviceBatteryLevelDidChange, object: UIApplication.shared)
+        NotificationCenter.default.addObserver(self, selector: #selector(Position.batteryStateChanged(_:)), name:NSNotification.Name.UIDeviceBatteryStateDidChange, object: UIApplication.shared)
+    }
 
-    func batteryLevelChanged(_ notification: Notification) {
+    internal func batteryLevelChanged(_ notification: Notification) {
         let batteryLevel: Float = UIDevice.current.batteryLevel
         if batteryLevel < 0 {
             return
@@ -537,7 +548,7 @@ extension Position {
         self.updateLocationAccuracyIfNecessary()
     }
 
-    func batteryStateChanged(_ notification: Notification) {
+    internal func batteryStateChanged(_ notification: Notification) {
         self.updateLocationAccuracyIfNecessary()
     }
     
