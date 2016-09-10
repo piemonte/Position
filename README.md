@@ -1,6 +1,8 @@
 ![Position](https://raw.githubusercontent.com/piemonte/Position/master/Position.png)
 
-`Position` is a [Swift](https://developer.apple.com/swift/) and efficient location positioning library for iOS. The library is a simple wrapper around CoreLocation that offers a variety of functionality and paths for potentially more interesting features in the future.
+`Position` is a [Swift](https://developer.apple.com/swift/) and efficient location positioning library for iOS.
+
+[![Pod Version](https://img.shields.io/cocoapods/v/Position.svg?style=flat)](http://cocoadocs.org/docsets/Position/) [![Build Status](https://travis-ci.org/piemonte/Position.svg?branch=master)](https://travis-ci.org/piemonte/Position)
 
 ### Features
 - [x] simple [Swift](https://developer.apple.com/swift/) API
@@ -10,54 +12,46 @@
 - [x] automatic low-power location adjustment when backgrounded setting
 - [x] automatic low-power location adjustment from battery monitoring setting
 - [x] automatic motion-based location adjustment
-- [ ] low-power geo-fenced based background location updating (future)
+- [ ] low-power geofence-based background location updating (future)
 
-[![Pod Version](https://img.shields.io/cocoapods/v/Position.svg?style=flat)](http://cocoadocs.org/docsets/Position/) [![Build Status](https://travis-ci.org/piemonte/Position.svg?branch=master)](https://travis-ci.org/piemonte/Position)
+## Quick Start
 
-## Installation
+`Position` is available for installation using the Cocoa dependency manager [CocoaPods](http://cocoapods.org/). Alternatively, you can simply copy the `Position` source files into your Xcode project.
 
-### CocoaPods
-
-`Position` is available for installation using the Cocoa dependency manager [CocoaPods](http://cocoapods.org/).
-
-To integrate, add the following to your `Podfile`:
+## Xcode 8 & Swift 3
 
 ```ruby
-source ‘https://github.com/CocoaPods/Specs.git'
-platform :iOS, ‘9.0’
-use_frameworks!
+# CocoaPods
+pod "Position", "~> 0.1.0"
 
-pod ‘Position’, '~> 0.0.4'
-```	
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['SWIFT_VERSION'] = '3.0'
+    end
+  end
+end
 
-### Carthage
+# Carthage
+github "piemonte/Position" ~> 0.1.0
 
-Installation is also available using the dependency manager [Carthage](https://github.com/Carthage/Carthage).
-
-To integrate, add the following line to your `Cartfile`:
-
-```ogdl
-github “piemonte/Position” >= 0.0.4
-```
-
-### Swift Package Manager
-
-Installation is available using the [Swift Package Manager](https://swift.org/package-manager/), add the following in your `Package.swift` :
-
-```Swift
-import PackageDescription
-
+# SwiftPM
 let package = Package(
-    name: "HelloWorld",
     dependencies: [
-        .Package(url: "https://github.com/piemonte/Position.git", majorVersion: 0),
+        .Package(url: "https://github.com/piemonte/Position", majorVersion: 0)
     ]
 )
 ```
 
-### Manual
+## Xcode 8 & Swift 2.3 or Xcode 7
 
-You can also simply copy the `Position.swift` file into your Xcode project.
+```ruby
+# CocoaPods
+pod "Position", "~> 0.0.4"
+
+# Carthage
+github "piemonte/Position" ~> 0.0.4
+```
 
 ## Usage
 
@@ -87,8 +81,8 @@ Have the component add itself as an observer and configure the appropriate setti
         Position.sharedPosition.addObserver(self)
         Position.sharedPosition.distanceFilter = 20
         
-        if Position.sharedPosition.locationServicesStatus == .AllowedWhenInUse ||
-           Position.sharedPosition.locationServicesStatus == .AllowedAlways {
+        if Position.sharedPosition.locationServicesStatus == .allowedWhenInUse ||
+           Position.sharedPosition.locationServicesStatus == .allowedAlways {
             Position.sharedPosition.performOneShotLocationUpdateWithDesiredAccuracy(250) { (location, error) -> () in
                 print(location, error)
             }
@@ -103,7 +97,7 @@ Have the component add itself as an observer and configure the appropriate setti
 If desired, begin tracking changes in motion activity.
 
 ```swift
-    if Position.sharedPosition.motionActivityStatus == .Allowed {
+    if Position.sharedPosition.motionActivityStatus == .allowed {
         Position.sharedPosition.startUpdatingActivity()
     } else {
         Position.sharedPosition.requestMotionActivityAuthorization()
@@ -134,6 +128,7 @@ Observe delegation, if necessary.
 
 ## Resources
 
+* [Swift Evolution](https://github.com/apple/swift-evolution)
 * [Location and Maps Programming Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/Introduction/Introduction.html)
 * [Core Location Framework Reference](https://developer.apple.com/library/ios/documentation/CoreLocation/Reference/CoreLocation_Framework/index.html)
 * [Core Location in iOS 8](http://nshipster.com/core-location-in-ios-8/)
