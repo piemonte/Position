@@ -133,8 +133,8 @@ public let ErrorDomain = "PositionErrorDomain"
 
 public enum ErrorType: Int, CustomStringConvertible {
     case timedOut = 0
-    case restricted = 1
-    case cancelled = 2
+    case restricted
+    case cancelled
     
     public var description: String {
         get {
@@ -246,10 +246,12 @@ public class Position: NSObject {
             self.activityManager.startActivityUpdates(to: OperationQueue()) { (activity) in
                 self.activityManager.stopActivityUpdates()
                 
-                let enumerator = self.observers?.objectEnumerator()
-                while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
-                    self.motionActivityStatus = .allowed
-                    observer.position(self, didChangeMotionAuthorizationStatus: self.motionActivityStatus)
+                if let observers = self.observers {
+                    let enumerator = observers.objectEnumerator()
+                    while let observer = enumerator.nextObject() as? PositionObserver {
+                        self.motionActivityStatus = .allowed
+                        observer.position(self, didChangeMotionAuthorizationStatus: self.motionActivityStatus)
+                    }
                 }
             }
             return;
@@ -398,9 +400,11 @@ public class Position: NSObject {
                 }
                 if self.lastActivity != activity {
                     self.lastActivity = activity
-                    let enumerator = self.observers?.objectEnumerator()
-                    while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
-                        observer.position(self, didChangeActivity: activity)
+                    if let observers = self.observers {
+                        let enumerator = observers.objectEnumerator()
+                        while let observer = enumerator.nextObject() as? PositionObserver {
+                            observer.position(self, didChangeActivity: activity)
+                        }
                     }
                 }
             })
@@ -416,9 +420,11 @@ public class Position: NSObject {
     
     internal func checkAuthorizationStatusForServices() {
         if self.locationCenter.locationServicesStatus == .denied {
-            let enumerator = self.observers?.objectEnumerator()
-            while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
-                observer.position(self, didChangeLocationAuthorizationStatus: .denied)
+            if let observers = self.observers {
+                let enumerator = observers.objectEnumerator()
+                while let observer = enumerator.nextObject() as? PositionObserver {
+                    observer.position(self, didChangeLocationAuthorizationStatus: .denied)
+                }
             }
         }
         
@@ -427,9 +433,11 @@ public class Position: NSObject {
                 self.activityManager.stopActivityUpdates()
                 self.motionActivityStatus = .allowed
                 
-                let enumerator = self.observers?.objectEnumerator()
-                while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
-                    observer.position(self, didChangeMotionAuthorizationStatus: self.motionActivityStatus)
+                if let observers = self.observers {
+                    let enumerator = observers.objectEnumerator()
+                    while let observer = enumerator.nextObject() as? PositionObserver {
+                        observer.position(self, didChangeMotionAuthorizationStatus: self.motionActivityStatus)
+                    }
                 }
             }
         }
@@ -559,44 +567,56 @@ extension Position {
 extension Position: PositionLocationCenterDelegate {
 
     internal func positionLocationCenter(_ positionLocationCenter: PositionLocationCenter, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
-        let enumerator = self.observers?.objectEnumerator()
-        while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
-            observer.position(self, didChangeLocationAuthorizationStatus: status)
+        if let observers = self.observers {
+            let enumerator = observers.objectEnumerator()
+            while let observer = enumerator.nextObject() as? PositionObserver {
+                observer.position(self, didChangeLocationAuthorizationStatus: status)
+            }
         }
     }
     
     internal func positionLocationCenter(_ positionLocationCenter: PositionLocationCenter, didFailWithError error: Error?) {
-        let enumerator = self.observers?.objectEnumerator()
-        while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
-            observer.position(self, didFailWithError : error)
+        if let observers = self.observers {
+            let enumerator = observers.objectEnumerator()
+            while let observer = enumerator.nextObject() as? PositionObserver {
+                observer.position(self, didFailWithError : error)
+            }
         }
     }
     
     internal func positionLocationCenter(_ positionLocationCenter: PositionLocationCenter, didUpdateOneShotLocation location: CLLocation?) {
-        let enumerator = self.observers?.objectEnumerator()
-        while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
-            observer.position(self, didUpdateOneShotLocation: location)
+        if let observers = self.observers {
+            let enumerator = observers.objectEnumerator()
+            while let observer = enumerator.nextObject() as? PositionObserver {
+                observer.position(self, didUpdateOneShotLocation: location)
+            }
         }
     }
     
     internal func positionLocationCenter(_ positionLocationCenter: PositionLocationCenter, didUpdateTrackingLocations locations: [CLLocation]?) {
-        let enumerator = self.observers?.objectEnumerator()
-        while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
-            observer.position(self, didUpdateTrackingLocations: locations)
+        if let observers = self.observers {
+            let enumerator = observers.objectEnumerator()
+            while let observer = enumerator.nextObject() as? PositionObserver {
+                observer.position(self, didUpdateTrackingLocations: locations)
+            }
         }
     }
     
     internal func positionLocationCenter(_ positionLocationCenter: PositionLocationCenter, didUpdateFloor floor: CLFloor) {
-        let enumerator = self.observers?.objectEnumerator()
-        while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
-            observer.position(self, didUpdateFloor: floor)
+        if let observers = self.observers {
+            let enumerator = observers.objectEnumerator()
+            while let observer = enumerator.nextObject() as? PositionObserver {
+                observer.position(self, didUpdateFloor: floor)
+            }
         }
     }
 
     internal func positionLocationCenter(_ positionLocationCenter: PositionLocationCenter, didVisit visit: CLVisit?) {
-        let enumerator = self.observers?.objectEnumerator()
-        while let observer: PositionObserver = enumerator?.nextObject() as? PositionObserver {
-            observer.position(self, didVisit: visit)
+        if let observers = self.observers {
+            let enumerator = observers.objectEnumerator()
+            while let observer = enumerator.nextObject() as? PositionObserver {
+                observer.position(self, didVisit: visit)
+            }
         }
     }
 }
@@ -619,13 +639,13 @@ internal class PositionLocationCenter: NSObject {
 
     weak var delegate: PositionLocationCenterDelegate?
     
-    var distanceFilter: Double! {
+    var distanceFilter: Double {
         didSet {
             self.updateLocationManagerStateIfNeeded()
         }
     }
     
-    var timeFilter: TimeInterval!
+    var timeFilter: TimeInterval
     
     var trackingDesiredAccuracyActive: Double {
         didSet {
@@ -659,6 +679,9 @@ internal class PositionLocationCenter: NSObject {
         self.updatingLocation = false
         self.updatingLowPowerLocation = false
         self.activityType = .unknown
+        
+        self.distanceFilter = 20
+        self.timeFilter = 0
         
         self.trackingDesiredAccuracyActive = kCLLocationAccuracyHundredMeters
         self.trackingDesiredAccuracyBackground = kCLLocationAccuracyKilometer
@@ -799,44 +822,53 @@ internal class PositionLocationCenter: NSObject {
     // MARK - private methods
     
     internal func processLocationRequests() {
-        guard self.locationRequests != nil && self.locationRequests!.count > 0 else {
-            self.delegate?.positionLocationCenter(self, didUpdateTrackingLocations: self.locations)
-            return
-        }
+        if let locationRequests = self.locationRequests {
+            guard
+                locationRequests.count > 0
+            else {
+                self.delegate?.positionLocationCenter(self, didUpdateTrackingLocations: self.locations)
+                return
+            }
         
-        let completeRequests: [PositionLocationRequest] = self.locationRequests!.filter { (request) -> Bool in
-            // check if a request completed, meaning expired or met horizontal accuracy
-            //print("desiredAccuracy \(request.desiredAccuracy) horizontal \(self.location?.horizontalAccuracy)")
-            guard request.expired == true || (self.location != nil && self.location!.horizontalAccuracy < request.desiredAccuracy) else {
+            let completeRequests: [PositionLocationRequest] = locationRequests.filter { (request) -> Bool in
+                // check if a request completed, meaning expired or met horizontal accuracy
+                //print("desiredAccuracy \(request.desiredAccuracy) horizontal \(self.location?.horizontalAccuracy)")
+                if let location = self.location {
+                    guard
+                        request.expired == true || location.horizontalAccuracy < request.desiredAccuracy
+                    else {
+                        return false
+                    }
+                    return true
+                }
                 return false
             }
-            return true
-        }
-        
-        for request in completeRequests {
-            if let handler = request.completionHandler {
-                if request.expired == true {
-                    let error: NSError = NSError(domain: ErrorDomain, code: ErrorType.timedOut.rawValue, userInfo: nil)
-                    handler(nil, error)
-                } else {
-                    handler(self.location, nil)
+            
+            for request in completeRequests {
+                if let handler = request.completionHandler {
+                    if request.expired == true {
+                        let error: NSError = NSError(domain: ErrorDomain, code: ErrorType.timedOut.rawValue, userInfo: nil)
+                        handler(nil, error)
+                    } else {
+                        handler(self.location, nil)
+                    }
+                }
+                if let index = locationRequests.index(of: request) {
+                    self.locationRequests?.remove(at: index)
                 }
             }
-            if let index = self.locationRequests!.index(of: request) {
-                self.locationRequests!.remove(at: index)
-            }
-        }
-        
-        if self.locationRequests!.count == 0 {
-            self.locationRequests = nil
-            self.updateLocationManagerStateIfNeeded()
             
-            if self.updatingLocation == false {
-                self.stopUpdating()
-            }
-            
-            if self.updatingLowPowerLocation == false {
-                self.stopLowPowerUpdating()
+            if locationRequests.count == 0 {
+                self.locationRequests = nil
+                self.updateLocationManagerStateIfNeeded()
+                
+                if self.updatingLocation == false {
+                    self.stopUpdating()
+                }
+                
+                if self.updatingLowPowerLocation == false {
+                    self.stopLowPowerUpdating()
+                }
             }
         }
     }
