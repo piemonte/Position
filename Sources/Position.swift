@@ -924,18 +924,19 @@ extension PositionLocationCenter: CLLocationManagerDelegate {
 
 // MARK: - PositionLocationRequest
 
-internal typealias TimeOutCompletionHandler = () -> ()
+internal typealias TimeOutCompletionHandler = () -> (Void)
 
 internal class PositionLocationRequest: NSObject {
 
-    var desiredAccuracy: Double!
-    var expired: Bool
-    var timeOutHandler: TimeOutCompletionHandler?
-    var completionHandler: OneShotCompletionHandler?
-
-    private var expirationTimer: Timer?
-
-    var expiration: TimeInterval! {
+    internal var desiredAccuracy: Double!
+    
+    internal var expired: Bool
+    
+    internal var timeOutHandler: TimeOutCompletionHandler?
+    
+    internal var completionHandler: OneShotCompletionHandler?
+    
+    internal var expiration: TimeInterval {
         didSet {
             if let timer = self.expirationTimer {
                 self.expired = false
@@ -945,10 +946,15 @@ internal class PositionLocationRequest: NSObject {
         }
     }
     
-    // MARK - object lifecycle
+    // MARK: - private ivars
+
+    private var expirationTimer: Timer?
+    
+    // MARK: - object lifecycle
     
     override init() {
         self.expired = false
+        self.expiration = PositionOneShotRequestTimeOut
         super.init()
     }
     
@@ -960,18 +966,18 @@ internal class PositionLocationRequest: NSObject {
         self.completionHandler = nil
     }
 
-    // MARK - functions
+    // MARK: - functions
 
-    func cancelRequest() {
+    internal func cancelRequest() {
         self.expired = true
         self.expirationTimer?.invalidate()
         self.timeOutHandler = nil
         self.expirationTimer = nil
     }
 
-    // MARK - NSTimer
+    // MARK: - NSTimer
     
-    func handleTimerFired(_ timer: Timer) {
+    internal func handleTimerFired(_ timer: Timer) {
         DispatchQueue.main.async(execute: {
             self.expired = true
             self.expirationTimer?.invalidate()
