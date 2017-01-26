@@ -1,5 +1,3 @@
-![Position](https://raw.githubusercontent.com/piemonte/Position/master/Position.png)
-
 `Position` is a [Swift](https://developer.apple.com/swift/) and efficient location positioning library for iOS.
 
 [![Pod Version](https://img.shields.io/cocoapods/v/Position.svg?style=flat)](http://cocoadocs.org/docsets/Position/) [![Build Status](https://travis-ci.org/piemonte/Position.svg?branch=master)](https://travis-ci.org/piemonte/Position)
@@ -11,8 +9,6 @@
 - [x] distance and time based location filtering
 - [x] automatic low-power location adjustment when backgrounded setting
 - [x] automatic low-power location adjustment from battery monitoring setting
-- [x] automatic motion-based location adjustment
-- [ ] low-power geofence-based background location updating (future)
 
 ## Quick Start
 
@@ -41,16 +37,6 @@ let package = Package(
         .Package(url: "https://github.com/piemonte/Position", majorVersion: 0)
     ]
 )
-```
-
-## Xcode 8 & Swift 2.3 or Xcode 7
-
-```ruby
-# CocoaPods
-pod "Position", "~> 0.0.4"
-
-# Carthage
-github "piemonte/Position" ~> 0.0.4
 ```
 
 ## Usage
@@ -132,9 +118,8 @@ Observe delegation, if necessary.
 * [Location and Maps Programming Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/Introduction/Introduction.html)
 * [Core Location Framework Reference](https://developer.apple.com/library/ios/documentation/CoreLocation/Reference/CoreLocation_Framework/index.html)
 * [Core Location in iOS 8](http://nshipster.com/core-location-in-ios-8/)
-* [objc.io Issue #8, The Quadcopter Navigator App](https://www.objc.io/issues/8-quadcopter/the-quadcopter-navigator-app/)
 
 ## License
 
-Position is available under the MIT license, see the [LICENSE](https://github.com/piemonte/position/blob/master/LICENSE) file for more information.
+Position is available under the MIT license, see the [LICENSE](https://github.com/piemonte/Position/blob/master/LICENSE) file for more information.
 
