@@ -92,6 +92,10 @@ Observe delegation, if necessary.
 
 **Remember** when creating location-based apps, respect the privacy of your users and be responsible for how you use their location. This is especially true if your application requires location permission `kCLAuthorizationStatusAuthorizedAlways`.
 
+## Documentation
+
+You can find [the docs here](https://piemonte.github.io/Position). Documentation is generated with [jazzy](https://github.com/realm/jazzy) and hosted on [GitHub-Pages](https://pages.github.com).
+
 ## Community
 
 - Need help? Use [Stack Overflow](http://stackoverflow.com/questions/tagged/position-swift) with the tag ‘position-swift’.
