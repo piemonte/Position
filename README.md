@@ -1,14 +1,15 @@
-`Position` is a [Swift](https://developer.apple.com/swift/) and efficient location positioning library for iOS.
+`Position` is a very simple [Swift](https://developer.apple.com/swift/) and efficient location positioning library for iOS.
 
 [![Pod Version](https://img.shields.io/cocoapods/v/Position.svg?style=flat)](http://cocoadocs.org/docsets/Position/) [![Build Status](https://travis-ci.org/piemonte/Position.svg?branch=master)](https://travis-ci.org/piemonte/Position)
 
-### Features
-- [x] simple [Swift](https://developer.apple.com/swift/) API
-- [x] multi-delegate observer support
-- [x] “one shot” block-based location requesting (more robust than iOS 9 Core Location API)
-- [x] distance and time based location filtering
-- [x] automatic low-power location adjustment when backgrounded setting
-- [x] automatic low-power location adjustment from battery monitoring setting
+|  | Features |
+|:---------:|:---------------------------------------------------------------|
+| &#128038; | [Swift 3](https://developer.apple.com/swift/) |
+| &#128301; | observer pattern support |
+| &#9732; | “one shot” closure based location requests ( more robust than iOS 9 CoreLocation API |
+| &#127756; | distance and time-based filtering |
+| &#127745; | automatic low-power location tracking adjustment when backgrounded setting |
+| &#128267; | automatic low-power location tracking adjustment from battery monitoring setting |
 
 ## Quick Start
 
@@ -64,29 +65,19 @@ Have the component add itself as an observer and configure the appropriate setti
 
         // ...
         
-        Position.sharedPosition.addObserver(self)
-        Position.sharedPosition.distanceFilter = 20
+        Position.shared.addObserver(self)
+        Position.shared.distanceFilter = 20
         
-        if Position.sharedPosition.locationServicesStatus == .allowedWhenInUse ||
-           Position.sharedPosition.locationServicesStatus == .allowedAlways {
-            Position.sharedPosition.performOneShotLocationUpdateWithDesiredAccuracy(250) { (location, error) -> () in
+        if Position.shared.locationServicesStatus == .allowedWhenInUse ||
+           Position.shared.locationServicesStatus == .allowedAlways {
+            Position.shared.performOneShotLocationUpdate(withDesiredAccuracy: 250) { (location, error) -> () in
                 print(location, error)
             }
         } else {
             // request permissions based on the type of location support required.
-            Position.sharedPosition.requestWhenInUseLocationAuthorization()
-            // Position.sharedPosition.requestAlwaysLocationAuthorization()
+            Position.shared.requestWhenInUseLocationAuthorization()
+            // Position.shared.requestAlwaysLocationAuthorization()
         }
-    }
-```
-
-If desired, begin tracking changes in motion activity.
-
-```swift
-    if Position.sharedPosition.motionActivityStatus == .allowed {
-        Position.sharedPosition.startUpdatingActivity()
-    } else {
-        Position.sharedPosition.requestMotionActivityAuthorization()
     }
 ```
 
@@ -95,10 +86,6 @@ Observe delegation, if necessary.
 ```swift
     func position(position: Position, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
         // location authorization did change, often this may even be triggered on application resume if the user updated settings
-    }
-
-    func position(position: Position, didChangeMotionAuthorizationStatus status: MotionAuthorizationStatus) {
-        // motion authorization did change, often this may even be triggered on application resume if the user updated settings
     }
 ```
 
