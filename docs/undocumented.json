@@ -58,20 +58,6 @@
     },
     {
       "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
-      "line": 97,
-      "symbol": "PositionObserver.position(_:didChangeLocationAuthorizationStatus:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
-      "line": 100,
-      "symbol": "PositionObserver.position(_:didUpdateOneShotLocation:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
       "line": 101,
       "symbol": "PositionObserver.position(_:didUpdateTrackingLocations:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
@@ -88,20 +74,6 @@
       "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
       "line": 103,
       "symbol": "PositionObserver.position(_:didVisit:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
-      "line": 106,
-      "symbol": "PositionObserver.position(_:didChangeDesiredAccurary:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
-      "line": 109,
-      "symbol": "PositionObserver.position(_:didFailWithError:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     }

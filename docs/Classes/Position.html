@@ -14,7 +14,7 @@
     <a title="Position Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">Position Docs</a> (66% documented)</p>
+        <p><a href="../index.html">Position Docs</a> (75% documented)</p>
         <p class="header-right"><a href="https://github.com/piemonte/Position"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -92,7 +92,7 @@
 
                 </div>
               </div>
-            <p>Position, Swift and efficient location positioning.</p>
+            <p>🛰 Position, Swift and efficient location positioning.</p>
 
           </section>
           <section class="section task-group-section">
@@ -105,6 +105,60 @@
                 </a>
               </div>
               <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC8Position8Position14distanceFilterSd"></a>
+                    <a name="//apple_ref/swift/Property/distanceFilter" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC8Position8Position14distanceFilterSd">distanceFilter</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Distance in meters a device must move before updating location.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">distanceFilter</span><span class="p">:</span> <span class="kt">Double</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC8Position8Position10timeFilterSd"></a>
+                    <a name="//apple_ref/swift/Property/timeFilter" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC8Position8Position10timeFilterSd">timeFilter</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Time that must pass for a device before updating location.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">timeFilter</span><span class="p">:</span> <span class="kt">TimeInterval</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -159,16 +213,12 @@
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:vC8Position8Position22locationServicesStatusOS_27LocationAuthorizationStatus"></a>
-                    <a name="//apple_ref/swift/Property/locationServicesStatus" class="dashAnchor"></a>
-                    <a class="token" href="#/s:vC8Position8Position22locationServicesStatusOS_27LocationAuthorizationStatus">locationServicesStatus</a>
+                    <a name="/s:vC8Position8Position33trackingDesiredAccuracyWhenActiveSd"></a>
+                    <a name="//apple_ref/swift/Property/trackingDesiredAccuracyWhenActive" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC8Position8Position33trackingDesiredAccuracyWhenActiveSd">trackingDesiredAccuracyWhenActive</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -176,14 +226,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Authorization status for location services.</p>
+                        <p>Location tracking desired accuracy when the app is active.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">locationServicesStatus</span><span class="p">:</span> <span class="kt"><a href="../Enums/LocationAuthorizationStatus.html">LocationAuthorizationStatus</a></span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">trackingDesiredAccuracyWhenActive</span><span class="p">:</span> <span class="kt">Double</span></code></pre>
 
                         </div>
                       </div>
@@ -193,9 +243,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FC8Position8Position34requestAlwaysLocationAuthorizationFT_T_"></a>
-                    <a name="//apple_ref/swift/Method/requestAlwaysLocationAuthorization()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FC8Position8Position34requestAlwaysLocationAuthorizationFT_T_">requestAlwaysLocationAuthorization()</a>
+                    <a name="/s:vC8Position8Position39trackingDesiredAccuracyWhenInBackgroundSd"></a>
+                    <a name="//apple_ref/swift/Property/trackingDesiredAccuracyWhenInBackground" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC8Position8Position39trackingDesiredAccuracyWhenInBackgroundSd">trackingDesiredAccuracyWhenInBackground</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -203,41 +253,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Request location authorization for in use always.</p>
+                        <p>Location tracking desired accuracy when the app is in the background.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">requestAlwaysLocationAuthorization</span><span class="p">()</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:FC8Position8Position37requestWhenInUseLocationAuthorizationFT_T_"></a>
-                    <a name="//apple_ref/swift/Method/requestWhenInUseLocationAuthorization()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FC8Position8Position37requestWhenInUseLocationAuthorizationFT_T_">requestWhenInUseLocationAuthorization()</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Request location authorization for in app use only.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">requestWhenInUseLocationAuthorization</span><span class="p">()</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">trackingDesiredAccuracyWhenInBackground</span><span class="p">:</span> <span class="kt">Double</span></code></pre>
 
                         </div>
                       </div>
@@ -361,6 +384,118 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:vC8Position8Position22locationServicesStatusOS_27LocationAuthorizationStatus"></a>
+                    <a name="//apple_ref/swift/Property/locationServicesStatus" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC8Position8Position22locationServicesStatusOS_27LocationAuthorizationStatus">locationServicesStatus</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Authorization status for location services.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">locationServicesStatus</span><span class="p">:</span> <span class="kt"><a href="../Enums/LocationAuthorizationStatus.html">LocationAuthorizationStatus</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC8Position8Position34requestAlwaysLocationAuthorizationFT_T_"></a>
+                    <a name="//apple_ref/swift/Method/requestAlwaysLocationAuthorization()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC8Position8Position34requestAlwaysLocationAuthorizationFT_T_">requestAlwaysLocationAuthorization()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Request location authorization for in use always.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">requestAlwaysLocationAuthorization</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC8Position8Position37requestWhenInUseLocationAuthorizationFT_T_"></a>
+                    <a name="//apple_ref/swift/Method/requestWhenInUseLocationAuthorization()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC8Position8Position37requestWhenInUseLocationAuthorizationFT_T_">requestWhenInUseLocationAuthorization()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Request location authorization for in app use only.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">requestWhenInUseLocationAuthorization</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC8Position8Position8locationGSqCSo10CLLocation_"></a>
+                    <a name="//apple_ref/swift/Property/location" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC8Position8Position8locationGSqCSo10CLLocation_">location</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Last determined location</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">location</span><span class="p">:</span> <span class="kt">CLLocation</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:vC8Position8Position16updatingLocationSb"></a>
                     <a name="//apple_ref/swift/Property/updatingLocation" class="dashAnchor"></a>
                     <a class="token" href="#/s:vC8Position8Position16updatingLocationSb">updatingLocation</a>
@@ -388,141 +523,6 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:vC8Position8Position8locationGSqCSo10CLLocation_"></a>
-                    <a name="//apple_ref/swift/Property/location" class="dashAnchor"></a>
-                    <a class="token" href="#/s:vC8Position8Position8locationGSqCSo10CLLocation_">location</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Last determine location</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">location</span><span class="p">:</span> <span class="kt">CLLocation</span><span class="p">?</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:vC8Position8Position33trackingDesiredAccuracyWhenActiveSd"></a>
-                    <a name="//apple_ref/swift/Property/trackingDesiredAccuracyWhenActive" class="dashAnchor"></a>
-                    <a class="token" href="#/s:vC8Position8Position33trackingDesiredAccuracyWhenActiveSd">trackingDesiredAccuracyWhenActive</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Location tracking desired accuracy when the app is active.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">trackingDesiredAccuracyWhenActive</span><span class="p">:</span> <span class="kt">Double</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:vC8Position8Position39trackingDesiredAccuracyWhenInBackgroundSd"></a>
-                    <a name="//apple_ref/swift/Property/trackingDesiredAccuracyWhenInBackground" class="dashAnchor"></a>
-                    <a class="token" href="#/s:vC8Position8Position39trackingDesiredAccuracyWhenInBackgroundSd">trackingDesiredAccuracyWhenInBackground</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Location tracking desired accuracy when the app is in the background.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">trackingDesiredAccuracyWhenInBackground</span><span class="p">:</span> <span class="kt">Double</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:vC8Position8Position14distanceFilterSd"></a>
-                    <a name="//apple_ref/swift/Property/distanceFilter" class="dashAnchor"></a>
-                    <a class="token" href="#/s:vC8Position8Position14distanceFilterSd">distanceFilter</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Distance in meters a device must move before updating location.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">distanceFilter</span><span class="p">:</span> <span class="kt">Double</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:vC8Position8Position10timeFilterSd"></a>
-                    <a name="//apple_ref/swift/Property/timeFilter" class="dashAnchor"></a>
-                    <a class="token" href="#/s:vC8Position8Position10timeFilterSd">timeFilter</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Time that must pass before updating location.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">timeFilter</span><span class="p">:</span> <span class="kt">TimeInterval</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
                     <a name="/s:FC8Position8Position28performOneShotLocationUpdateFT19withDesiredAccuracySd17completionHandlerFTGSqCSo10CLLocation_GSqPs5Error___T__T_"></a>
                     <a name="//apple_ref/swift/Method/performOneShotLocationUpdate(withDesiredAccuracy:completionHandler:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:FC8Position8Position28performOneShotLocationUpdateFT19withDesiredAccuracySd17completionHandlerFTGSqCSo10CLLocation_GSqPs5Error___T__T_">performOneShotLocationUpdate(withDesiredAccuracy:completionHandler:)</a>
@@ -533,13 +533,13 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Triggers a single location request at a specific desired accuracy regardless of any other location tracking or requests.</p>
+                        <p>Triggers a single location request at a specific desired accuracy regardless of any other location tracking configuration or requests.</p>
 
 <ul>
 <li>Parameters:
 
 <ul>
-<li>desiredAccuracy: Desired accuracy to meet at a minimum before for the single request.</li>
+<li>desiredAccuracy: Minimum accuracy to meet before for request.</li>
 <li>completionHandler: Completion handler for when the location is determined.</li>
 </ul></li>
 </ul>
@@ -565,7 +565,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>Desired accuracy to meet at a minimum before for the single request.</p>
+                                  <p>Minimum accuracy to meet before for request.</p>
 
                                 </div>
                               </td>
@@ -648,7 +648,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2017 <a class="link" href="https://patrickpiemonte.com" target="_blank" rel="external">Patrick Piemonte</a>. All rights reserved. (Last updated: 2017-01-26)</p>
+          <p>&copy; 2017 <a class="link" href="https://patrickpiemonte.com" target="_blank" rel="external">Patrick Piemonte</a>. All rights reserved. (Last updated: 2017-01-27)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.7.2</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

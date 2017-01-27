@@ -13,7 +13,7 @@
     <a title="Position  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">Position Docs</a> (66% documented)</p>
+        <p><a href="index.html">Position Docs</a> (75% documented)</p>
         <p class="header-right"><a href="https://github.com/piemonte/Position"><img src="img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -85,19 +85,41 @@
         <section>
           <section class="section">
             
-            <p><code>Position</code> is a <a href="https://developer.apple.com/swift/">Swift</a> and efficient location positioning library for iOS.</p>
+            <p><code>Position</code> is a very simple <a href="https://developer.apple.com/swift/">Swift</a> and efficient location positioning library for iOS.</p>
 
 <p><a href="http://cocoadocs.org/docsets/Position/"><img src="https://img.shields.io/cocoapods/v/Position.svg?style=flat" alt="Pod Version"></a> <a href="https://travis-ci.org/piemonte/Position"><img src="https://travis-ci.org/piemonte/Position.svg?branch=master" alt="Build Status"></a></p>
-<a href='#features' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h3 id='features'>Features</h3>
 
-<ul>
-<li>[x] simple <a href="https://developer.apple.com/swift/">Swift</a> API</li>
-<li>[x] multi-delegate observer support</li>
-<li>[x] “one shot” block-based location requesting (more robust than iOS 9 Core Location API)</li>
-<li>[x] distance and time based location filtering</li>
-<li>[x] automatic low-power location adjustment when backgrounded setting</li>
-<li>[x] automatic low-power location adjustment from battery monitoring setting</li>
-</ul>
+<table><thead>
+<tr>
+<th style="text-align: center"></th>
+<th style="text-align: left">Features</th>
+</tr>
+</thead><tbody>
+<tr>
+<td style="text-align: center">&#128038;</td>
+<td style="text-align: left"><a href="https://developer.apple.com/swift/">Swift 3</a></td>
+</tr>
+<tr>
+<td style="text-align: center">&#128301;</td>
+<td style="text-align: left">observer pattern support</td>
+</tr>
+<tr>
+<td style="text-align: center">&#9732;</td>
+<td style="text-align: left">“one shot” closure based location requests ( more robust than iOS 9 CoreLocation API</td>
+</tr>
+<tr>
+<td style="text-align: center">&#127756;</td>
+<td style="text-align: left">distance and time-based filtering</td>
+</tr>
+<tr>
+<td style="text-align: center">&#127745;</td>
+<td style="text-align: left">automatic low-power location tracking adjustment when backgrounded setting</td>
+</tr>
+<tr>
+<td style="text-align: center">&#128267;</td>
+<td style="text-align: left">automatic low-power location tracking adjustment from battery monitoring setting</td>
+</tr>
+</tbody></table>
 <a href='#quick-start' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='quick-start'>Quick Start</h2>
 
 <p><code>Position</code> is available for installation using the Cocoa dependency manager <a href="http://cocoapods.org/">CocoaPods</a>. Alternatively, you can simply copy the <code>Position</code> source files into your Xcode project.</p>
@@ -144,37 +166,25 @@
 
         <span class="c1">// ...</span>
 
-        <span class="kt">Position</span><span class="o">.</span><span class="n">sharedPosition</span><span class="o">.</span><span class="nf">addObserver</span><span class="p">(</span><span class="k">self</span><span class="p">)</span>
-        <span class="kt">Position</span><span class="o">.</span><span class="n">sharedPosition</span><span class="o">.</span><span class="n">distanceFilter</span> <span class="o">=</span> <span class="mi">20</span>
+        <span class="kt">Position</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">addObserver</span><span class="p">(</span><span class="k">self</span><span class="p">)</span>
+        <span class="kt">Position</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="n">distanceFilter</span> <span class="o">=</span> <span class="mi">20</span>
 
-        <span class="k">if</span> <span class="kt">Position</span><span class="o">.</span><span class="n">sharedPosition</span><span class="o">.</span><span class="n">locationServicesStatus</span> <span class="o">==</span> <span class="o">.</span><span class="n">allowedWhenInUse</span> <span class="o">||</span>
-           <span class="kt">Position</span><span class="o">.</span><span class="n">sharedPosition</span><span class="o">.</span><span class="n">locationServicesStatus</span> <span class="o">==</span> <span class="o">.</span><span class="n">allowedAlways</span> <span class="p">{</span>
-            <span class="kt">Position</span><span class="o">.</span><span class="n">sharedPosition</span><span class="o">.</span><span class="nf">performOneShotLocationUpdateWithDesiredAccuracy</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span> <span class="p">{</span> <span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">()</span> <span class="k">in</span>
+        <span class="k">if</span> <span class="kt">Position</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="n">locationServicesStatus</span> <span class="o">==</span> <span class="o">.</span><span class="n">allowedWhenInUse</span> <span class="o">||</span>
+           <span class="kt">Position</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="n">locationServicesStatus</span> <span class="o">==</span> <span class="o">.</span><span class="n">allowedAlways</span> <span class="p">{</span>
+            <span class="kt">Position</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">performOneShotLocationUpdate</span><span class="p">(</span><span class="nv">withDesiredAccuracy</span><span class="p">:</span> <span class="mi">250</span><span class="p">)</span> <span class="p">{</span> <span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">()</span> <span class="k">in</span>
                 <span class="nf">print</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
             <span class="p">}</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="c1">// request permissions based on the type of location support required.</span>
-            <span class="kt">Position</span><span class="o">.</span><span class="n">sharedPosition</span><span class="o">.</span><span class="nf">requestWhenInUseLocationAuthorization</span><span class="p">()</span>
-            <span class="c1">// Position.sharedPosition.requestAlwaysLocationAuthorization()</span>
+            <span class="kt">Position</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">requestWhenInUseLocationAuthorization</span><span class="p">()</span>
+            <span class="c1">// Position.shared.requestAlwaysLocationAuthorization()</span>
         <span class="p">}</span>
-    <span class="p">}</span>
-</code></pre>
-
-<p>If desired, begin tracking changes in motion activity.</p>
-<pre class="highlight swift"><code>    <span class="k">if</span> <span class="kt">Position</span><span class="o">.</span><span class="n">sharedPosition</span><span class="o">.</span><span class="n">motionActivityStatus</span> <span class="o">==</span> <span class="o">.</span><span class="n">allowed</span> <span class="p">{</span>
-        <span class="kt">Position</span><span class="o">.</span><span class="n">sharedPosition</span><span class="o">.</span><span class="nf">startUpdatingActivity</span><span class="p">()</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="kt">Position</span><span class="o">.</span><span class="n">sharedPosition</span><span class="o">.</span><span class="nf">requestMotionActivityAuthorization</span><span class="p">()</span>
     <span class="p">}</span>
 </code></pre>
 
 <p>Observe delegation, if necessary.</p>
 <pre class="highlight swift"><code>    <span class="kd">func</span> <span class="nf">position</span><span class="p">(</span><span class="nv">position</span><span class="p">:</span> <span class="kt">Position</span><span class="p">,</span> <span class="n">didChangeLocationAuthorizationStatus</span> <span class="nv">status</span><span class="p">:</span> <span class="kt">LocationAuthorizationStatus</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// location authorization did change, often this may even be triggered on application resume if the user updated settings</span>
-    <span class="p">}</span>
-
-    <span class="kd">func</span> <span class="nf">position</span><span class="p">(</span><span class="nv">position</span><span class="p">:</span> <span class="kt">Position</span><span class="p">,</span> <span class="n">didChangeMotionAuthorizationStatus</span> <span class="nv">status</span><span class="p">:</span> <span class="kt">MotionAuthorizationStatus</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// motion authorization did change, often this may even be triggered on application resume if the user updated settings</span>
     <span class="p">}</span>
 </code></pre>
 
@@ -203,7 +213,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2017 <a class="link" href="https://patrickpiemonte.com" target="_blank" rel="external">Patrick Piemonte</a>. All rights reserved. (Last updated: 2017-01-26)</p>
+          <p>&copy; 2017 <a class="link" href="https://patrickpiemonte.com" target="_blank" rel="external">Patrick Piemonte</a>. All rights reserved. (Last updated: 2017-01-27)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.7.2</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
