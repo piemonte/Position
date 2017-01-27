@@ -27,12 +27,14 @@
 //
 
 import UIKit
+import MapKit
 import CoreLocation
 
 class ViewController: UIViewController {
 
     // MARK: - ivars
     
+    internal var _mapView: MKMapView?
     internal var _permissionLocationButton: UIButton?
     internal var _locationLookupButton: UIButton?
     
@@ -55,27 +57,31 @@ class ViewController: UIViewController {
         super.viewDidLoad()
 
         self.view.autoresizingMask = ([UIViewAutoresizing.flexibleWidth, UIViewAutoresizing.flexibleHeight])
-        self.view.backgroundColor = UIColor.white
+        self.view.backgroundColor = UIColor.lightGray
         
-        self._permissionLocationButton = UIButton(frame: CGRect(x: 0, y: 0, width: 240, height: 50))
+        self._mapView = MKMapView(frame: self.view.bounds)
+        if let mapView = self._mapView {
+            self.view.addSubview(mapView)
+        }
+        
+        self._locationLookupButton = UIButton(frame: CGRect(x: 0, y: self.view.bounds.size.height - 50, width: self.view.bounds.size.width, height: 50))
+        if let locationButton = self._locationLookupButton {
+            locationButton.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
+            locationButton.setTitle("Request Location", for: UIControlState())
+            locationButton.titleLabel!.font = UIFont(name: "AvenirNext-Regular", size: 16)
+            locationButton.backgroundColor = UIColor(red: 115/255, green: 57/255, blue: 248/255, alpha: 1)
+            locationButton.addTarget(self, action: #selector(ViewController.handleOneShotLocationButton(_:)), for: .touchUpInside)
+            self.view.addSubview(locationButton)
+        }
+        
+        self._permissionLocationButton = UIButton(frame: CGRect(x: 0, y: self.view.bounds.size.height - 100, width: self.view.bounds.size.width, height: 50))
         if let permissionLocationButton = self._permissionLocationButton {
-            permissionLocationButton.center = CGPoint(x: self.view.center.x, y: self.view.center.y - 120)
-            permissionLocationButton.setTitle("Location Permission", for: UIControlState())
-            permissionLocationButton.titleLabel!.font = UIFont(name: "AvenirNext-Regular", size: 20)
-            permissionLocationButton.backgroundColor = UIColor(red: 115/255, green: 252/255, blue: 214/255, alpha: 1)
-            permissionLocationButton.layer.cornerRadius = 6.0
+            permissionLocationButton.setTitle("Request Permission", for: UIControlState())
+            permissionLocationButton.titleLabel!.font = UIFont(name: "AvenirNext-Regular", size: 16)
+            permissionLocationButton.backgroundColor = UIColor(red: 50/255, green: 153/255, blue: 252/255, alpha: 1)
             permissionLocationButton.addTarget(self, action: #selector(handleLocationPermissionButton(_:)), for: .touchUpInside)
             self.view.addSubview(permissionLocationButton)
         }
-        
-        let locationButton: UIButton = UIButton(frame: CGRect(x: 0, y: 0, width: 240, height: 50))
-        locationButton.center = CGPoint(x: self.view.center.x, y: self.view.center.y + 60)
-        locationButton.setTitle("Request Location", for: UIControlState())
-        locationButton.titleLabel!.font = UIFont(name: "AvenirNext-Regular", size: 20)
-        locationButton.backgroundColor = UIColor(red: 115/255, green: 252/255, blue: 214/255, alpha: 1)
-        locationButton.layer.cornerRadius = 6.0
-        locationButton.addTarget(self, action: #selector(ViewController.handleOneShotLocationButton(_:)), for: .touchUpInside)
-        self.view.addSubview(locationButton)
         
         // setup position
         
@@ -83,16 +89,15 @@ class ViewController: UIViewController {
         position.addObserver(self)
         position.distanceFilter = 20
         
-        // Example settings for AllowedAlways:
+        // Example, using settings for AllowedAlways tracking:
         // position.adjustLocationUseWhenBackgrounded = true
         // position.adjustLocationUseFromBatteryLevel = true
         
-        // tracking
+        // Example, using location tracking
         // if position.locationServicesStatus == .AllowedWhenInUse ||
         //      position.locationServicesStatus == .AllowedAlways {
         //      position.startUpdating()
         // }
-
     }
 }
 
@@ -100,17 +105,23 @@ class ViewController: UIViewController {
 
 extension ViewController {
     
-    func handleLocationPermissionButton(_ button: UIButton!) {
+    func handleLocationPermissionButton(_ button: UIButton) {
         // request permissions based on the type of location support required.
         Position.shared.requestWhenInUseLocationAuthorization()
         //Position.shared.requestAlwaysLocationAuthorization()
     }
     
-    func handleOneShotLocationButton(_ button: UIButton!) {
+    func handleOneShotLocationButton(_ button: UIButton) {
         let position = Position.shared
         if position.locationServicesStatus == .allowedWhenInUse ||
            position.locationServicesStatus == .allowedAlways {
             position.performOneShotLocationUpdate(withDesiredAccuracy: 150) { (location, error) -> () in
+                if let pos = location {
+                    if pos.horizontalAccuracy > 0 {
+                        let region = MKCoordinateRegion(center: pos.coordinate, span: MKCoordinateSpan(latitudeDelta: 250, longitudeDelta: 250))
+                        self._mapView?.setRegion(region, animated: true)
+                    }
+                }
                 print("one shot location update \(location) error \(error)")
             }
         } else if position.locationServicesStatus == .notAvailable {
@@ -125,7 +136,7 @@ extension ViewController {
 extension ViewController: PositionObserver {
 
     func position(_ position: Position, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
-        // location authorization did change, often this may even be triggered on application resume if the user updated settings
+        // location authorization did change, this may even be triggered on application resume if the user updated settings
         print("location authorization status \(status)")
     }
 	
