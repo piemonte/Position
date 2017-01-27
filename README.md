@@ -7,6 +7,7 @@
 | &#128038; | [Swift 3](https://developer.apple.com/swift/) |
 | &#128301; | observer pattern support |
 | &#9732; | “one shot” closure based location requests ( more robust than iOS 9 CoreLocation API |
+| &#128274; | authorization check and response support |
 | &#127756; | distance and time-based filtering |
 | &#127745; | automatic low-power location tracking adjustment when backgrounded setting |
 | &#128267; | automatic low-power location tracking adjustment from battery monitoring setting |
