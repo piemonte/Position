@@ -1,0 +1,110 @@
+{
+  "warnings": [
+    {
+      "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
+      "line": 47,
+      "symbol": "LocationAuthorizationStatus.notDetermined",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
+      "line": 48,
+      "symbol": "LocationAuthorizationStatus.notAvailable",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
+      "line": 49,
+      "symbol": "LocationAuthorizationStatus.denied",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
+      "line": 50,
+      "symbol": "LocationAuthorizationStatus.allowedWhenInUse",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
+      "line": 51,
+      "symbol": "LocationAuthorizationStatus.allowedAlways",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
+      "line": 76,
+      "symbol": "ErrorType.timedOut",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
+      "line": 77,
+      "symbol": "ErrorType.restricted",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
+      "line": 78,
+      "symbol": "ErrorType.cancelled",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
+      "line": 97,
+      "symbol": "PositionObserver.position(_:didChangeLocationAuthorizationStatus:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
+      "line": 100,
+      "symbol": "PositionObserver.position(_:didUpdateOneShotLocation:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
+      "line": 101,
+      "symbol": "PositionObserver.position(_:didUpdateTrackingLocations:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
+      "line": 102,
+      "symbol": "PositionObserver.position(_:didUpdateFloor:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
+      "line": 103,
+      "symbol": "PositionObserver.position(_:didVisit:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
+      "line": 106,
+      "symbol": "PositionObserver.position(_:didChangeDesiredAccurary:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
+      "line": 109,
+      "symbol": "PositionObserver.position(_:didFailWithError:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    }
+  ],
+  "source_directory": "/Users/piemonte/Source/Position"
+}

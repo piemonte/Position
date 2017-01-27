@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Position  Reference</title>
+    <link rel="stylesheet" type="text/css" href="css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="js/jquery.min.js" defer></script>
+    <script src="js/jazzy.js" defer></script>
+    
+  </head>
+  <body>
+    <a title="Position  Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="index.html">Position Docs</a> (66% documented)</p>
+        <p class="header-right"><a href="https://github.com/piemonte/Position"><img src="img/gh.png"/>View on GitHub</a></p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="index.html">Position Reference</a>
+        <img id="carat" src="img/carat.png" />
+        Position  Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Classes/Position.html">Position</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Global Variables.html">Global Variables</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Global Variables.html#/s:v8Position11ErrorDomainSS">ErrorDomain</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Global Variables.html#/s:v8Position19TimeFilter10MinutesSd">TimeFilter10Minutes</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Global Variables.html#/s:v8Position18TimeFilter5MinutesSd">TimeFilter5Minutes</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Global Variables.html#/s:v8Position14TimeFilterNoneSd">TimeFilterNone</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Enums.html">Enums</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Enums/ErrorType.html">ErrorType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/LocationAuthorizationStatus.html">LocationAuthorizationStatus</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Protocols/PositionObserver.html">PositionObserver</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Typealiases.html">Typealiases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Typealiases.html#/s:8Position24OneShotCompletionHandler">OneShotCompletionHandler</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            
+            <p><code>Position</code> is a <a href="https://developer.apple.com/swift/">Swift</a> and efficient location positioning library for iOS.</p>
+
+<p><a href="http://cocoadocs.org/docsets/Position/"><img src="https://img.shields.io/cocoapods/v/Position.svg?style=flat" alt="Pod Version"></a> <a href="https://travis-ci.org/piemonte/Position"><img src="https://travis-ci.org/piemonte/Position.svg?branch=master" alt="Build Status"></a></p>
+<a href='#features' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h3 id='features'>Features</h3>
+
+<ul>
+<li>[x] simple <a href="https://developer.apple.com/swift/">Swift</a> API</li>
+<li>[x] multi-delegate observer support</li>
+<li>[x] “one shot” block-based location requesting (more robust than iOS 9 Core Location API)</li>
+<li>[x] distance and time based location filtering</li>
+<li>[x] automatic low-power location adjustment when backgrounded setting</li>
+<li>[x] automatic low-power location adjustment from battery monitoring setting</li>
+</ul>
+<a href='#quick-start' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='quick-start'>Quick Start</h2>
+
+<p><code>Position</code> is available for installation using the Cocoa dependency manager <a href="http://cocoapods.org/">CocoaPods</a>. Alternatively, you can simply copy the <code>Position</code> source files into your Xcode project.</p>
+<a href='#xcode-8-amp-swift-3' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='xcode-8-amp-swift-3'>Xcode 8 &amp; Swift 3</h2>
+<pre class="highlight ruby"><code><span class="c1"># CocoaPods</span>
+<span class="n">pod</span> <span class="s2">"Position"</span><span class="p">,</span> <span class="s2">"~&gt; 0.1.0"</span>
+
+<span class="n">post_install</span> <span class="k">do</span> <span class="o">|</span><span class="n">installer</span><span class="o">|</span>
+  <span class="n">installer</span><span class="p">.</span><span class="nf">pods_project</span><span class="p">.</span><span class="nf">targets</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">target</span><span class="o">|</span>
+    <span class="n">target</span><span class="p">.</span><span class="nf">build_configurations</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+      <span class="n">config</span><span class="p">.</span><span class="nf">build_settings</span><span class="p">[</span><span class="s1">'SWIFT_VERSION'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'3.0'</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1"># Carthage</span>
+<span class="n">github</span> <span class="s2">"piemonte/Position"</span> <span class="o">~&gt;</span> <span class="mi">0</span><span class="o">.</span><span class="mi">1</span><span class="o">.</span><span class="mi">0</span>
+
+<span class="c1"># SwiftPM</span>
+<span class="n">let</span> <span class="n">package</span> <span class="o">=</span> <span class="no">Package</span><span class="p">(</span>
+    <span class="ss">dependencies: </span><span class="p">[</span>
+        <span class="o">.</span><span class="no">Package</span><span class="p">(</span><span class="ss">url: </span><span class="s2">"https://github.com/piemonte/Position"</span><span class="p">,</span> <span class="ss">majorVersion: </span><span class="mi">0</span><span class="p">)</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</code></pre>
+<a href='#usage' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='usage'>Usage</h2>
+
+<p>The sample project provides an example of how to integrate <code>Position</code>, otherwise you can follow these steps.</p>
+
+<p>Ensure your app’s <code>Info.plist</code> file includes both a location usage description, required device capability “location-services”, and  required background mode (if necessary).</p>
+
+<p>See sample project for examples too.</p>
+
+<p>Import the file and setup your component to be a PositionObserver, if you’d like it to be a delegate.</p>
+<pre class="highlight swift"><code><span class="kd">import</span> <span class="kt">Position</span>
+
+<span class="kd">class</span> <span class="kt">ViewController</span><span class="p">:</span> <span class="kt">UIViewController</span><span class="p">,</span> <span class="kt">PositionObserver</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+</code></pre>
+
+<p>Have the component add itself as an observer and configure the appropriate settings.</p>
+<pre class="highlight swift"><code>    <span class="k">override</span> <span class="kd">func</span> <span class="nf">viewDidLoad</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">super</span><span class="o">.</span><span class="nf">viewDidLoad</span><span class="p">()</span>
+
+        <span class="c1">// ...</span>
+
+        <span class="kt">Position</span><span class="o">.</span><span class="n">sharedPosition</span><span class="o">.</span><span class="nf">addObserver</span><span class="p">(</span><span class="k">self</span><span class="p">)</span>
+        <span class="kt">Position</span><span class="o">.</span><span class="n">sharedPosition</span><span class="o">.</span><span class="n">distanceFilter</span> <span class="o">=</span> <span class="mi">20</span>
+
+        <span class="k">if</span> <span class="kt">Position</span><span class="o">.</span><span class="n">sharedPosition</span><span class="o">.</span><span class="n">locationServicesStatus</span> <span class="o">==</span> <span class="o">.</span><span class="n">allowedWhenInUse</span> <span class="o">||</span>
+           <span class="kt">Position</span><span class="o">.</span><span class="n">sharedPosition</span><span class="o">.</span><span class="n">locationServicesStatus</span> <span class="o">==</span> <span class="o">.</span><span class="n">allowedAlways</span> <span class="p">{</span>
+            <span class="kt">Position</span><span class="o">.</span><span class="n">sharedPosition</span><span class="o">.</span><span class="nf">performOneShotLocationUpdateWithDesiredAccuracy</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span> <span class="p">{</span> <span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">()</span> <span class="k">in</span>
+                <span class="nf">print</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="c1">// request permissions based on the type of location support required.</span>
+            <span class="kt">Position</span><span class="o">.</span><span class="n">sharedPosition</span><span class="o">.</span><span class="nf">requestWhenInUseLocationAuthorization</span><span class="p">()</span>
+            <span class="c1">// Position.sharedPosition.requestAlwaysLocationAuthorization()</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+</code></pre>
+
+<p>If desired, begin tracking changes in motion activity.</p>
+<pre class="highlight swift"><code>    <span class="k">if</span> <span class="kt">Position</span><span class="o">.</span><span class="n">sharedPosition</span><span class="o">.</span><span class="n">motionActivityStatus</span> <span class="o">==</span> <span class="o">.</span><span class="n">allowed</span> <span class="p">{</span>
+        <span class="kt">Position</span><span class="o">.</span><span class="n">sharedPosition</span><span class="o">.</span><span class="nf">startUpdatingActivity</span><span class="p">()</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="kt">Position</span><span class="o">.</span><span class="n">sharedPosition</span><span class="o">.</span><span class="nf">requestMotionActivityAuthorization</span><span class="p">()</span>
+    <span class="p">}</span>
+</code></pre>
+
+<p>Observe delegation, if necessary.</p>
+<pre class="highlight swift"><code>    <span class="kd">func</span> <span class="nf">position</span><span class="p">(</span><span class="nv">position</span><span class="p">:</span> <span class="kt">Position</span><span class="p">,</span> <span class="n">didChangeLocationAuthorizationStatus</span> <span class="nv">status</span><span class="p">:</span> <span class="kt">LocationAuthorizationStatus</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// location authorization did change, often this may even be triggered on application resume if the user updated settings</span>
+    <span class="p">}</span>
+
+    <span class="kd">func</span> <span class="nf">position</span><span class="p">(</span><span class="nv">position</span><span class="p">:</span> <span class="kt">Position</span><span class="p">,</span> <span class="n">didChangeMotionAuthorizationStatus</span> <span class="nv">status</span><span class="p">:</span> <span class="kt">MotionAuthorizationStatus</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// motion authorization did change, often this may even be triggered on application resume if the user updated settings</span>
+    <span class="p">}</span>
+</code></pre>
+
+<p><strong>Remember</strong> when creating location-based apps, respect the privacy of your users and be responsible for how you use their location. This is especially true if your application requires location permission <code>kCLAuthorizationStatusAuthorizedAlways</code>.</p>
+<a href='#community' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='community'>Community</h2>
+
+<ul>
+<li>Need help? Use <a href="http://stackoverflow.com/questions/tagged/position-swift">Stack Overflow</a> with the tag ‘position-swift’.</li>
+<li>Questions? Use <a href="http://stackoverflow.com/questions/tagged/position-swift">Stack Overflow</a> with the tag ‘position-swift’.</li>
+<li>Found a bug? Open an <a href="https://github.com/piemonte/position/issues">issue</a>.</li>
+<li>Feature idea? Open an <a href="https://github.com/piemonte/position/issues">issue</a>.</li>
+<li>Want to contribute? Submit a <a href="https://github.com/piemonte/position/pulls">pull request</a>.</li>
+</ul>
+<a href='#resources' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='resources'>Resources</h2>
+
+<ul>
+<li><a href="https://github.com/apple/swift-evolution">Swift Evolution</a></li>
+<li><a href="https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/Introduction/Introduction.html">Location and Maps Programming Guide</a></li>
+<li><a href="https://developer.apple.com/library/ios/documentation/CoreLocation/Reference/CoreLocation_Framework/index.html">Core Location Framework Reference</a></li>
+<li><a href="http://nshipster.com/core-location-in-ios-8/">Core Location in iOS 8</a></li>
+</ul>
+<a href='#license' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='license'>License</h2>
+
+<p>Position is available under the MIT license, see the <a href="https://github.com/piemonte/Position/blob/master/LICENSE">LICENSE</a> file for more information.</p>
+
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2017 <a class="link" href="https://patrickpiemonte.com" target="_blank" rel="external">Patrick Piemonte</a>. All rights reserved. (Last updated: 2017-01-26)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.7.2</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>
