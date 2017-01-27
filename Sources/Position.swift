@@ -109,7 +109,7 @@ public protocol PositionObserver: NSObjectProtocol {
     func position(_ position: Position, didFailWithError error: Error?)
 }
 
-/// Position, Swift and efficient location positioning.
+/// 🛰 Position, Swift and efficient location positioning.
 public class Position: NSObject {
     
     // MARK: - properties
