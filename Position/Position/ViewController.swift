@@ -107,8 +107,14 @@ extension ViewController {
     
     func handleLocationPermissionButton(_ button: UIButton) {
         // request permissions based on the type of location support required.
-        Position.shared.requestWhenInUseLocationAuthorization()
-        //Position.shared.requestAlwaysLocationAuthorization()
+        let position = Position.shared
+        if position.locationServicesStatus == .allowedWhenInUse ||
+            position.locationServicesStatus == .allowedAlways {
+            print("app has permission")
+        } else {
+            Position.shared.requestWhenInUseLocationAuthorization()
+            //Position.shared.requestAlwaysLocationAuthorization()
+        }
     }
     
     func handleOneShotLocationButton(_ button: UIButton) {
