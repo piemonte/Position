@@ -64,20 +64,22 @@ class ViewController: UIViewController {
             self.view.addSubview(mapView)
         }
         
-        self._locationLookupButton = UIButton(frame: CGRect(x: 0, y: self.view.bounds.size.height - 50, width: self.view.bounds.size.width, height: 50))
+        let buttonHeight: CGFloat = 60
+        
+        self._locationLookupButton = UIButton(frame: CGRect(x: 0, y: self.view.bounds.size.height - buttonHeight, width: self.view.bounds.size.width, height: buttonHeight))
         if let locationButton = self._locationLookupButton {
             locationButton.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
             locationButton.setTitle("Request Location", for: UIControlState())
-            locationButton.titleLabel!.font = UIFont(name: "AvenirNext-Regular", size: 16)
+            locationButton.titleLabel!.font = UIFont(name: "AvenirNext-Medium", size: 16)
             locationButton.backgroundColor = UIColor(red: 115/255, green: 57/255, blue: 248/255, alpha: 1)
             locationButton.addTarget(self, action: #selector(ViewController.handleOneShotLocationButton(_:)), for: .touchUpInside)
             self.view.addSubview(locationButton)
         }
         
-        self._permissionLocationButton = UIButton(frame: CGRect(x: 0, y: self.view.bounds.size.height - 100, width: self.view.bounds.size.width, height: 50))
+        self._permissionLocationButton = UIButton(frame: CGRect(x: 0, y: self.view.bounds.size.height - (buttonHeight * 2), width: self.view.bounds.size.width, height: buttonHeight))
         if let permissionLocationButton = self._permissionLocationButton {
             permissionLocationButton.setTitle("Request Permission", for: UIControlState())
-            permissionLocationButton.titleLabel!.font = UIFont(name: "AvenirNext-Regular", size: 16)
+            permissionLocationButton.titleLabel!.font = UIFont(name: "AvenirNext-Medium", size: 16)
             permissionLocationButton.backgroundColor = UIColor(red: 50/255, green: 153/255, blue: 252/255, alpha: 1)
             permissionLocationButton.addTarget(self, action: #selector(handleLocationPermissionButton(_:)), for: .touchUpInside)
             self.view.addSubview(permissionLocationButton)
@@ -124,7 +126,7 @@ extension ViewController {
             position.performOneShotLocationUpdate(withDesiredAccuracy: 150) { (location, error) -> () in
                 if let pos = location {
                     if pos.horizontalAccuracy > 0 {
-                        let region = MKCoordinateRegion(center: pos.coordinate, span: MKCoordinateSpan(latitudeDelta: 250, longitudeDelta: 250))
+                        let region = MKCoordinateRegion(center: pos.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
                         self._mapView?.setRegion(region, animated: true)
                     }
                 }
