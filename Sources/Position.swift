@@ -464,6 +464,11 @@ internal protocol PositionLocationManagerDelegate: NSObjectProtocol {
     func positionLocationManager(_ positionLocationManager: PositionLocationManager, didVisit visit: CLVisit?)
 }
 
+// MARK: - constants
+
+private let PositionRequestQueueIdentifier = "PositionRequestQueue"
+private let PositionRequestQueueSpecificKey = DispatchSpecificKey<NSObject>()
+
 // MARK: - PositionLocationManager
 
 internal class PositionLocationManager: NSObject {
@@ -498,7 +503,8 @@ internal class PositionLocationManager: NSObject {
     // MARK: - ivars
     
     internal var _locationManager: CLLocationManager
-    internal var _locationRequests: [PositionLocationRequest]?
+    internal var _locationRequests: [PositionLocationRequest]
+    internal var _requestQueue: DispatchQueue
     
     // MARK: - object lifecycle
     
@@ -513,6 +519,9 @@ internal class PositionLocationManager: NSObject {
         self.updatingLowPowerLocation = false
 
         self._locationManager = CLLocationManager()
+        self._locationRequests = []
+        self._requestQueue = DispatchQueue(label: PositionRequestQueueIdentifier, target: DispatchQueue.global())
+        self._requestQueue.setSpecific(key: PositionRequestQueueSpecificKey, value: self._requestQueue)
         super.init()
         
         self._locationManager.delegate = self
@@ -568,35 +577,36 @@ extension PositionLocationManager {
         if self.locationServicesStatus == .allowedAlways ||
             self.locationServicesStatus == .allowedWhenInUse {
             
-            let request = PositionLocationRequest()
-            request.desiredAccuracy = desiredAccuracy
-            request.lifespan = OneShotRequestTimeOut
-            request.timeOutHandler = {
-                self.processLocationRequests()
-            }
-            request.completionHandler = completionHandler
-
-            if self._locationRequests == nil {
-                self._locationRequests = []
-            }
-            self._locationRequests?.append(request)
-
-            self.startLowPowerUpdating()
-            self._locationManager.desiredAccuracy = kCLLocationAccuracyBest
-            self._locationManager.distanceFilter = kCLDistanceFilterNone
-
-            if self.updatingLocation == false {
-                self.startUpdating()
+            self.executeClosureAsyncOnRequestQueueIfNecessary {
+                let request = PositionLocationRequest()
+                request.desiredAccuracy = desiredAccuracy
+                request.lifespan = OneShotRequestTimeOut
+                request.timeOutHandler = {
+                    self.processLocationRequests()
+                }
+                request.completionHandler = completionHandler
                 
-                // flag signals to turn off updating once complete
-                self.updatingLocation = false
+                self._locationRequests.append(request)
+                
+                self.startLowPowerUpdating()
+                self._locationManager.desiredAccuracy = kCLLocationAccuracyBest
+                self._locationManager.distanceFilter = kCLDistanceFilterNone
+                
+                // activate location to process request
+                if self.updatingLocation == false {
+                    self.startUpdating()
+                    // flag signals to turn off updating once complete
+                    self.updatingLocation = false
+                }
             }
             
         } else {
+            
             self.executeClosureAsyncOnMainQueueIfNecessary {
                 let error = NSError(domain: ErrorDomain, code: ErrorType.restricted.rawValue, userInfo: nil)
                 completionHandler(nil, error)
             }
+            
         }
     }
     
@@ -660,83 +670,87 @@ extension PositionLocationManager {
     
     // only called from the request queue
     internal func processLocationRequests() {
-        if let locationRequests = self._locationRequests {
-            guard
-                locationRequests.count > 0
-            else {
+        guard
+            self._locationRequests.count > 0
+        else {
+            self.executeClosureSyncOnMainQueueIfNecessary(withClosure: { 
                 self.delegate?.positionLocationManager(self, didUpdateTrackingLocations: self.locations)
-                return
+            })
+            return
+        }
+    
+        let completeRequests: [PositionLocationRequest] = self._locationRequests.filter { (request) -> Bool in
+            // check if a request completed, meaning expired or met horizontal accuracy
+            //print("desiredAccuracy \(request.desiredAccuracy) horizontal \(self.location?.horizontalAccuracy)")
+            if let location = self.locations?.first {
+                guard
+                    request.expired == true || location.horizontalAccuracy < request.desiredAccuracy
+                else {
+                    return false
+                }
+                return true
             }
+            return false
+        }
         
-            let completeRequests: [PositionLocationRequest] = locationRequests.filter { (request) -> Bool in
-                // check if a request completed, meaning expired or met horizontal accuracy
-                //print("desiredAccuracy \(request.desiredAccuracy) horizontal \(self.location?.horizontalAccuracy)")
-                if let location = self.locations?.first {
-                    guard
-                        request.expired == true || location.horizontalAccuracy < request.desiredAccuracy
-                    else {
-                        return false
+        for request in completeRequests {
+            if request.completed == false {
+                request.completed = true
+                if request.expired == true {
+                    self.executeClosureSyncOnMainQueueIfNecessary {
+                        request.completionHandler?(nil, NSError(domain: ErrorDomain, code: ErrorType.timedOut.rawValue, userInfo: nil))
                     }
-                    return true
-                }
-                return false
-            }
-            
-            for request in completeRequests {
-                if let handler = request.completionHandler {
-                    if request.expired == true {
-                        let error = NSError(domain: ErrorDomain, code: ErrorType.timedOut.rawValue, userInfo: nil)
-                        handler(nil, error)
-                    } else {
-                        handler(self.locations?.first, nil)
+                } else {
+                    self.executeClosureSyncOnMainQueueIfNecessary {
+                        request.completionHandler?(self.locations?.first, nil)
                     }
                 }
-                if let index = locationRequests.index(of: request) {
-                    self._locationRequests?.remove(at: index)
-                }
+            }
+        }
+        
+        let pendingRequests: [PositionLocationRequest] = self._locationRequests.filter { (request) -> Bool in
+            request.completed == false
+        }
+        self._locationRequests = pendingRequests
+
+        if self._locationRequests.count == 0 {
+            self.updateLocationManagerStateIfNeeded()
+            
+            if self.updatingLocation == false {
+                self.stopUpdating()
             }
             
-            if locationRequests.count == 0 {
-                self._locationRequests = nil
-                self.updateLocationManagerStateIfNeeded()
-                
-                if self.updatingLocation == false {
-                    self.stopUpdating()
-                }
-                
-                if self.updatingLowPowerLocation == false {
-                    self.stopLowPowerUpdating()
-                }
+            if self.updatingLowPowerLocation == false {
+                self.stopLowPowerUpdating()
             }
         }
     }
     
-    internal func completeLocationRequestsWithError(_ error: Error?) {
-        if let locationRequests = self._locationRequests {
-            for locationRequest in locationRequests {
-                locationRequest.cancelRequest()
-                guard let handler = locationRequest.completionHandler else { continue }
-                if let resultingError = error {
-                    handler(nil, resultingError)
-                } else {
-                    handler(nil, NSError(domain: ErrorDomain, code: ErrorType.cancelled.rawValue, userInfo: nil))
-                }
+    internal func completeLocationRequests(withError error: Error?) {
+        for locationRequest in self._locationRequests {
+            locationRequest.cancelRequest()
+            guard
+                let handler = locationRequest.completionHandler
+            else {
+                continue
+            }
+            
+            self.executeClosureSyncOnMainQueueIfNecessary {
+                handler(nil, error ?? NSError(domain: ErrorDomain, code: ErrorType.cancelled.rawValue, userInfo: nil))
             }
         }
     }
 
     internal func updateLocationManagerStateIfNeeded() {
         // when not processing requests, set desired accuracy appropriately
-        if let locationRequests = self._locationRequests {
-            if locationRequests.count > 0 {
-                if self.updatingLocation == true {
-                    self._locationManager.desiredAccuracy = self.trackingDesiredAccuracyActive
-                } else if self.updatingLowPowerLocation == true {
-                    self._locationManager.desiredAccuracy = self.trackingDesiredAccuracyBackground
-                }
-                
-                self._locationManager.distanceFilter = self.distanceFilter
+        if self._locationRequests.count > 0 {
+            if self.updatingLocation == true {
+                self._locationManager.desiredAccuracy = self.trackingDesiredAccuracyActive
+            } else if self.updatingLowPowerLocation == true {
+                self._locationManager.desiredAccuracy = self.trackingDesiredAccuracyBackground
             }
+            
+            self._locationManager.distanceFilter = self.distanceFilter
         }
     }
 }
@@ -747,28 +761,38 @@ extension PositionLocationManager: CLLocationManagerDelegate {
     
     @objc(locationManager:didUpdateLocations:)
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        self.locations = locations
-    
-        // update one-shot requests
-        self.processLocationRequests()
+        self.executeClosureAsyncOnRequestQueueIfNecessary {
+            // update last location
+            self.locations = locations
+            // update one-shot requests
+            self.processLocationRequests()
+        }
     }
     
     @objc(locationManager:didFailWithError:)
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        self.completeLocationRequestsWithError(error)
-        self.delegate?.positionLocationManager(self, didFailWithError: error)
+        self.executeClosureAsyncOnRequestQueueIfNecessary {
+            self.completeLocationRequests(withError: error)
+            self.executeClosureSyncOnMainQueueIfNecessary {
+                self.delegate?.positionLocationManager(self, didFailWithError: error)
+            }
+        }
     }
     
     @objc(locationManager:didChangeAuthorizationStatus:)
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        switch status {
+        self.executeClosureAsyncOnRequestQueueIfNecessary {
+            switch status {
             case .denied, .restricted:
-                self.completeLocationRequestsWithError(NSError(domain: ErrorDomain, code: ErrorType.restricted.rawValue, userInfo: nil))
+                self.completeLocationRequests(withError: NSError(domain: ErrorDomain, code: ErrorType.restricted.rawValue, userInfo: nil))
                 break
             default:
                 break
+            }
+            self.executeClosureSyncOnMainQueueIfNecessary {
+                self.delegate?.positionLocationManager(self, didChangeLocationAuthorizationStatus: self.locationServicesStatus)
+            }
         }
-        self.delegate?.positionLocationManager(self, didChangeLocationAuthorizationStatus: self.locationServicesStatus)
     }
     
     @objc(locationManager:didDetermineState:forRegion:)
@@ -818,6 +842,14 @@ extension PositionLocationManager {
             closure()
         } else {
             DispatchQueue.main.sync(execute: closure)
+        }
+    }
+    
+    internal func executeClosureAsyncOnRequestQueueIfNecessary(withClosure closure: @escaping () -> Void) {
+        if DispatchQueue.getSpecific(key: PositionRequestQueueSpecificKey) == self._requestQueue {
+            closure()
+        } else {
+            self._requestQueue.async(execute: closure)
         }
     }
     
