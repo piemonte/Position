@@ -145,20 +145,21 @@ extension ViewController: PositionObserver {
 
     func position(_ position: Position, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
         // location authorization did change, this may even be triggered on application resume if the user updated settings
-        print("location authorization status \(status)")
+        print("position, location authorization status \(status)")
     }
 	
     // error handling
     func position(_ position: Position, didFailWithError error: Error?) {
-        print("failed with error \(error)")
+        print("position, failed with error \(error)")
     }
 
     // location
     func position(_ position: Position, didUpdateOneShotLocation location: CLLocation?) {
+        print("position, one-shot location updated \(location)")
     }
     
     func position(_ position: Position, didUpdateTrackingLocations locations: [CLLocation]?) {
-        print("tracking location update \(locations?.last)")
+        print("position, tracking location update \(locations?.last)")
     }
     
     func position(_ position: Position, didUpdateFloor floor: CLFloor) {
@@ -168,6 +169,7 @@ extension ViewController: PositionObserver {
     }
     
     func position(_ position: Position, didChangeDesiredAccurary desiredAccuracy: Double) {
+        print("position, changed desired accuracy \(desiredAccuracy)")
     }
 
 }
