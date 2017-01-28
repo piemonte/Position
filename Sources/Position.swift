@@ -593,10 +593,10 @@ extension PositionLocationManager {
             }
             
         } else {
-            DispatchQueue.main.async(execute: {
+            self.executeClosureAsyncOnMainQueueIfNecessary {
                 let error = NSError(domain: ErrorDomain, code: ErrorType.restricted.rawValue, userInfo: nil)
                 completionHandler(nil, error)
-            })
+            }
         }
     }
     
@@ -656,6 +656,7 @@ extension PositionLocationManager {
     
     // MARK - private methods
     
+    // only called from the request queue
     internal func processLocationRequests() {
         if let locationRequests = self._locationRequests {
             guard
@@ -794,6 +795,28 @@ extension PositionLocationManager: CLLocationManagerDelegate {
     @objc(locationManager:monitoringDidFailForRegion:withError:)
     func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
         self.delegate?.positionLocationManager(self, didFailWithError: error)
+    }
+    
+}
+
+// MARK: - queues
+
+extension PositionLocationManager {
+    
+    internal func executeClosureAsyncOnMainQueueIfNecessary(withClosure closure: @escaping () -> Void) {
+        if Thread.isMainThread {
+            closure()
+        } else {
+            DispatchQueue.main.async(execute: closure)
+        }
+    }
+    
+    internal func executeClosureSyncOnMainQueueIfNecessary(withClosure closure: @escaping () -> Void) {
+        if Thread.isMainThread {
+            closure()
+        } else {
+            DispatchQueue.main.sync(execute: closure)
+        }
     }
     
 }
