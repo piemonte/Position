@@ -635,6 +635,7 @@ extension PositionLocationManager {
                 self._locationManager.startMonitoringSignificantLocationChanges()
                 self.updatingLowPowerLocation = true
                 self.updateLocationManagerStateIfNeeded()
+                fallthrough
             default:
                 break
         }
@@ -647,6 +648,7 @@ extension PositionLocationManager {
                 self._locationManager.stopMonitoringSignificantLocationChanges()
                 self.updatingLowPowerLocation = false
                 self.updateLocationManagerStateIfNeeded()
+                fallthrough
             default:
                 break
         }
