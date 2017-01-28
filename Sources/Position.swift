@@ -618,10 +618,12 @@ extension PositionLocationManager {
         switch self.locationServicesStatus {
             case .allowedAlways,
                  .allowedWhenInUse:
-                self._locationManager.stopUpdatingLocation()
-                self._locationManager.stopMonitoringVisits()
-                self.updatingLocation = false
-                self.updateLocationManagerStateIfNeeded()
+                if self.updatingLocation == true {
+                    self._locationManager.stopUpdatingLocation()
+                    self._locationManager.stopMonitoringVisits()
+                    self.updatingLocation = false
+                    self.updateLocationManagerStateIfNeeded()
+                }
                 fallthrough
             default:
                 break
