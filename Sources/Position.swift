@@ -834,7 +834,6 @@ internal class PositionLocationRequest: NSObject {
     // MARK: - properties
     
     internal var desiredAccuracy: Double
-    internal var expired: Bool
     internal var lifespan: TimeInterval {
         didSet {
             self.expired = false
@@ -842,6 +841,10 @@ internal class PositionLocationRequest: NSObject {
             self._expirationTimer = Timer.scheduledTimer(timeInterval: self.lifespan, target: self, selector: #selector(handleTimerFired(_:)), userInfo: nil, repeats: false)
         }
     }
+    
+    internal var completed: Bool
+    internal var expired: Bool
+
     internal var timeOutHandler: TimeOutCompletionHandler?
     internal var completionHandler: OneShotCompletionHandler?
     
@@ -853,8 +856,9 @@ internal class PositionLocationRequest: NSObject {
     
     override init() {
         self.desiredAccuracy = kCLLocationAccuracyBest
-        self.expired = false
         self.lifespan = OneShotRequestTimeOut
+        self.completed = false
+        self.expired = false
         super.init()
     }
     
