@@ -17,7 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		06070F171C375A68000C09A6 /* Position.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Position.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		06070F171C375A68000C09A6 /* Position_iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Position_iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		06070F1A1C375A69000C09A6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		06070F1C1C375A69000C09A6 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		06070F211C375A69000C09A6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -57,7 +57,7 @@
 		06070F181C375A68000C09A6 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				06070F171C375A68000C09A6 /* Position.app */,
+				06070F171C375A68000C09A6 /* Position_iOS.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -114,9 +114,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		06070F161C375A68000C09A6 /* Position */ = {
+		06070F161C375A68000C09A6 /* Position_iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 06070F291C375A69000C09A6 /* Build configuration list for PBXNativeTarget "Position" */;
+			buildConfigurationList = 06070F291C375A69000C09A6 /* Build configuration list for PBXNativeTarget "Position_iOS" */;
 			buildPhases = (
 				06070F131C375A68000C09A6 /* Sources */,
 				06070F141C375A68000C09A6 /* Frameworks */,
@@ -126,9 +126,9 @@
 			);
 			dependencies = (
 			);
-			name = Position;
+			name = Position_iOS;
 			productName = Position;
-			productReference = 06070F171C375A68000C09A6 /* Position.app */;
+			productReference = 06070F171C375A68000C09A6 /* Position_iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -165,7 +165,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				06070F161C375A68000C09A6 /* Position */,
+				06070F161C375A68000C09A6 /* Position_iOS */,
 			);
 		};
 /* End PBXProject section */
@@ -331,7 +331,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		06070F291C375A69000C09A6 /* Build configuration list for PBXNativeTarget "Position" */ = {
+		06070F291C375A69000C09A6 /* Build configuration list for PBXNativeTarget "Position_iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				06070F2A1C375A69000C09A6 /* Debug */,

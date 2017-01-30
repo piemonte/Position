@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "06070F161C375A68000C09A6"
-               BuildableName = "Position.app"
-               BlueprintName = "Position"
+               BuildableName = "Position_iOS.app"
+               BlueprintName = "Position_iOS"
                ReferencedContainer = "container:Position.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -33,8 +33,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "06070F161C375A68000C09A6"
-            BuildableName = "Position.app"
-            BlueprintName = "Position"
+            BuildableName = "Position_iOS.app"
+            BlueprintName = "Position_iOS"
             ReferencedContainer = "container:Position.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -56,8 +56,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "06070F161C375A68000C09A6"
-            BuildableName = "Position.app"
-            BlueprintName = "Position"
+            BuildableName = "Position_iOS.app"
+            BlueprintName = "Position_iOS"
             ReferencedContainer = "container:Position.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -75,8 +75,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "06070F161C375A68000C09A6"
-            BuildableName = "Position.app"
-            BlueprintName = "Position"
+            BuildableName = "Position_iOS.app"
+            BlueprintName = "Position_iOS"
             ReferencedContainer = "container:Position.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
