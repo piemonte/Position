@@ -96,8 +96,10 @@ public protocol PositionObserver: NSObjectProtocol {
     /// Permission change authorization status, this may be triggered on application resume if the app settings have changed
     func position(_ position: Position, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus)
     
-    /// Location positioning updates
+    /// Location positioning one-shot updates
     func position(_ position: Position, didUpdateOneShotLocation location: CLLocation?)
+    
+    /// Location positioning tracking updates
     func position(_ position: Position, didUpdateTrackingLocations locations: [CLLocation]?)
     func position(_ position: Position, didUpdateFloor floor: CLFloor)
     func position(_ position: Position, didVisit visit: CLVisit?)
