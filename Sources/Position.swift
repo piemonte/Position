@@ -112,6 +112,11 @@ public protocol PositionObserver: NSObjectProtocol {
 /// 🛰 Position, Swift and efficient location positioning.
 public class Position: NSObject {
     
+    // MARK: - singleton
+    
+    /// Shared singleton
+    public static let shared = Position()
+    
     // MARK: - properties
     
     /// Distance in meters a device must move before updating location.
@@ -177,11 +182,6 @@ public class Position: NSObject {
     internal var _positionLocationManager: PositionLocationManager
     internal var _updating: Bool
     
-    // MARK: - singleton
-    
-    /// Shared singleton
-    static let shared = Position()
-
     // MARK: - object lifecycle
     
     override init() {
