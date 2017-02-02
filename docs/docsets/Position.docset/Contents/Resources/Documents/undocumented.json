@@ -58,14 +58,14 @@
     },
     {
       "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
-      "line": 104,
+      "line": 108,
       "symbol": "PositionObserver.position(_:didUpdateFloor:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
-      "line": 105,
+      "line": 109,
       "symbol": "PositionObserver.position(_:didVisit:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
