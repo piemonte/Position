@@ -91,10 +91,14 @@ public enum ErrorType: Int, CustomStringConvertible {
     }
 }
 
-/// Position observer protocol.
-public protocol PositionObserver: NSObjectProtocol {
+/// Position location authorization protocol.
+public protocol PositionAuthorizationObserver: NSObjectProtocol {
     /// Permission change authorization status, this may be triggered on application resume if the app settings have changed
     func position(_ position: Position, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus)
+}
+
+/// Position location updates protocol.
+public protocol PositionObserver: NSObjectProtocol {
     
     /// Location positioning one-shot updates
     func position(_ position: Position, didUpdateOneShotLocation location: CLLocation?)
@@ -180,6 +184,7 @@ public class Position: NSObject {
     
     // MARK: - ivars
     
+    internal var _authorizationObservers: NSHashTable<AnyObject>?
     internal var _observers: NSHashTable<AnyObject>?
     internal var _positionLocationManager: PositionLocationManager
     internal var _updating: Bool
@@ -207,6 +212,31 @@ public class Position: NSObject {
 // MARK: - observers
 
 extension Position {
+    
+    /// Adds an authorization observer.
+    ///
+    /// - Parameter observer: Observing instance.
+    public func addAuthorizationObserver(_ observer: PositionAuthorizationObserver?) {
+        if self._authorizationObservers == nil {
+            self._authorizationObservers = NSHashTable(options: .strongMemory)
+        }
+        
+        if self._authorizationObservers?.contains(observer) == false {
+            self._authorizationObservers?.add(observer)
+        }
+    }
+    
+    /// Removes an authorization observer.
+    ///
+    /// - Parameter observer: Observing instance.
+    public func removeAuthorizationObserver(_ observer: PositionAuthorizationObserver?) {
+        if self._authorizationObservers?.contains(observer) == true {
+            self._authorizationObservers?.remove(observer)
+        }
+        if self._authorizationObservers?.count == 0 {
+            self._authorizationObservers = nil
+        }
+    }
     
     /// Adds a position observer.
     ///
@@ -305,8 +335,8 @@ extension Position {
     
     internal func checkAuthorizationStatusForServices() {
         if self._positionLocationManager.locationServicesStatus == .denied {
-            let enumerator = self._observers?.objectEnumerator()
-            while let observer = enumerator?.nextObject() as? PositionObserver {
+            let enumerator = self._authorizationObservers?.objectEnumerator()
+            while let observer = enumerator?.nextObject() as? PositionAuthorizationObserver {
                 observer.position(self, didChangeLocationAuthorizationStatus: .denied)
             }
         }
@@ -407,8 +437,8 @@ extension Position {
 extension Position: PositionLocationManagerDelegate {
 
     internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
-        let enumerator = self._observers?.objectEnumerator()
-        while let observer = enumerator?.nextObject() as? PositionObserver {
+        let enumerator = self._authorizationObservers?.objectEnumerator()
+        while let observer = enumerator?.nextObject() as? PositionAuthorizationObserver {
             observer.position(self, didChangeLocationAuthorizationStatus: status)
         }
     }
