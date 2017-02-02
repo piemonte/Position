@@ -10,7 +10,7 @@ jazzy \
     --author_url 'https://patrickpiemonte.com' \
     --github_url 'https://github.com/piemonte/Position' \
     --sdk iphonesimulator \
-    --xcodebuild-arguments -scheme,Debug \
+    --xcodebuild-arguments -scheme,Position \
     --module 'Position' \
     --framework-root . \
     --readme README.md \
