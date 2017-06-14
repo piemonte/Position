@@ -552,8 +552,10 @@ internal class PositionLocationManager: NSObject {
 
         self._locationManager = CLLocationManager()
         self._locationRequests = []
-        self._requestQueue = DispatchQueue(label: PositionRequestQueueIdentifier, target: DispatchQueue.global())
+        
+        self._requestQueue = DispatchQueue(label: PositionRequestQueueIdentifier, autoreleaseFrequency: .workItem, target: DispatchQueue.global())
         self._requestQueue.setSpecific(key: PositionRequestQueueSpecificKey, value: self._requestQueue)
+        
         super.init()
         
         self._locationManager.delegate = self
