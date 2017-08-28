@@ -1,11 +1,11 @@
 `Position` is a very simple [Swift](https://developer.apple.com/swift/) and efficient location positioning library for iOS.
 
-[![Pod Version](https://img.shields.io/cocoapods/v/Position.svg?style=flat)](http://cocoadocs.org/docsets/Position/) [![Build Status](https://travis-ci.org/piemonte/Position.svg?branch=master)](https://travis-ci.org/piemonte/Position) [![Swift Version](https://img.shields.io/badge/language-swift%203.0-brightgreen.svg)](https://developer.apple.com/swift) [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/piemonte/Position/blob/master/LICENSE)
+[![Pod Version](https://img.shields.io/cocoapods/v/Position.svg?style=flat)](http://cocoadocs.org/docsets/Position/) [![Build Status](https://travis-ci.org/piemonte/Position.svg?branch=master)](https://travis-ci.org/piemonte/Position) [![Swift Version](https://img.shields.io/badge/language-swift%204.0-brightgreen.svg)](https://developer.apple.com/swift) [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/piemonte/Position/blob/master/LICENSE)
 
 
 |  | Features |
 |:---------:|:---------------------------------------------------------------|
-| &#128038; | [Swift 3](https://developer.apple.com/swift/) |
+| &#128038; | [Swift 4](https://developer.apple.com/swift/) |
 | &#128301; | observer pattern support |
 | &#9732; | “one shot” closure based location requests ( more robust than iOS 9 CoreLocation API |
 | &#128274; | authorization check and response support |
@@ -17,15 +17,13 @@
 
 `Position` is available for installation using the Cocoa dependency manager [CocoaPods](http://cocoapods.org/). Alternatively, you can simply copy the `Position` source files into your Xcode project.
 
-## Xcode 8 & Swift 3
-
 ```ruby
 # CocoaPods
-swift_version = "3.0"
-pod "Position", "~> 0.1.0"
+swift_version = "4.0"
+pod "Position", "~> 0.4.0"
 
 # Carthage
-github "piemonte/Position" ~> 0.1.0
+github "piemonte/Position" ~> 0.4.0
 
 # SwiftPM
 let package = Package(

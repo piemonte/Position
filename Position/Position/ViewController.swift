@@ -30,7 +30,7 @@ import UIKit
 import MapKit
 import CoreLocation
 
-class ViewController: UIViewController {
+public class ViewController: UIViewController {
 
     // MARK: - ivars
     
@@ -44,7 +44,7 @@ class ViewController: UIViewController {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
     
-    required init(coder aDecoder: NSCoder) {
+    required public init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)!
     }
     
@@ -53,7 +53,7 @@ class ViewController: UIViewController {
 
     // MARK: - view lifecycle
     
-    override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
 
         self.view.autoresizingMask = ([UIViewAutoresizing.flexibleWidth, UIViewAutoresizing.flexibleHeight])
@@ -72,7 +72,7 @@ class ViewController: UIViewController {
             locationButton.setTitle("Request Location", for: UIControlState())
             locationButton.titleLabel!.font = UIFont(name: "AvenirNext-Medium", size: 16)
             locationButton.backgroundColor = UIColor(red: 115/255, green: 57/255, blue: 248/255, alpha: 1)
-            locationButton.addTarget(self, action: #selector(ViewController.handleOneShotLocationButton(_:)), for: .touchUpInside)
+            locationButton.addTarget(self, action: #selector(handleOneShotLocationButton(_:)), for: .touchUpInside)
             self.view.addSubview(locationButton)
         }
         
@@ -107,19 +107,20 @@ class ViewController: UIViewController {
 
 extension ViewController {
     
-    func handleLocationPermissionButton(_ button: UIButton) {
+    @objc internal func handleLocationPermissionButton(_ button: UIButton) {
         // request permissions based on the type of location support required.
         let position = Position.shared
         if position.locationServicesStatus == .allowedWhenInUse ||
             position.locationServicesStatus == .allowedAlways {
             print("app has permission")
         } else {
+            // request permission
             Position.shared.requestWhenInUseLocationAuthorization()
             //Position.shared.requestAlwaysLocationAuthorization()
         }
     }
     
-    func handleOneShotLocationButton(_ button: UIButton) {
+    @objc internal func handleOneShotLocationButton(_ button: UIButton) {
         let position = Position.shared
         if position.locationServicesStatus == .allowedWhenInUse ||
            position.locationServicesStatus == .allowedAlways {
@@ -130,10 +131,10 @@ extension ViewController {
                         self._mapView?.setRegion(region, animated: true)
                     }
                 }
-                print("one shot location update \(location) error \(error)")
+                //print("one shot locatiString(describing: on update \(location) error \(error)")
             }
         } else if position.locationServicesStatus == .notAvailable {
-            print("location is not available")
+            //print("location is not available")
         }
     }
 
@@ -143,7 +144,7 @@ extension ViewController {
 
 extension ViewController: PositionAuthorizationObserver {
 
-    func position(_ position: Position, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
+    public func position(_ position: Position, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
         // location authorization did change, this may even be triggered on application resume if the user updated settings
         print("position, location authorization status \(status)")
     }
@@ -155,27 +156,27 @@ extension ViewController: PositionAuthorizationObserver {
 extension ViewController: PositionObserver {
 	
     // location
-    func position(_ position: Position, didUpdateOneShotLocation location: CLLocation?) {
-        print("position, one-shot location updated \(location)")
+    public func position(_ position: Position, didUpdateOneShotLocation location: CLLocation?) {
+//        print("position, one-shot location updated \(location)")
     }
     
-    func position(_ position: Position, didUpdateTrackingLocations locations: [CLLocation]?) {
-        print("position, tracking location update \(locations?.last)")
+    public func position(_ position: Position, didUpdateTrackingLocations locations: [CLLocation]?) {
+//        print("position, tracking location update \(locations?.last)")
     }
     
-    func position(_ position: Position, didUpdateFloor floor: CLFloor) {
+    public func position(_ position: Position, didUpdateFloor floor: CLFloor) {
     }
     
-    func position(_ position: Position, didVisit visit: CLVisit?) {
+    public func position(_ position: Position, didVisit visit: CLVisit?) {
     }
     
-    func position(_ position: Position, didChangeDesiredAccurary desiredAccuracy: Double) {
-        print("position, changed desired accuracy \(desiredAccuracy)")
+    public func position(_ position: Position, didChangeDesiredAccurary desiredAccuracy: Double) {
+//        print("position, changed desired accuracy \(desiredAccuracy)")
     }
     
     // error handling
-    func position(_ position: Position, didFailWithError error: Error?) {
-        print("position, failed with error \(error)")
+    public func position(_ position: Position, didFailWithError error: Error?) {
+//        print("position, failed with error \(error)")
     }
 
 }

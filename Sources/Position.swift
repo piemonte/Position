@@ -392,7 +392,7 @@ extension Position {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIDeviceBatteryStateDidChange, object: UIApplication.shared)
     }
     
-    internal func handleApplicationDidBecomeActive(_ notification: Notification) {
+    @objc internal func handleApplicationDidBecomeActive(_ notification: Notification) {
         self.checkAuthorizationStatusForServices()
         
         // if position is not updating, don't modify state
@@ -406,7 +406,7 @@ extension Position {
         }        
     }
 
-    internal func handleApplicationWillResignActive(_ notification: Notification) {
+    @objc internal func handleApplicationWillResignActive(_ notification: Notification) {
         if self._updating == true {
             return
         }
@@ -418,7 +418,7 @@ extension Position {
         self.updateLocationAccuracyIfNecessary()
     }
 
-    internal func handleBatteryLevelChanged(_ notification: Notification) {
+    @objc internal func handleBatteryLevelChanged(_ notification: Notification) {
         let batteryLevel = UIDevice.current.batteryLevel
         if batteryLevel < 0 {
             return
@@ -426,7 +426,7 @@ extension Position {
         self.updateLocationAccuracyIfNecessary()
     }
 
-    internal func handleBatteryStateChanged(_ notification: Notification) {
+    @objc internal func handleBatteryStateChanged(_ notification: Notification) {
         self.updateLocationAccuracyIfNecessary()
     }
     
@@ -953,7 +953,7 @@ internal class PositionLocationRequest: NSObject {
 
 extension PositionLocationRequest {
     
-    internal func handleTimerFired(_ timer: Timer) {
+    @objc internal func handleTimerFired(_ timer: Timer) {
         DispatchQueue.main.async(execute: {
             self.expired = true
             self._expirationTimer?.invalidate()
