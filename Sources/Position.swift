@@ -373,23 +373,23 @@ extension Position {
     // application
     
     internal func addAppObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleApplicationDidBecomeActive(_:)), name: NSNotification.Name.UIApplicationDidBecomeActive, object: UIApplication.shared)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleApplicationWillResignActive(_:)), name: NSNotification.Name.UIApplicationWillResignActive, object: UIApplication.shared)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleApplicationDidBecomeActive(_:)), name: .UIApplicationDidBecomeActive, object: UIApplication.shared)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleApplicationWillResignActive(_:)), name: .UIApplicationWillResignActive, object: UIApplication.shared)
     }
     
     internal func removeAppObservers() {
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIApplicationDidBecomeActive, object: UIApplication.shared)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIApplicationWillResignActive, object: UIApplication.shared)
+        NotificationCenter.default.removeObserver(self, name: .UIApplicationDidBecomeActive, object: UIApplication.shared)
+        NotificationCenter.default.removeObserver(self, name: .UIApplicationWillResignActive, object: UIApplication.shared)
     }
     
     internal func addBatteryObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleBatteryLevelChanged(_:)), name:NSNotification.Name.UIDeviceBatteryLevelDidChange, object: UIApplication.shared)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleBatteryStateChanged(_:)), name:NSNotification.Name.UIDeviceBatteryStateDidChange, object: UIApplication.shared)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleBatteryLevelChanged(_:)), name: .UIDeviceBatteryLevelDidChange, object: UIApplication.shared)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleBatteryStateChanged(_:)), name: .UIDeviceBatteryStateDidChange, object: UIApplication.shared)
     }
     
     internal func removeBatteryObservers() {
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIDeviceBatteryLevelDidChange, object: UIApplication.shared)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIDeviceBatteryStateDidChange, object: UIApplication.shared)
+        NotificationCenter.default.removeObserver(self, name: .UIDeviceBatteryLevelDidChange, object: UIApplication.shared)
+        NotificationCenter.default.removeObserver(self, name: .UIDeviceBatteryStateDidChange, object: UIApplication.shared)
     }
     
     @objc internal func handleApplicationDidBecomeActive(_ notification: Notification) {
