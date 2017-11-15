@@ -218,7 +218,7 @@ extension Position {
     /// - Parameter observer: Observing instance.
     public func addAuthorizationObserver(_ observer: PositionAuthorizationObserver?) {
         if self._authorizationObservers == nil {
-            self._authorizationObservers = NSHashTable(options: .strongMemory)
+            self._authorizationObservers = NSHashTable.weakObjects()
         }
         
         if self._authorizationObservers?.contains(observer) == false {
@@ -243,7 +243,7 @@ extension Position {
     /// - Parameter observer: Observing instance.
     public func addObserver(_ observer: PositionObserver?) {
         if self._observers == nil {
-            self._observers = NSHashTable(options: .strongMemory)
+            self._observers = NSHashTable.weakObjects()
         }
         
         if self._observers?.contains(observer) == false {
