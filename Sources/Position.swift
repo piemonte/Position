@@ -335,9 +335,10 @@ extension Position {
     
     internal func checkAuthorizationStatusForServices() {
         if self._positionLocationManager.locationServicesStatus == .denied {
-            let enumerator = self._authorizationObservers?.objectEnumerator()
-            while let observer = enumerator?.nextObject() as? PositionAuthorizationObserver {
-                observer.position(self, didChangeLocationAuthorizationStatus: .denied)
+            if let observers = self._observers?.allObjects as? [PositionAuthorizationObserver] {
+                for observer in observers {
+                    observer.position(self, didChangeLocationAuthorizationStatus: .denied)
+                }
             }
         }
     }
@@ -437,45 +438,51 @@ extension Position {
 extension Position: PositionLocationManagerDelegate {
 
     internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
-        let enumerator = self._authorizationObservers?.objectEnumerator()
-        while let observer = enumerator?.nextObject() as? PositionAuthorizationObserver {
-            observer.position(self, didChangeLocationAuthorizationStatus: status)
+        if let observers = self._observers?.allObjects as? [PositionAuthorizationObserver] {
+            for observer in observers {
+                observer.position(self, didChangeLocationAuthorizationStatus: status)
+            }
         }
     }
     
     internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didFailWithError error: Error?) {
-        let enumerator = self._observers?.objectEnumerator()
-        while let observer = enumerator?.nextObject() as? PositionObserver {
-            observer.position(self, didFailWithError : error)
+        if let observers = self._observers?.allObjects as? [PositionObserver] {
+            for observer in observers {
+                observer.position(self, didFailWithError : error)
+            }
         }
     }
     
     internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didUpdateOneShotLocation location: CLLocation?) {
-        let enumerator = self._observers?.objectEnumerator()
-        while let observer = enumerator?.nextObject() as? PositionObserver {
-            observer.position(self, didUpdateOneShotLocation: location)
+        if let observers = self._observers?.allObjects as? [PositionObserver] {
+            for observer in observers {
+                observer.position(self, didUpdateOneShotLocation: location)
+            }
         }
     }
     
     internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didUpdateTrackingLocations locations: [CLLocation]?) {
-        let enumerator = self._observers?.objectEnumerator()
-        while let observer = enumerator?.nextObject() as? PositionObserver {
-            observer.position(self, didUpdateTrackingLocations: locations)
+        if let observers = self._observers?.allObjects as? [PositionObserver] {
+            for observer in observers {
+                observer.position(self, didUpdateTrackingLocations: locations)
+            }
         }
     }
     
     internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didUpdateFloor floor: CLFloor) {
-        let enumerator = self._observers?.objectEnumerator()
-        while let observer = enumerator?.nextObject() as? PositionObserver {
-            observer.position(self, didUpdateFloor: floor)
+        if let observers = self._observers?.allObjects as? [PositionObserver] {
+            for observer in observers {
+                observer.position(self, didUpdateFloor: floor)
+            }
         }
     }
 
     internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didVisit visit: CLVisit?) {
-        let enumerator = self._observers?.objectEnumerator()
-        while let observer = enumerator?.nextObject() as? PositionObserver {
-            observer.position(self, didVisit: visit)
-        }
+        if let observers = self._observers?.allObjects as? [PositionObserver] {
+            for observer in observers {
+                observer.position(self, didVisit: visit)
+            }
+        }        
     }
     
 }
