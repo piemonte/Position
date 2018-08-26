@@ -146,7 +146,7 @@ public class Position: NSObject {
     }
     
     /// When `true`, location will reduce power usage from adjusted accuracy when backgrounded.
-    public var adjustLocationUseWhenBackgrounded: Bool {
+    public var adjustLocationUseWhenBackgrounded: Bool = false {
         didSet {
             if self._positionLocationManager.updatingLowPowerLocation == true {
                 self._positionLocationManager.stopLowPowerUpdating()
@@ -156,7 +156,7 @@ public class Position: NSObject {
     }
     
     /// When `true`, location will reduce power usage from adjusted accuracy based on the current battery level.
-    public var adjustLocationUseFromBatteryLevel: Bool {
+    public var adjustLocationUseFromBatteryLevel: Bool = false {
         didSet {
             UIDevice.current.isBatteryMonitoringEnabled = self.adjustLocationUseFromBatteryLevel
         }
@@ -187,15 +187,12 @@ public class Position: NSObject {
     internal var _authorizationObservers: NSHashTable<AnyObject>?
     internal var _observers: NSHashTable<AnyObject>?
     internal var _positionLocationManager: PositionLocationManager
-    internal var _updating: Bool
+    internal var _updating: Bool = false
     
     // MARK: - object lifecycle
     
     override init() {
-        self.adjustLocationUseWhenBackgrounded = false
-        self.adjustLocationUseFromBatteryLevel = false
         self._positionLocationManager = PositionLocationManager()
-        self._updating = false
         super.init()
         self._positionLocationManager.delegate = self
         
@@ -514,21 +511,21 @@ internal class PositionLocationManager: NSObject {
 
     internal weak var delegate: PositionLocationManagerDelegate?
     
-    internal var distanceFilter: Double {
+    internal var distanceFilter: Double = 0.0 {
         didSet {
             self.updateLocationManagerStateIfNeeded()
         }
     }
     
-    internal var timeFilter: TimeInterval
+    internal var timeFilter: TimeInterval = 0.0
     
-    internal var trackingDesiredAccuracyActive: Double {
+    internal var trackingDesiredAccuracyActive: Double = kCLLocationAccuracyHundredMeters {
         didSet {
             self.updateLocationManagerStateIfNeeded()
         }
     }
     
-    internal var trackingDesiredAccuracyBackground: Double {
+    internal var trackingDesiredAccuracyBackground: Double = kCLLocationAccuracyKilometer {
         didSet {
             self.updateLocationManagerStateIfNeeded()
         }
@@ -536,33 +533,22 @@ internal class PositionLocationManager: NSObject {
     
     internal var locations: [CLLocation]?
 
-    internal var updatingLocation: Bool
-    internal var updatingLowPowerLocation: Bool
+    internal var updatingLocation: Bool = false
+    internal var updatingLowPowerLocation: Bool = false
 
     // MARK: - ivars
     
-    internal var _locationManager: CLLocationManager
-    internal var _locationRequests: [PositionLocationRequest]
+    internal var _locationManager: CLLocationManager 
+    internal var _locationRequests: [PositionLocationRequest] = []
     internal var _requestQueue: DispatchQueue
     
     // MARK: - object lifecycle
     
     override init() {
-        self.distanceFilter = 0
-        self.timeFilter = 0
-        
-        self.trackingDesiredAccuracyActive = kCLLocationAccuracyHundredMeters
-        self.trackingDesiredAccuracyBackground = kCLLocationAccuracyKilometer
-
-        self.updatingLocation = false
-        self.updatingLowPowerLocation = false
-
-        self._locationManager = CLLocationManager()
-        self._locationRequests = []
-        
         self._requestQueue = DispatchQueue(label: PositionRequestQueueIdentifier, autoreleaseFrequency: .workItem, target: DispatchQueue.global())
         self._requestQueue.setSpecific(key: PositionRequestQueueSpecificKey, value: self._requestQueue)
-        
+        self._locationManager = CLLocationManager()
+
         super.init()
         
         self._locationManager.delegate = self
@@ -898,8 +884,8 @@ internal class PositionLocationRequest: NSObject {
 
     // MARK: - properties
     
-    internal var desiredAccuracy: Double
-    internal var lifespan: TimeInterval {
+    internal var desiredAccuracy: Double = kCLLocationAccuracyBest
+    internal var lifespan: TimeInterval = OneShotRequestTimeOut {
         didSet {
             self.expired = false
             self._expirationTimer?.invalidate()
@@ -907,8 +893,8 @@ internal class PositionLocationRequest: NSObject {
         }
     }
     
-    internal var completed: Bool
-    internal var expired: Bool
+    internal var completed: Bool = false
+    internal var expired: Bool = false
 
     internal var timeOutHandler: TimeOutCompletionHandler?
     internal var completionHandler: OneShotCompletionHandler?
@@ -918,14 +904,6 @@ internal class PositionLocationRequest: NSObject {
     internal var _expirationTimer: Timer?
     
     // MARK: - object lifecycle
-    
-    override init() {
-        self.desiredAccuracy = kCLLocationAccuracyBest
-        self.lifespan = OneShotRequestTimeOut
-        self.completed = false
-        self.expired = false
-        super.init()
-    }
     
     deinit {
         self.expired = true
