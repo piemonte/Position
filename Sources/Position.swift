@@ -785,7 +785,6 @@ extension PositionLocationManager {
 
 extension PositionLocationManager: CLLocationManagerDelegate {
     
-    @objc(locationManager:didUpdateLocations:)
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         self.executeClosureAsyncOnRequestQueueIfNecessary {
             // update last location
@@ -795,7 +794,6 @@ extension PositionLocationManager: CLLocationManagerDelegate {
         }
     }
     
-    @objc(locationManager:didFailWithError:)
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         self.executeClosureAsyncOnRequestQueueIfNecessary {
             self.completeLocationRequests(withError: error)
@@ -805,7 +803,6 @@ extension PositionLocationManager: CLLocationManagerDelegate {
         }
     }
     
-    @objc(locationManager:didChangeAuthorizationStatus:)
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         self.executeClosureAsyncOnRequestQueueIfNecessary {
             switch status {
@@ -821,30 +818,24 @@ extension PositionLocationManager: CLLocationManagerDelegate {
         }
     }
     
-    @objc(locationManager:didDetermineState:forRegion:)
     func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
     }
     
-    @objc(locationManager:didVisit:)
     func locationManager(_ manager: CLLocationManager, didVisit visit: CLVisit) {
         self.delegate?.positionLocationManager(self, didVisit: visit)
     }
 
-    @objc(locationManager:didEnterRegion:)
     func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
         // TODO low power geofence tracking
     }
     
-    @objc(locationManager:didExitRegion:)
     func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
         // TODO low power geofence tracking
     }
     
-    @objc(locationManager:didStartMonitoringForRegion:)
     func locationManager(_ manager: CLLocationManager, didStartMonitoringFor region: CLRegion) {
     }
 
-    @objc(locationManager:monitoringDidFailForRegion:withError:)
     func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
         self.delegate?.positionLocationManager(self, didFailWithError: error)
     }
