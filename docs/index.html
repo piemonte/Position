@@ -13,7 +13,7 @@
     <a title="Position  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">Position Docs</a> (79% documented)</p>
+        <p><a href="index.html">Position Docs</a> (78% documented)</p>
         <p class="header-right"><a href="https://github.com/piemonte/Position"><img src="img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -39,21 +39,21 @@
             <a href="Global Variables.html">Global Variables</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="Global Variables.html#/s:v8Position11ErrorDomainSS">ErrorDomain</a>
+                <a href="Global Variables.html#/s:8Position11ErrorDomainSSvp">ErrorDomain</a>
               </li>
               <li class="nav-group-task">
-                <a href="Global Variables.html#/s:v8Position19TimeFilter10MinutesSd">TimeFilter10Minutes</a>
+                <a href="Global Variables.html#/s:8Position19TimeFilter10MinutesSdvp">TimeFilter10Minutes</a>
               </li>
               <li class="nav-group-task">
-                <a href="Global Variables.html#/s:v8Position18TimeFilter5MinutesSd">TimeFilter5Minutes</a>
+                <a href="Global Variables.html#/s:8Position18TimeFilter5MinutesSdvp">TimeFilter5Minutes</a>
               </li>
               <li class="nav-group-task">
-                <a href="Global Variables.html#/s:v8Position14TimeFilterNoneSd">TimeFilterNone</a>
+                <a href="Global Variables.html#/s:8Position14TimeFilterNoneSdvp">TimeFilterNone</a>
               </li>
             </ul>
           </li>
           <li class="nav-group-name">
-            <a href="Enums.html">Enums</a>
+            <a href="Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a href="Enums/ErrorType.html">ErrorType</a>
@@ -75,10 +75,10 @@
             </ul>
           </li>
           <li class="nav-group-name">
-            <a href="Typealiases.html">Typealiases</a>
+            <a href="Typealiases.html">Type Aliases</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="Typealiases.html#/s:8Position24OneShotCompletionHandler">OneShotCompletionHandler</a>
+                <a href="Typealiases.html#/s:8Position24OneShotCompletionHandlera">OneShotCompletionHandler</a>
               </li>
             </ul>
           </li>
@@ -88,9 +88,9 @@
         <section>
           <section class="section">
             
-            <p><code>Position</code> is a very simple <a href="https://developer.apple.com/swift/">Swift</a> and efficient location positioning library for iOS.</p>
+            <p><code><a href="Classes/Position.html">Position</a></code> is a very simple <a href="https://developer.apple.com/swift/">Swift</a> and efficient location positioning library for iOS.</p>
 
-<p><a href="http://cocoadocs.org/docsets/Position/"><img src="https://img.shields.io/cocoapods/v/Position.svg?style=flat" alt="Pod Version"></a> <a href="https://travis-ci.org/piemonte/Position"><img src="https://travis-ci.org/piemonte/Position.svg?branch=master" alt="Build Status"></a></p>
+<p><a href="http://cocoadocs.org/docsets/Position/"><img src="https://img.shields.io/cocoapods/v/Position.svg?style=flat" alt="Pod Version"></a> <a href="https://travis-ci.org/piemonte/Position"><img src="https://travis-ci.org/piemonte/Position.svg?branch=master" alt="Build Status"></a> <a href="https://developer.apple.com/swift"><img src="https://img.shields.io/badge/language-swift%204.0-brightgreen.svg" alt="Swift Version"></a> <a href="https://github.com/piemonte/Position/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-lightgrey.svg" alt="GitHub license"></a></p>
 
 <table><thead>
 <tr>
@@ -100,7 +100,7 @@
 </thead><tbody>
 <tr>
 <td style="text-align: center">&#128038;</td>
-<td style="text-align: left"><a href="https://developer.apple.com/swift/">Swift 3</a></td>
+<td style="text-align: left"><a href="https://developer.apple.com/swift/">Swift 4</a></td>
 </tr>
 <tr>
 <td style="text-align: center">&#128301;</td>
@@ -127,23 +127,15 @@
 <td style="text-align: left">automatic low-power location tracking adjustment from battery monitoring setting</td>
 </tr>
 </tbody></table>
-<a href='#quick-start' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='quick-start'>Quick Start</h2>
+<h2 id='quick-start' class='heading'>Quick Start</h2>
 
-<p><code>Position</code> is available for installation using the Cocoa dependency manager <a href="http://cocoapods.org/">CocoaPods</a>. Alternatively, you can simply copy the <code>Position</code> source files into your Xcode project.</p>
-<a href='#xcode-8-amp-swift-3' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='xcode-8-amp-swift-3'>Xcode 8 &amp; Swift 3</h2>
+<p><code><a href="Classes/Position.html">Position</a></code> is available for installation using the Cocoa dependency manager <a href="http://cocoapods.org/">CocoaPods</a>. Alternatively, you can simply copy the <code><a href="Classes/Position.html">Position</a></code> source files into your Xcode project.</p>
 <pre class="highlight ruby"><code><span class="c1"># CocoaPods</span>
-<span class="n">pod</span> <span class="s2">"Position"</span><span class="p">,</span> <span class="s2">"~&gt; 0.1.0"</span>
-
-<span class="n">post_install</span> <span class="k">do</span> <span class="o">|</span><span class="n">installer</span><span class="o">|</span>
-  <span class="n">installer</span><span class="p">.</span><span class="nf">pods_project</span><span class="p">.</span><span class="nf">targets</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">target</span><span class="o">|</span>
-    <span class="n">target</span><span class="p">.</span><span class="nf">build_configurations</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
-      <span class="n">config</span><span class="p">.</span><span class="nf">build_settings</span><span class="p">[</span><span class="s1">'SWIFT_VERSION'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'3.0'</span>
-    <span class="k">end</span>
-  <span class="k">end</span>
-<span class="k">end</span>
+<span class="n">swift_version</span> <span class="o">=</span> <span class="s2">"4.0"</span>
+<span class="n">pod</span> <span class="s2">"Position"</span><span class="p">,</span> <span class="s2">"~&gt; 0.4.0"</span>
 
 <span class="c1"># Carthage</span>
-<span class="n">github</span> <span class="s2">"piemonte/Position"</span> <span class="o">~&gt;</span> <span class="mi">0</span><span class="o">.</span><span class="mi">1</span><span class="o">.</span><span class="mi">0</span>
+<span class="n">github</span> <span class="s2">"piemonte/Position"</span> <span class="o">~&gt;</span> <span class="mf">0.4</span><span class="o">.</span><span class="mi">0</span>
 
 <span class="c1"># SwiftPM</span>
 <span class="n">let</span> <span class="n">package</span> <span class="o">=</span> <span class="no">Package</span><span class="p">(</span>
@@ -152,9 +144,9 @@
     <span class="p">]</span>
 <span class="p">)</span>
 </code></pre>
-<a href='#usage' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='usage'>Usage</h2>
+<h2 id='usage' class='heading'>Usage</h2>
 
-<p>The sample project provides an example of how to integrate <code>Position</code>, otherwise you can follow these steps.</p>
+<p>The sample project provides an example of how to integrate <code><a href="Classes/Position.html">Position</a></code>, otherwise you can follow these steps.</p>
 
 <p>Ensure your app’s <code>Info.plist</code> file includes both a location usage description, required device capability “location-services”, and  required background mode (if necessary).</p>
 
@@ -196,10 +188,10 @@
 </code></pre>
 
 <p><strong>Remember</strong> when creating location-based apps, respect the privacy of your users and be responsible for how you use their location. This is especially true if your application requires location permission <code>kCLAuthorizationStatusAuthorizedAlways</code>.</p>
-<a href='#documentation' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='documentation'>Documentation</h2>
+<h2 id='documentation' class='heading'>Documentation</h2>
 
 <p>You can find <a href="https://piemonte.github.io/Position">the docs here</a>. Documentation is generated with <a href="https://github.com/realm/jazzy">jazzy</a> and hosted on <a href="https://pages.github.com">GitHub-Pages</a>.</p>
-<a href='#community' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='community'>Community</h2>
+<h2 id='community' class='heading'>Community</h2>
 
 <ul>
 <li>Need help? Use <a href="http://stackoverflow.com/questions/tagged/position-swift">Stack Overflow</a> with the tag ‘position-swift’.</li>
@@ -208,7 +200,7 @@
 <li>Feature idea? Open an <a href="https://github.com/piemonte/position/issues">issue</a>.</li>
 <li>Want to contribute? Submit a <a href="https://github.com/piemonte/position/pulls">pull request</a>.</li>
 </ul>
-<a href='#resources' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='resources'>Resources</h2>
+<h2 id='resources' class='heading'>Resources</h2>
 
 <ul>
 <li><a href="https://github.com/apple/swift-evolution">Swift Evolution</a></li>
@@ -216,15 +208,15 @@
 <li><a href="https://developer.apple.com/library/ios/documentation/CoreLocation/Reference/CoreLocation_Framework/index.html">Core Location Framework Reference</a></li>
 <li><a href="http://nshipster.com/core-location-in-ios-8/">Core Location in iOS 8</a></li>
 </ul>
-<a href='#license' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='license'>License</h2>
+<h2 id='license' class='heading'>License</h2>
 
 <p>Position is available under the MIT license, see the <a href="https://github.com/piemonte/Position/blob/master/LICENSE">LICENSE</a> file for more information.</p>
 
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2017 <a class="link" href="https://patrickpiemonte.com" target="_blank" rel="external">Patrick Piemonte</a>. All rights reserved. (Last updated: 2017-02-01)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.7.2</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2018 <a class="link" href="https://patrickpiemonte.com" target="_blank" rel="external">Patrick Piemonte</a>. All rights reserved. (Last updated: 2018-08-25)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

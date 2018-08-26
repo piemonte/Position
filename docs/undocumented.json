@@ -2,6 +2,13 @@
   "warnings": [
     {
       "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
+      "line": null,
+      "symbol": "PositionLocationManager",
+      "symbol_kind": "source.lang.swift.decl.extension",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
       "line": 47,
       "symbol": "LocationAuthorizationStatus.notDetermined",
       "symbol_kind": "source.lang.swift.decl.enumelement",
