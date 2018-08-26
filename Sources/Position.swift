@@ -497,10 +497,6 @@ extension Position: PositionLocationManagerDelegate {
     
 }
 
-// MARK: - types
-
-internal let OneShotRequestTimeOut: TimeInterval = 0.5 * 60.0
-
 // MARK: - PositionlocationManagerDelegate
 
 internal protocol PositionLocationManagerDelegate: AnyObject {
@@ -515,7 +511,8 @@ internal protocol PositionLocationManagerDelegate: AnyObject {
 
 // MARK: - constants
 
-private let PositionRequestQueueIdentifier = "PositionRequestQueue"
+private let OneShotRequestTimeOut: TimeInterval = 0.5 * 60.0
+private let PositionRequestQueueIdentifier = "PositionRequestQueueIdentifier"
 private let PositionRequestQueueSpecificKey = DispatchSpecificKey<()>()
 
 // MARK: - PositionLocationManager
@@ -706,16 +703,18 @@ extension PositionLocationManager {
         }
     }
     
-    // MARK - private methods
+}
+
+// MARK - private methods
+
+extension PositionLocationManager {
     
     // only called from the request queue
     internal func processLocationRequests() {
-        guard
-            self._locationRequests.count > 0
-        else {
-            self.executeClosureSyncOnMainQueueIfNecessary(withClosure: { 
+        guard self._locationRequests.count > 0 else {
+            DispatchQueue.main.async {
                 self.delegate?.positionLocationManager(self, didUpdateTrackingLocations: self.locations)
-            })
+            }
             return
         }
     
@@ -736,7 +735,7 @@ extension PositionLocationManager {
         for request in completeRequests {
             if request.completed == false {
                 request.completed = true
-                if request.expired == true {
+                if request.expired {
                     self.executeClosureSyncOnMainQueueIfNecessary {
                         request.completionHandler?(nil, NSError(domain: ErrorDomain, code: ErrorType.timedOut.rawValue, userInfo: nil))
                     }
@@ -769,9 +768,7 @@ extension PositionLocationManager {
     internal func completeLocationRequests(withError error: Error?) {
         for locationRequest in self._locationRequests {
             locationRequest.cancelRequest()
-            guard
-                let handler = locationRequest.completionHandler
-            else {
+            guard let handler = locationRequest.completionHandler else {
                 continue
             }
             
@@ -811,7 +808,7 @@ extension PositionLocationManager: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         self.executeClosureAsyncOnRequestQueueIfNecessary {
             self.completeLocationRequests(withError: error)
-            self.executeClosureSyncOnMainQueueIfNecessary {
+            DispatchQueue.main.async {
                 self.delegate?.positionLocationManager(self, didFailWithError: error)
             }
         }
@@ -826,7 +823,7 @@ extension PositionLocationManager: CLLocationManagerDelegate {
             default:
                 break
             }
-            self.executeClosureSyncOnMainQueueIfNecessary {
+            DispatchQueue.main.async {
                 self.delegate?.positionLocationManager(self, didChangeLocationAuthorizationStatus: self.locationServicesStatus)
             }
         }
