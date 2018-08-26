@@ -490,7 +490,7 @@ internal let OneShotRequestTimeOut: TimeInterval = 0.5 * 60.0
 
 // MARK: - PositionlocationManagerDelegate
 
-internal protocol PositionLocationManagerDelegate: NSObjectProtocol {
+internal protocol PositionLocationManagerDelegate: AnyObject {
     func positionLocationManager(_ positionLocationManager: PositionLocationManager, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus)
     func positionLocationManager(_ positionLocationManager: PositionLocationManager, didFailWithError error: Error?)
 
