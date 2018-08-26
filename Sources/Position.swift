@@ -643,7 +643,7 @@ extension PositionLocationManager {
             
         } else {
             
-            self.executeClosureAsyncOnMainQueueIfNecessary {
+            DispatchQueue.main.async {
                 let error = NSError(domain: ErrorDomain, code: ErrorType.restricted.rawValue, userInfo: nil)
                 completionHandler(nil, error)
             }
@@ -869,14 +869,6 @@ extension PositionLocationManager: CLLocationManagerDelegate {
 // MARK: - queues
 
 extension PositionLocationManager {
-    
-    internal func executeClosureAsyncOnMainQueueIfNecessary(withClosure closure: @escaping () -> Void) {
-        if Thread.isMainThread {
-            closure()
-        } else {
-            DispatchQueue.main.async(execute: closure)
-        }
-    }
     
     internal func executeClosureSyncOnMainQueueIfNecessary(withClosure closure: @escaping () -> Void) {
         if Thread.isMainThread {
