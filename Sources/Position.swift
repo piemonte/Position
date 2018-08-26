@@ -502,7 +502,7 @@ internal protocol PositionLocationManagerDelegate: AnyObject {
 // MARK: - constants
 
 private let PositionRequestQueueIdentifier = "PositionRequestQueue"
-private let PositionRequestQueueSpecificKey = DispatchSpecificKey<NSObject>()
+private let PositionRequestQueueSpecificKey = DispatchSpecificKey<()>()
 
 // MARK: - PositionLocationManager
 
@@ -545,7 +545,7 @@ internal class PositionLocationManager: NSObject {
     
     override init() {
         self._requestQueue = DispatchQueue(label: PositionRequestQueueIdentifier, autoreleaseFrequency: .workItem, target: DispatchQueue.global())
-        self._requestQueue.setSpecific(key: PositionRequestQueueSpecificKey, value: self._requestQueue)
+        self._requestQueue.setSpecific(key: PositionRequestQueueSpecificKey, value: ())
         self._locationManager = CLLocationManager()
 
         super.init()
@@ -864,7 +864,7 @@ extension PositionLocationManager {
     }
     
     internal func executeClosureAsyncOnRequestQueueIfNecessary(withClosure closure: @escaping () -> Void) {
-        if DispatchQueue.getSpecific(key: PositionRequestQueueSpecificKey) == self._requestQueue {
+        if DispatchQueue.getSpecific(key: PositionRequestQueueSpecificKey) != nil {
             closure()
         } else {
             self._requestQueue.async(execute: closure)
@@ -930,7 +930,7 @@ internal class PositionLocationRequest {
 extension PositionLocationRequest {
     
     @objc internal func handleTimerFired(_ timer: Timer) {
-        DispatchQueue.main.async(execute: {
+        DispatchQueue.main.async {
             self.expired = true
             self._expirationTimer?.invalidate()
             self._expirationTimer = nil
@@ -939,7 +939,7 @@ extension PositionLocationRequest {
                 timeOutHandler()
                 self.timeOutHandler = nil
             }
-        })
+        }
     }
     
 }
