@@ -92,13 +92,13 @@ public enum ErrorType: Int, CustomStringConvertible {
 }
 
 /// Position location authorization protocol.
-public protocol PositionAuthorizationObserver: NSObjectProtocol {
+public protocol PositionAuthorizationObserver: AnyObject {
     /// Permission change authorization status, this may be triggered on application resume if the app settings have changed
     func position(_ position: Position, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus)
 }
 
 /// Position location updates protocol.
-public protocol PositionObserver: NSObjectProtocol {
+public protocol PositionObserver: AnyObject {
     
     /// Location positioning one-shot updates
     func position(_ position: Position, didUpdateOneShotLocation location: CLLocation?)
