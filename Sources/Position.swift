@@ -69,11 +69,11 @@ public enum LocationAuthorizationStatus: Int, CustomStringConvertible {
 }
 
 /// Position error domain
-public let ErrorDomain = "PositionErrorDomain"
+public let PositionErrorDomain = "PositionErrorDomain"
 
 /// Possible error types
-public enum ErrorType: Int, CustomStringConvertible {
-    case timedOut = 0
+public enum PositionErrorType: Error, CustomStringConvertible {
+    case timedOut
     case restricted
     case cancelled
     
@@ -117,6 +117,8 @@ public protocol PositionObserver: AnyObject {
 
 /// 🛰 Position, Swift and efficient location positioning.
 public class Position {
+    
+    // MARK: - types
     
     // MARK: - singleton
     
@@ -640,8 +642,7 @@ extension PositionLocationManager {
         } else {
             
             DispatchQueue.main.async {
-                let error = NSError(domain: ErrorDomain, code: ErrorType.restricted.rawValue, userInfo: nil)
-                completionHandler(nil, error)
+                completionHandler(nil, PositionErrorType.restricted)
             }
             
         }
@@ -737,7 +738,7 @@ extension PositionLocationManager {
                 request.completed = true
                 if request.expired {
                     self.executeClosureSyncOnMainQueueIfNecessary {
-                        request.completionHandler?(nil, NSError(domain: ErrorDomain, code: ErrorType.timedOut.rawValue, userInfo: nil))
+                        request.completionHandler?(nil, PositionErrorType.timedOut)
                     }
                 } else {
                     self.executeClosureSyncOnMainQueueIfNecessary {
@@ -773,7 +774,7 @@ extension PositionLocationManager {
             }
             
             self.executeClosureSyncOnMainQueueIfNecessary {
-                handler(nil, error ?? NSError(domain: ErrorDomain, code: ErrorType.cancelled.rawValue, userInfo: nil))
+                handler(nil, error ?? PositionErrorType.cancelled)
             }
         }
     }
@@ -818,7 +819,7 @@ extension PositionLocationManager: CLLocationManagerDelegate {
         self.executeClosureAsyncOnRequestQueueIfNecessary {
             switch status {
             case .denied, .restricted:
-                self.completeLocationRequests(withError: NSError(domain: ErrorDomain, code: ErrorType.restricted.rawValue, userInfo: nil))
+                self.completeLocationRequests(withError: PositionErrorType.restricted)
                 break
             default:
                 break
