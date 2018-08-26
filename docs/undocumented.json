@@ -45,21 +45,21 @@
     {
       "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
       "line": 76,
-      "symbol": "ErrorType.timedOut",
+      "symbol": "PositionErrorType.timedOut",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
       "line": 77,
-      "symbol": "ErrorType.restricted",
+      "symbol": "PositionErrorType.restricted",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
       "line": 78,
-      "symbol": "ErrorType.cancelled",
+      "symbol": "PositionErrorType.cancelled",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
