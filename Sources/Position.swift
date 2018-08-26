@@ -116,7 +116,7 @@ public protocol PositionObserver: AnyObject {
 }
 
 /// 🛰 Position, Swift and efficient location positioning.
-public class Position: NSObject {
+public class Position {
     
     // MARK: - singleton
     
@@ -190,10 +190,9 @@ public class Position: NSObject {
     internal var _updating: Bool = false
     
     // MARK: - object lifecycle
-    
-    override init() {
+
+    init() {
         self._positionLocationManager = PositionLocationManager()
-        super.init()
         self._positionLocationManager.delegate = self
         
         self.addBatteryObservers()
@@ -550,7 +549,7 @@ internal class PositionLocationManager: NSObject {
         self._locationManager = CLLocationManager()
 
         super.init()
-        
+
         self._locationManager.delegate = self
         self._locationManager.desiredAccuracy = kCLLocationAccuracyBest
         self._locationManager.pausesLocationUpdatesAutomatically = false
@@ -876,7 +875,7 @@ extension PositionLocationManager {
 
 // MARK: - PositionLocationRequest
 
-internal class PositionLocationRequest: NSObject {
+internal class PositionLocationRequest {
 
     // MARK: - types
     
