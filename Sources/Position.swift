@@ -331,9 +331,11 @@ extension Position {
     
     internal func checkAuthorizationStatusForServices() {
         if self._positionLocationManager.locationServicesStatus == .denied {
-            if let observers = self._observers?.allObjects as? [PositionAuthorizationObserver] {
-                for observer in observers {
-                    observer.position(self, didChangeLocationAuthorizationStatus: .denied)
+            DispatchQueue.main.async {
+                if let observers = self._observers?.allObjects as? [PositionAuthorizationObserver] {
+                    for observer in observers {
+                        observer.position(self, didChangeLocationAuthorizationStatus: .denied)
+                    }
                 }
             }
         }
@@ -434,51 +436,63 @@ extension Position {
 extension Position: PositionLocationManagerDelegate {
 
     internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
-        if let observers = self._observers?.allObjects as? [PositionAuthorizationObserver] {
-            for observer in observers {
-                observer.position(self, didChangeLocationAuthorizationStatus: status)
+        DispatchQueue.main.async {
+            if let observers = self._observers?.allObjects as? [PositionAuthorizationObserver] {
+                for observer in observers {
+                    observer.position(self, didChangeLocationAuthorizationStatus: status)
+                }
             }
         }
     }
     
     internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didFailWithError error: Error?) {
-        if let observers = self._observers?.allObjects as? [PositionObserver] {
-            for observer in observers {
-                observer.position(self, didFailWithError : error)
+        DispatchQueue.main.async {
+            if let observers = self._observers?.allObjects as? [PositionObserver] {
+                for observer in observers {
+                    observer.position(self, didFailWithError : error)
+                }
             }
         }
     }
     
     internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didUpdateOneShotLocation location: CLLocation?) {
-        if let observers = self._observers?.allObjects as? [PositionObserver] {
-            for observer in observers {
-                observer.position(self, didUpdateOneShotLocation: location)
+        DispatchQueue.main.async {
+            if let observers = self._observers?.allObjects as? [PositionObserver] {
+                for observer in observers {
+                    observer.position(self, didUpdateOneShotLocation: location)
+                }
             }
         }
     }
     
     internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didUpdateTrackingLocations locations: [CLLocation]?) {
-        if let observers = self._observers?.allObjects as? [PositionObserver] {
-            for observer in observers {
-                observer.position(self, didUpdateTrackingLocations: locations)
+        DispatchQueue.main.async {
+            if let observers = self._observers?.allObjects as? [PositionObserver] {
+                for observer in observers {
+                    observer.position(self, didUpdateTrackingLocations: locations)
+                }
             }
         }
     }
     
     internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didUpdateFloor floor: CLFloor) {
-        if let observers = self._observers?.allObjects as? [PositionObserver] {
-            for observer in observers {
-                observer.position(self, didUpdateFloor: floor)
+        DispatchQueue.main.async {
+            if let observers = self._observers?.allObjects as? [PositionObserver] {
+                for observer in observers {
+                    observer.position(self, didUpdateFloor: floor)
+                }
             }
         }
     }
 
     internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didVisit visit: CLVisit?) {
-        if let observers = self._observers?.allObjects as? [PositionObserver] {
-            for observer in observers {
-                observer.position(self, didVisit: visit)
+        DispatchQueue.main.async {
+            if let observers = self._observers?.allObjects as? [PositionObserver] {
+                for observer in observers {
+                    observer.position(self, didVisit: visit)
+                }
             }
-        }        
+        }
     }
     
 }
