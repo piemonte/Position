@@ -56,7 +56,7 @@ public class ViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        self.view.autoresizingMask = ([UIViewAutoresizing.flexibleWidth, UIViewAutoresizing.flexibleHeight])
+        self.view.autoresizingMask = ([.flexibleWidth, .flexibleHeight])
         self.view.backgroundColor = UIColor.lightGray
         
         self._mapView = MKMapView(frame: self.view.bounds)
@@ -69,7 +69,7 @@ public class ViewController: UIViewController {
         self._locationLookupButton = UIButton(frame: CGRect(x: 0, y: self.view.bounds.size.height - buttonHeight, width: self.view.bounds.size.width, height: buttonHeight))
         if let locationButton = self._locationLookupButton {
             locationButton.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
-            locationButton.setTitle("Request Location", for: UIControlState())
+            locationButton.setTitle("Request Location", for: UIControl.State())
             locationButton.titleLabel!.font = UIFont(name: "AvenirNext-Medium", size: 16)
             locationButton.backgroundColor = UIColor(red: 115/255, green: 57/255, blue: 248/255, alpha: 1)
             locationButton.addTarget(self, action: #selector(handleOneShotLocationButton(_:)), for: .touchUpInside)
@@ -78,7 +78,7 @@ public class ViewController: UIViewController {
         
         self._permissionLocationButton = UIButton(frame: CGRect(x: 0, y: self.view.bounds.size.height - (buttonHeight * 2), width: self.view.bounds.size.width, height: buttonHeight))
         if let permissionLocationButton = self._permissionLocationButton {
-            permissionLocationButton.setTitle("Request Permission", for: UIControlState())
+            permissionLocationButton.setTitle("Request Permission", for: UIControl.State())
             permissionLocationButton.titleLabel!.font = UIFont(name: "AvenirNext-Medium", size: 16)
             permissionLocationButton.backgroundColor = UIColor(red: 50/255, green: 153/255, blue: 252/255, alpha: 1)
             permissionLocationButton.addTarget(self, action: #selector(handleLocationPermissionButton(_:)), for: .touchUpInside)
