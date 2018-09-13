@@ -1,6 +1,6 @@
 `Position` is a [Swift](https://developer.apple.com/swift/) and efficient location positioning library for iOS.
 
-[![Pod Version](https://img.shields.io/cocoapods/v/Position.svg?style=flat)](http://cocoadocs.org/docsets/Position/) [![Build Status](https://travis-ci.org/piemonte/Position.svg?branch=master)](https://travis-ci.org/piemonte/Position) [![Swift Version](https://img.shields.io/badge/language-swift%204.0-brightgreen.svg)](https://developer.apple.com/swift) [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/piemonte/Position/blob/master/LICENSE)
+[![Pod Version](https://img.shields.io/cocoapods/v/Position.svg?style=flat)](http://cocoadocs.org/docsets/Position/) [![Build Status](https://travis-ci.org/piemonte/Position.svg?branch=master)](https://travis-ci.org/piemonte/Position) [![Swift Version](https://img.shields.io/badge/language-swift%204.2-brightgreen.svg)](https://developer.apple.com/swift) [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/piemonte/Position/blob/master/LICENSE)
 
 
 |  | Features |
@@ -12,6 +12,10 @@
 | &#127756; | distance and time-based filtering |
 | &#127745; | automatic low-power location tracking adjustment when backgrounded setting |
 | &#128267; | automatic low-power location tracking adjustment from battery monitoring setting |
+
+Need a different version of Swift?
+* `4.2` - Target your Podfile to the `swift4.2` branch
+* `4.0` - Target your Podfile to the latest release or master
 
 ## Quick Start
 
@@ -57,10 +61,10 @@ Have the component add itself as an observer and configure the appropriate setti
         super.viewDidLoad()
 
         // ...
-        
+
         Position.shared.addObserver(self)
         Position.shared.distanceFilter = 20
-        
+
         if Position.shared.locationServicesStatus == .allowedWhenInUse ||
            Position.shared.locationServicesStatus == .allowedAlways {
             Position.shared.performOneShotLocationUpdate(withDesiredAccuracy: 250) { (location, error) -> () in
@@ -106,4 +110,3 @@ You can find [the docs here](https://piemonte.github.io/Position). Documentation
 ## License
 
 Position is available under the MIT license, see the [LICENSE](https://github.com/piemonte/Position/blob/master/LICENSE) file for more information.
-

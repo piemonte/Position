@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'Position'
-  s.version = '0.5.0'
+  s.version = '0.6.0'
   s.license = 'MIT'
   s.summary = 'location positioning and tracking for iOS in Swift'
   s.homepage = 'https://github.com/piemonte/Position'
@@ -10,5 +10,5 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '10.0'
   s.source_files = 'Sources/*.swift'
   s.requires_arc = true
-  s.swift_version = '4.0'
+  s.swift_version = '4.2'
 end
