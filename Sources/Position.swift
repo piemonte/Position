@@ -353,6 +353,8 @@ extension Position {
                     break
                 case .unplugged,
                      .unknown:
+                    fallthrough
+                @unknown default:
                     let batteryLevel: Float = UIDevice.current.batteryLevel
                     if batteryLevel < 0.15 {
                         self._positionLocationManager.trackingDesiredAccuracyActive = kCLLocationAccuracyThreeKilometers
@@ -591,6 +593,8 @@ extension PositionLocationManager {
                     status = .denied
                     break
                 case .notDetermined:
+                    fallthrough
+                @unknown default:
                     status = .notDetermined
                     break
             }

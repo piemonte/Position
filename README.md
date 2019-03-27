@@ -5,7 +5,7 @@
 
 |  | Features |
 |:---------:|:---------------------------------------------------------------|
-| &#128038; | [Swift 4](https://developer.apple.com/swift/) |
+| &#128038; | [Swift 5](https://developer.apple.com/swift/) |
 | &#128301; | observer pattern support |
 | &#9732; | “one shot” closure based location requests ( more robust than iOS 9 CoreLocation API |
 | &#128274; | authorization check and response support |
@@ -14,8 +14,9 @@
 | &#128267; | automatic low-power location tracking adjustment from battery monitoring setting |
 
 Need a different version of Swift?
+* `5.0` - Target your Podfile to the latest release or master
 * `4.2` - Target your Podfile to the `swift4.2` branch
-* `4.0` - Target your Podfile to the latest release or master
+* `4.0` - Target your Podfile to the `swift4.0` branch
 
 ## Quick Start
 
@@ -23,11 +24,10 @@ Need a different version of Swift?
 
 ```ruby
 # CocoaPods
-swift_version = "4.0"
-pod "Position", "~> 0.4.0"
+pod "Position", "~> 0.5.0"
 
 # Carthage
-github "piemonte/Position" ~> 0.4.0
+github "piemonte/Position" ~> 0.5.0
 
 # SwiftPM
 let package = Package(
