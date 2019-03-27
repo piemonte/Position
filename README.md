@@ -24,10 +24,10 @@ Need a different version of Swift?
 
 ```ruby
 # CocoaPods
-pod "Position", "~> 0.5.0"
+pod "Position", "~> 0.7.0"
 
 # Carthage
-github "piemonte/Position" ~> 0.5.0
+github "piemonte/Position" ~> 0.7.0
 
 # SwiftPM
 let package = Package(
