@@ -14,7 +14,7 @@
     <a title="PositionObserver Protocol Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">Position Docs</a> (78% documented)</p>
+        <p><a href="../index.html">Position Docs</a> (77% documented)</p>
         <p class="header-right"><a href="https://github.com/piemonte/Position"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -65,6 +65,14 @@
             </ul>
           </li>
           <li class="nav-group-name">
+            <a href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Extensions/CLLocation.html">CLLocation</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
             <a href="../Protocols.html">Protocols</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
@@ -91,7 +99,7 @@
             <h1>PositionObserver</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">PositionObserver</span> <span class="p">:</span> <span class="kt">AnyObject</span></code></pre>
+                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">PositionObserver</span><span class="p">:</span> <span class="kt">AnyObject</span></code></pre>
 
                 </div>
               </div>
@@ -104,9 +112,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:8Position0A8ObserverP8positionyA2AC_So10CLLocationCSg24didUpdateOneShotLocationtF"></a>
+                    <a name="/s:8Position0A8ObserverP8position_24didUpdateOneShotLocationyA2AC_So10CLLocationCSgtF"></a>
                     <a name="//apple_ref/swift/Method/position(_:didUpdateOneShotLocation:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:8Position0A8ObserverP8positionyA2AC_So10CLLocationCSg24didUpdateOneShotLocationtF">position(_:didUpdateOneShotLocation:)</a>
+                    <a class="token" href="#/s:8Position0A8ObserverP8position_24didUpdateOneShotLocationyA2AC_So10CLLocationCSgtF">position(_:didUpdateOneShotLocation:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -121,7 +129,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">position</span><span class="p">(</span><span class="n">_</span> <span class="nv">position</span><span class="p">:</span> <span class="kt"><a href="../Classes/Position.html">Position</a></span><span class="p">,</span> <span class="n">didUpdateOneShotLocation</span> <span class="nv">location</span><span class="p">:</span> <span class="kt">CLLocation</span><span class="p">?)</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">position</span><span class="p">(</span><span class="n">_</span> <span class="nv">position</span><span class="p">:</span> <span class="kt"><a href="../Classes/Position.html">Position</a></span><span class="p">,</span> <span class="n">didUpdateOneShotLocation</span> <span class="nv">location</span><span class="p">:</span> <span class="kt">CLLocation</span><span class="p">?)</span></code></pre>
 
                         </div>
                       </div>
@@ -131,9 +139,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:8Position0A8ObserverP8positionyA2AC_SaySo10CLLocationCGSg26didUpdateTrackingLocationstF"></a>
+                    <a name="/s:8Position0A8ObserverP8position_26didUpdateTrackingLocationsyA2AC_SaySo10CLLocationCGSgtF"></a>
                     <a name="//apple_ref/swift/Method/position(_:didUpdateTrackingLocations:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:8Position0A8ObserverP8positionyA2AC_SaySo10CLLocationCGSg26didUpdateTrackingLocationstF">position(_:didUpdateTrackingLocations:)</a>
+                    <a class="token" href="#/s:8Position0A8ObserverP8position_26didUpdateTrackingLocationsyA2AC_SaySo10CLLocationCGSgtF">position(_:didUpdateTrackingLocations:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -148,7 +156,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">position</span><span class="p">(</span><span class="n">_</span> <span class="nv">position</span><span class="p">:</span> <span class="kt"><a href="../Classes/Position.html">Position</a></span><span class="p">,</span> <span class="n">didUpdateTrackingLocations</span> <span class="nv">locations</span><span class="p">:</span> <span class="p">[</span><span class="kt">CLLocation</span><span class="p">]?)</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">position</span><span class="p">(</span><span class="n">_</span> <span class="nv">position</span><span class="p">:</span> <span class="kt"><a href="../Classes/Position.html">Position</a></span><span class="p">,</span> <span class="n">didUpdateTrackingLocations</span> <span class="nv">locations</span><span class="p">:</span> <span class="p">[</span><span class="kt">CLLocation</span><span class="p">]?)</span></code></pre>
 
                         </div>
                       </div>
@@ -158,9 +166,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:8Position0A8ObserverP8positionyA2AC_So7CLFloorC14didUpdateFloortF"></a>
+                    <a name="/s:8Position0A8ObserverP8position_14didUpdateFlooryA2AC_So7CLFloorCtF"></a>
                     <a name="//apple_ref/swift/Method/position(_:didUpdateFloor:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:8Position0A8ObserverP8positionyA2AC_So7CLFloorC14didUpdateFloortF">position(_:didUpdateFloor:)</a>
+                    <a class="token" href="#/s:8Position0A8ObserverP8position_14didUpdateFlooryA2AC_So7CLFloorCtF">position(_:didUpdateFloor:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -175,7 +183,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">position</span><span class="p">(</span><span class="n">_</span> <span class="nv">position</span><span class="p">:</span> <span class="kt"><a href="../Classes/Position.html">Position</a></span><span class="p">,</span> <span class="n">didUpdateFloor</span> <span class="nv">floor</span><span class="p">:</span> <span class="kt">CLFloor</span><span class="p">)</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">PositionObserver</span><span class="p">:</span> <span class="kt">AnyObject</span></code></pre>
 
                         </div>
                       </div>
@@ -185,9 +193,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:8Position0A8ObserverP8positionyA2AC_So7CLVisitCSg8didVisittF"></a>
+                    <a name="/s:8Position0A8ObserverP8position_8didVisityA2AC_So7CLVisitCSgtF"></a>
                     <a name="//apple_ref/swift/Method/position(_:didVisit:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:8Position0A8ObserverP8positionyA2AC_So7CLVisitCSg8didVisittF">position(_:didVisit:)</a>
+                    <a class="token" href="#/s:8Position0A8ObserverP8position_8didVisityA2AC_So7CLVisitCSgtF">position(_:didVisit:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -202,7 +210,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">position</span><span class="p">(</span><span class="n">_</span> <span class="nv">position</span><span class="p">:</span> <span class="kt"><a href="../Classes/Position.html">Position</a></span><span class="p">,</span> <span class="n">didVisit</span> <span class="nv">visit</span><span class="p">:</span> <span class="kt">CLVisit</span><span class="p">?)</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">PositionObserver</span><span class="p">:</span> <span class="kt">AnyObject</span></code></pre>
 
                         </div>
                       </div>
@@ -212,9 +220,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:8Position0A8ObserverP8positionyA2AC_Sd24didChangeDesiredAccurarytF"></a>
+                    <a name="/s:8Position0A8ObserverP8position_24didChangeDesiredAccuraryyA2AC_SdtF"></a>
                     <a name="//apple_ref/swift/Method/position(_:didChangeDesiredAccurary:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:8Position0A8ObserverP8positionyA2AC_Sd24didChangeDesiredAccurarytF">position(_:didChangeDesiredAccurary:)</a>
+                    <a class="token" href="#/s:8Position0A8ObserverP8position_24didChangeDesiredAccuraryyA2AC_SdtF">position(_:didChangeDesiredAccurary:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -229,7 +237,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">position</span><span class="p">(</span><span class="n">_</span> <span class="nv">position</span><span class="p">:</span> <span class="kt"><a href="../Classes/Position.html">Position</a></span><span class="p">,</span> <span class="n">didChangeDesiredAccurary</span> <span class="nv">desiredAccuracy</span><span class="p">:</span> <span class="kt">Double</span><span class="p">)</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">position</span><span class="p">(</span><span class="n">_</span> <span class="nv">position</span><span class="p">:</span> <span class="kt"><a href="../Classes/Position.html">Position</a></span><span class="p">,</span> <span class="n">didChangeDesiredAccurary</span> <span class="nv">desiredAccuracy</span><span class="p">:</span> <span class="kt">Double</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -239,9 +247,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:8Position0A8ObserverP8positionyA2AC_s5Error_pSg011didFailWithD0tF"></a>
+                    <a name="/s:8Position0A8ObserverP8position_16didFailWithErroryA2AC_s0G0_pSgtF"></a>
                     <a name="//apple_ref/swift/Method/position(_:didFailWithError:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:8Position0A8ObserverP8positionyA2AC_s5Error_pSg011didFailWithD0tF">position(_:didFailWithError:)</a>
+                    <a class="token" href="#/s:8Position0A8ObserverP8position_16didFailWithErroryA2AC_s0G0_pSgtF">position(_:didFailWithError:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -256,7 +264,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">position</span><span class="p">(</span><span class="n">_</span> <span class="nv">position</span><span class="p">:</span> <span class="kt"><a href="../Classes/Position.html">Position</a></span><span class="p">,</span> <span class="n">didFailWithError</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?)</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">position</span><span class="p">(</span><span class="n">_</span> <span class="nv">position</span><span class="p">:</span> <span class="kt"><a href="../Classes/Position.html">Position</a></span><span class="p">,</span> <span class="n">didFailWithError</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?)</span></code></pre>
 
                         </div>
                       </div>
@@ -268,8 +276,8 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2018 <a class="link" href="https://patrickpiemonte.com" target="_blank" rel="external">Patrick Piemonte</a>. All rights reserved. (Last updated: 2018-08-25)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2019 <a class="link" href="https://patrickpiemonte.com" target="_blank" rel="external">Patrick Piemonte</a>. All rights reserved. (Last updated: 2019-04-03)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.4</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

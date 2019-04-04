@@ -14,7 +14,7 @@
     <a title="Position Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">Position Docs</a> (78% documented)</p>
+        <p><a href="../index.html">Position Docs</a> (77% documented)</p>
         <p class="header-right"><a href="https://github.com/piemonte/Position"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -65,6 +65,14 @@
             </ul>
           </li>
           <li class="nav-group-name">
+            <a href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Extensions/CLLocation.html">CLLocation</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
             <a href="../Protocols.html">Protocols</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
@@ -91,7 +99,7 @@
             <h1>Position</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">Position</span></code></pre>
+                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">Position</span></code></pre>
 
                 </div>
               </div>
@@ -128,7 +136,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">shared</span><span class="p">:</span> <span class="kt">Position</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">shared</span> <span class="o">=</span> <span class="kt">Position</span><span class="p">()</span></code></pre>
 
                         </div>
                       </div>
@@ -166,7 +174,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">distanceFilter</span><span class="p">:</span> <span class="kt">Double</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">distanceFilter</span><span class="p">:</span> <span class="kt">Double</span></code></pre>
 
                         </div>
                       </div>
@@ -193,7 +201,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">timeFilter</span><span class="p">:</span> <span class="kt">TimeInterval</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">timeFilter</span><span class="p">:</span> <span class="kt">TimeInterval</span></code></pre>
 
                         </div>
                       </div>
@@ -220,7 +228,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">adjustLocationUseWhenBackgrounded</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">adjustLocationUseWhenBackgrounded</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span></code></pre>
 
                         </div>
                       </div>
@@ -247,7 +255,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">adjustLocationUseFromBatteryLevel</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">adjustLocationUseFromBatteryLevel</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span></code></pre>
 
                         </div>
                       </div>
@@ -274,7 +282,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">trackingDesiredAccuracyWhenActive</span><span class="p">:</span> <span class="kt">Double</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">trackingDesiredAccuracyWhenActive</span><span class="p">:</span> <span class="kt">Double</span></code></pre>
 
                         </div>
                       </div>
@@ -301,7 +309,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">trackingDesiredAccuracyWhenInBackground</span><span class="p">:</span> <span class="kt">Double</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">trackingDesiredAccuracyWhenInBackground</span><span class="p">:</span> <span class="kt">Double</span></code></pre>
 
                         </div>
                       </div>
@@ -312,19 +320,50 @@
             </div>
             <div class="task-group">
               <div class="task-name-container">
-                <a name="/observers"></a>
-                <a name="//apple_ref/swift/Section/observers" class="dashAnchor"></a>
-                <a href="#/observers">
-                  <h3 class="section-name">observers</h3>
+                <a name="/object%20lifecycle"></a>
+                <a name="//apple_ref/swift/Section/object lifecycle" class="dashAnchor"></a>
+                <a href="#/object%20lifecycle">
+                  <h3 class="section-name">object lifecycle</h3>
                 </a>
               </div>
               <ul>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:8PositionAAC24addAuthorizationObserveryAA0acD0_pSgF"></a>
+                    <a name="/s:8PositionAACfd"></a>
+                    <a name="//apple_ref/swift/Method/deinit" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8PositionAACfd">deinit</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">Position</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:8PositionAAC24addAuthorizationObserveryyAA0acD0_pSgF"></a>
                     <a name="//apple_ref/swift/Method/addAuthorizationObserver(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:8PositionAAC24addAuthorizationObserveryAA0acD0_pSgF">addAuthorizationObserver(_:)</a>
+                    <a class="token" href="#/s:8PositionAAC24addAuthorizationObserveryyAA0acD0_pSgF">addAuthorizationObserver(_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -339,7 +378,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">addAuthorizationObserver</span><span class="p">(</span><span class="n">_</span> <span class="nv">observer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/PositionAuthorizationObserver.html">PositionAuthorizationObserver</a></span><span class="p">?)</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">addAuthorizationObserver</span><span class="p">(</span><span class="n">_</span> <span class="nv">observer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/PositionAuthorizationObserver.html">PositionAuthorizationObserver</a></span><span class="p">?)</span></code></pre>
 
                         </div>
                       </div>
@@ -368,9 +407,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:8PositionAAC27removeAuthorizationObserveryAA0acD0_pSgF"></a>
+                    <a name="/s:8PositionAAC27removeAuthorizationObserveryyAA0acD0_pSgF"></a>
                     <a name="//apple_ref/swift/Method/removeAuthorizationObserver(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:8PositionAAC27removeAuthorizationObserveryAA0acD0_pSgF">removeAuthorizationObserver(_:)</a>
+                    <a class="token" href="#/s:8PositionAAC27removeAuthorizationObserveryyAA0acD0_pSgF">removeAuthorizationObserver(_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -385,7 +424,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">removeAuthorizationObserver</span><span class="p">(</span><span class="n">_</span> <span class="nv">observer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/PositionAuthorizationObserver.html">PositionAuthorizationObserver</a></span><span class="p">?)</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">removeAuthorizationObserver</span><span class="p">(</span><span class="n">_</span> <span class="nv">observer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/PositionAuthorizationObserver.html">PositionAuthorizationObserver</a></span><span class="p">?)</span></code></pre>
 
                         </div>
                       </div>
@@ -414,9 +453,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:8PositionAAC11addObserveryAA0aC0_pSgF"></a>
+                    <a name="/s:8PositionAAC11addObserveryyAA0aC0_pSgF"></a>
                     <a name="//apple_ref/swift/Method/addObserver(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:8PositionAAC11addObserveryAA0aC0_pSgF">addObserver(_:)</a>
+                    <a class="token" href="#/s:8PositionAAC11addObserveryyAA0aC0_pSgF">addObserver(_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -431,7 +470,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">addObserver</span><span class="p">(</span><span class="n">_</span> <span class="nv">observer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/PositionObserver.html">PositionObserver</a></span><span class="p">?)</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">addObserver</span><span class="p">(</span><span class="n">_</span> <span class="nv">observer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/PositionObserver.html">PositionObserver</a></span><span class="p">?)</span></code></pre>
 
                         </div>
                       </div>
@@ -460,9 +499,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:8PositionAAC14removeObserveryAA0aC0_pSgF"></a>
+                    <a name="/s:8PositionAAC14removeObserveryyAA0aC0_pSgF"></a>
                     <a name="//apple_ref/swift/Method/removeObserver(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:8PositionAAC14removeObserveryAA0aC0_pSgF">removeObserver(_:)</a>
+                    <a class="token" href="#/s:8PositionAAC14removeObserveryyAA0aC0_pSgF">removeObserver(_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -477,7 +516,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">removeObserver</span><span class="p">(</span><span class="n">_</span> <span class="nv">observer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/PositionObserver.html">PositionObserver</a></span><span class="p">?)</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">removeObserver</span><span class="p">(</span><span class="n">_</span> <span class="nv">observer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/PositionObserver.html">PositionObserver</a></span><span class="p">?)</span></code></pre>
 
                         </div>
                       </div>
@@ -506,13 +545,6 @@
               </ul>
             </div>
             <div class="task-group">
-              <div class="task-name-container">
-                <a name="/permissions%20and%20access"></a>
-                <a name="//apple_ref/swift/Section/permissions and access" class="dashAnchor"></a>
-                <a href="#/permissions%20and%20access">
-                  <h3 class="section-name">permissions and access</h3>
-                </a>
-              </div>
               <ul>
                 <li class="item">
                   <div>
@@ -534,7 +566,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">locationServicesStatus</span><span class="p">:</span> <span class="kt"><a href="../Enums/LocationAuthorizationStatus.html">LocationAuthorizationStatus</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">locationServicesStatus</span><span class="p">:</span> <span class="kt"><a href="../Enums/LocationAuthorizationStatus.html">LocationAuthorizationStatus</a></span></code></pre>
 
                         </div>
                       </div>
@@ -561,7 +593,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">requestAlwaysLocationAuthorization</span><span class="p">()</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">requestAlwaysLocationAuthorization</span><span class="p">()</span></code></pre>
 
                         </div>
                       </div>
@@ -588,7 +620,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">requestWhenInUseLocationAuthorization</span><span class="p">()</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">requestWhenInUseLocationAuthorization</span><span class="p">()</span></code></pre>
 
                         </div>
                       </div>
@@ -598,13 +630,6 @@
               </ul>
             </div>
             <div class="task-group">
-              <div class="task-name-container">
-                <a name="/location"></a>
-                <a name="//apple_ref/swift/Section/location" class="dashAnchor"></a>
-                <a href="#/location">
-                  <h3 class="section-name">location</h3>
-                </a>
-              </div>
               <ul>
                 <li class="item">
                   <div>
@@ -626,7 +651,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">location</span><span class="p">:</span> <span class="kt">CLLocation</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">location</span><span class="p">:</span> <span class="kt">CLLocation</span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -653,7 +678,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">updatingLocation</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">updatingLocation</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
 
                         </div>
                       </div>
@@ -663,9 +688,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:8PositionAAC28performOneShotLocationUpdateySd19withDesiredAccuracy_ySo10CLLocationCSg_s5Error_pSgtc17completionHandlertF"></a>
+                    <a name="/s:8PositionAAC28performOneShotLocationUpdate19withDesiredAccuracy17completionHandlerySd_ySo10CLLocationCSg_s5Error_pSgtctF"></a>
                     <a name="//apple_ref/swift/Method/performOneShotLocationUpdate(withDesiredAccuracy:completionHandler:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:8PositionAAC28performOneShotLocationUpdateySd19withDesiredAccuracy_ySo10CLLocationCSg_s5Error_pSgtc17completionHandlertF">performOneShotLocationUpdate(withDesiredAccuracy:completionHandler:)</a>
+                    <a class="token" href="#/s:8PositionAAC28performOneShotLocationUpdate19withDesiredAccuracy17completionHandlerySd_ySo10CLLocationCSg_s5Error_pSgtctF">performOneShotLocationUpdate(withDesiredAccuracy:completionHandler:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -680,7 +705,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">performOneShotLocationUpdate</span><span class="p">(</span><span class="n">withDesiredAccuracy</span> <span class="nv">desiredAccuracy</span><span class="p">:</span> <span class="kt">Double</span><span class="p">,</span> <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Typealiases.html#/s:8Position24OneShotCompletionHandlera">OneShotCompletionHandler</a></span><span class="p">)</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">performOneShotLocationUpdate</span><span class="p">(</span><span class="n">withDesiredAccuracy</span> <span class="nv">desiredAccuracy</span><span class="p">:</span> <span class="kt">Double</span><span class="p">,</span> <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Typealiases.html#/s:8Position24OneShotCompletionHandlera">OneShotCompletionHandler</a></span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -738,7 +763,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">startUpdating</span><span class="p">()</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">startUpdating</span><span class="p">()</span></code></pre>
 
                         </div>
                       </div>
@@ -765,7 +790,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">stopUpdating</span><span class="p">()</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">stopUpdating</span><span class="p">()</span></code></pre>
 
                         </div>
                       </div>
@@ -777,8 +802,8 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2018 <a class="link" href="https://patrickpiemonte.com" target="_blank" rel="external">Patrick Piemonte</a>. All rights reserved. (Last updated: 2018-08-25)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2019 <a class="link" href="https://patrickpiemonte.com" target="_blank" rel="external">Patrick Piemonte</a>. All rights reserved. (Last updated: 2019-04-03)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.4</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

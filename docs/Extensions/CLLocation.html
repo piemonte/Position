@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>PositionErrorType Enumeration Reference</title>
+    <title>CLLocation Extension Reference</title>
     <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
     <meta charset='utf-8'>
@@ -10,8 +10,8 @@
     
   </head>
   <body>
-    <a name="//apple_ref/swift/Enum/PositionErrorType" class="dashAnchor"></a>
-    <a title="PositionErrorType Enumeration Reference"></a>
+    <a name="//apple_ref/swift/Extension/CLLocation" class="dashAnchor"></a>
+    <a title="CLLocation Extension Reference"></a>
     <header>
       <div class="content-wrapper">
         <p><a href="../index.html">Position Docs</a> (77% documented)</p>
@@ -22,7 +22,7 @@
       <p id="breadcrumbs">
         <a href="../index.html">Position Reference</a>
         <img id="carat" src="../img/carat.png" />
-        PositionErrorType Enumeration Reference
+        CLLocation Extension Reference
       </p>
     </div>
     <div class="content-wrapper">
@@ -96,15 +96,8 @@
       <article class="main-content">
         <section>
           <section class="section">
-            <h1>PositionErrorType</h1>
-              <div class="declaration">
-                <div class="language">
-                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">PositionErrorType</span><span class="p">:</span> <span class="kt">Error</span><span class="p">,</span> <span class="kt">CustomStringConvertible</span></code></pre>
-
-                </div>
-              </div>
-            <p>Possible error types</p>
-
+            <h1>CLLocation</h1>
+            
           </section>
           <section class="section task-group-section">
             <div class="task-group">
@@ -112,9 +105,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:8Position0A9ErrorTypeO8timedOutyA2CmF"></a>
-                    <a name="//apple_ref/swift/Element/timedOut" class="dashAnchor"></a>
-                    <a class="token" href="#/s:8Position0A9ErrorTypeO8timedOutyA2CmF">timedOut</a>
+                    <a name="/s:So10CLLocationC8PositionE18locationCoordinate11withBearing14distanceMeters6originSo0A12Coordinate2DVSd_SdAItFZ"></a>
+                    <a name="//apple_ref/swift/Method/locationCoordinate(withBearing:distanceMeters:origin:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So10CLLocationC8PositionE18locationCoordinate11withBearing14distanceMeters6originSo0A12Coordinate2DVSd_SdAItFZ">locationCoordinate(withBearing:distanceMeters:origin:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -122,30 +115,73 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Calculates the location coordinate for a given bearing and distance from an origin.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">PositionErrorType</span><span class="p">:</span> <span class="kt">Error</span><span class="p">,</span> <span class="kt">CustomStringConvertible</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kd">func</span> <span class="nf">locationCoordinate</span><span class="p">(</span><span class="n">withBearing</span> <span class="nv">bearingDegrees</span><span class="p">:</span> <span class="kt">Double</span><span class="p">,</span> <span class="nv">distanceMeters</span><span class="p">:</span> <span class="kt">Double</span><span class="p">,</span> <span class="nv">origin</span><span class="p">:</span> <span class="kt">CLLocationCoordinate2D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">CLLocationCoordinate2D</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>bearingDegrees</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Bearing in degrees</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>distanceMeters</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Distance in meters</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>origin</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Coordinate from which the result is calculated</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Location coordinate at the bearing and distance from origin coordinate.</p>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:8Position0A9ErrorTypeO10restrictedyA2CmF"></a>
-                    <a name="//apple_ref/swift/Element/restricted" class="dashAnchor"></a>
-                    <a class="token" href="#/s:8Position0A9ErrorTypeO10restrictedyA2CmF">restricted</a>
+                    <a name="/s:So10CLLocationC8PositionE5vCard4name10Foundation3URLVSgSS_tF"></a>
+                    <a name="//apple_ref/swift/Method/vCard(name:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So10CLLocationC8PositionE5vCard4name10Foundation3URLVSgSS_tF">vCard(name:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -153,77 +189,20 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Creates a Virtual Contact File (VCF) or vCard for the location.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">PositionErrorType</span><span class="p">:</span> <span class="kt">Error</span><span class="p">,</span> <span class="kt">CustomStringConvertible</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">vCard</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"Location"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">URL</span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:8Position0A9ErrorTypeO9cancelledyA2CmF"></a>
-                    <a name="//apple_ref/swift/Element/cancelled" class="dashAnchor"></a>
-                    <a class="token" href="#/s:8Position0A9ErrorTypeO9cancelledyA2CmF">cancelled</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">PositionErrorType</span><span class="p">:</span> <span class="kt">Error</span><span class="p">,</span> <span class="kt">CustomStringConvertible</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:s23CustomStringConvertibleP11descriptionSSvp"></a>
-                    <a name="//apple_ref/swift/Property/description" class="dashAnchor"></a>
-                    <a class="token" href="#/s:s23CustomStringConvertibleP11descriptionSSvp">description</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">description</span><span class="p">:</span> <span class="kt">String</span></code></pre>
-
-                        </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Local file path URL.</p>
                       </div>
                     </section>
                   </div>
