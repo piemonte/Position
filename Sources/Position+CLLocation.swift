@@ -1,5 +1,5 @@
 //
-//  CLLocation+Position.swift
+//  Position+CLLocation.swift
 //
 //  Created by patrick piemonte on 3/1/15.
 //
