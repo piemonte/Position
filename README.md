@@ -1,13 +1,15 @@
-`Position` is a [Swift](https://developer.apple.com/swift/) and efficient location positioning library for iOS.
+# `Position` is a lightweight and efficient location positioning library for iOS.
 
 [![Pod Version](https://img.shields.io/cocoapods/v/Position.svg?style=flat)](http://cocoadocs.org/docsets/Position/) [![Build Status](https://travis-ci.org/piemonte/Position.svg?branch=master)](https://travis-ci.org/piemonte/Position) [![Swift Version](https://img.shields.io/badge/language-swift%205.0-brightgreen.svg)](https://developer.apple.com/swift) [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/piemonte/Position/blob/master/LICENSE)
 
 
 |  | Features |
 |:---------:|:---------------------------------------------------------------|
-| &#9732; | “one shot” closure based location requests |
+| &#9732; | “one shot” request-based architecture |
+| &#128752; | location tracking support |
 | &#128274; | authorization check and response support |
 | &#127756; | distance and time-based filtering |
+| &#128205; | vCard location sharing |
 | &#127745; | automatic low-power location tracking adjustment when backgrounded setting |
 | &#128267; | automatic low-power location tracking adjustment from battery monitoring setting |
 | &#128038; | [Swift 5](https://developer.apple.com/swift/) |
