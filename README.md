@@ -7,6 +7,7 @@
 |:---------:|:---------------------------------------------------------------|
 | &#9732; | “one shot” request-based architecture |
 | &#128752; | location tracking support |
+| &#128267; | Automatically manage tracking resources based on requests |
 | &#128274; | authorization check and response support |
 | &#127756; | distance and time-based filtering |
 | &#128205; | vCard location sharing |
