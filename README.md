@@ -89,6 +89,12 @@ Observe delegation, if necessary.
 
 **Remember** when creating location-based apps, respect the privacy of your users and be responsible for how you use their location. This is especially true if your application requires location permission `kCLAuthorizationStatusAuthorizedAlways`.
 
+To share a location using a vCard, simply call the vCard function on any location object instance.
+
+```swift
+   let fileURL = location.vCard()
+```
+
 ## Documentation
 
 You can find [the docs here](https://piemonte.github.io/Position). Documentation is generated with [jazzy](https://github.com/realm/jazzy) and hosted on [GitHub-Pages](https://pages.github.com).
