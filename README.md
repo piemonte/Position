@@ -1,4 +1,4 @@
-## `Position` is a lightweight and efficient location positioning library for iOS.
+`Position` is a lightweight and efficient location positioning library for iOS.
 
 [![Pod Version](https://img.shields.io/cocoapods/v/Position.svg?style=flat)](http://cocoadocs.org/docsets/Position/) [![Build Status](https://travis-ci.org/piemonte/Position.svg?branch=master)](https://travis-ci.org/piemonte/Position) [![Swift Version](https://img.shields.io/badge/language-swift%205.0-brightgreen.svg)](https://developer.apple.com/swift) [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/piemonte/Position/blob/master/LICENSE)
 
