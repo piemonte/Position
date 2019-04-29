@@ -13,6 +13,7 @@
 | &#128205; | vCard location sharing |
 | &#127745; | automatic low-power location tracking adjustment when backgrounded setting |
 | &#128267; | automatic low-power location tracking adjustment from battery monitoring setting |
+| &#128301; | multiple component observer support |
 | &#128038; | [Swift 5](https://developer.apple.com/swift/) |
 
 Need a different version of Swift?
