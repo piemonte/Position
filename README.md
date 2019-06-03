@@ -17,9 +17,9 @@
 | &#128038; | [Swift 5](https://developer.apple.com/swift/) |
 
 Need a different version of Swift?
+
 * `5.0` - Target your Podfile to the latest release or master
 * `4.2` - Target your Podfile to the `swift4.2` branch
-* `4.0` - Target your Podfile to the `swift4.0` branch
 
 ## Quick Start
 
