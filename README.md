@@ -5,16 +5,15 @@
 
 |  | Features |
 |:---------:|:---------------------------------------------------------------|
-| &#9732; | “one shot” request-based architecture |
+| &#9732; | “one shot” customizable location requests |
+| &#127756; | distance and time-based location filtering |
 | &#128752; | location tracking support |
-| &#128202; | Automatically manage tracking resources based on requests |
-| &#128274; | authorization check and response support |
-| &#127756; | distance and time-based filtering |
+| &#128202; | automatically manage energy resources based on tracking |
+| &#128274; | permission check and response support |
 | &#128205; | vCard location sharing |
 | &#127745; | automatic low-power location tracking adjustment when backgrounded setting |
 | &#128267; | automatic low-power location tracking adjustment from battery monitoring setting |
-| &#128301; | multiple component observer support |
-| &#128038; | [Swift 5](https://developer.apple.com/swift/) |
+| &#128301; | multiple component observer-based architecture |
 
 Need a different version of Swift?
 
