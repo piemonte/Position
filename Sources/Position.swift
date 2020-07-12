@@ -300,21 +300,7 @@ extension Position {
 // MARK: - location
 
 extension Position {
-    
-    /// Last determined location
-    public var location: CLLocation? {
-        get {
-            return self._positionLocationManager.locations?.first
-        }
-    }
-    
-    /// `true` when location services are updating
-    public var updatingLocation: Bool {
-        get {
-            return self._positionLocationManager.updatingLocation == true || self._positionLocationManager.updatingLowPowerLocation == true
-        }
-    }
-    
+
     /// Triggers a single location request at a specific desired accuracy regardless of any other location tracking configuration or requests.
     ///
     /// - Parameters:
@@ -498,7 +484,10 @@ extension Position: PositionLocationManagerDelegate {
     
 }
 
-// MARK: - PositionlocationManagerDelegate
+// MARK: -
+// MARK: -
+
+// MARK: - PositionLocationManagerDelegate
 
 internal protocol PositionLocationManagerDelegate: AnyObject {
     func positionLocationManager(_ positionLocationManager: PositionLocationManager, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus)
@@ -544,8 +533,8 @@ internal class PositionLocationManager: NSObject {
     
     internal var locations: [CLLocation]?
 
-    internal var updatingLocation: Bool = false
-    internal var updatingLowPowerLocation: Bool = false
+    internal var isUpdatingLocation: Bool = false
+    internal var isUpdatingLowPowerLocation: Bool = false
 
     // MARK: - ivars
     
@@ -633,10 +622,10 @@ extension PositionLocationManager {
                 self._locationManager.distanceFilter = kCLDistanceFilterNone
                 
                 // activate location to process request
-                if self.updatingLocation == false {
+                if self.isUpdatingLocation == false {
                     self.startUpdating()
                     // flag signals to turn off updating once complete
-                    self.updatingLocation = false
+                    self.isUpdatingLocation = false
                 }
             }
             
@@ -653,7 +642,7 @@ extension PositionLocationManager {
                  .allowedWhenInUse:
                 self._locationManager.startUpdatingLocation()
                 self._locationManager.startMonitoringVisits()
-                self.updatingLocation = true
+                self.isUpdatingLocation = true
                 self.updateLocationManagerStateIfNeeded()
                 fallthrough
             default:
@@ -665,10 +654,10 @@ extension PositionLocationManager {
         switch self.locationServicesStatus {
             case .allowedAlways,
                  .allowedWhenInUse:
-                if self.updatingLocation == true {
+                if self.isUpdatingLocation == true {
                     self._locationManager.stopUpdatingLocation()
                     self._locationManager.stopMonitoringVisits()
-                    self.updatingLocation = false
+                    self.isUpdatingLocation = false
                     self.updateLocationManagerStateIfNeeded()
                 }
                 fallthrough
@@ -682,7 +671,7 @@ extension PositionLocationManager {
         switch status {
             case .allowedAlways, .allowedWhenInUse:
                 self._locationManager.startMonitoringSignificantLocationChanges()
-                self.updatingLowPowerLocation = true
+                self.isUpdatingLowPowerLocation = true
                 self.updateLocationManagerStateIfNeeded()
                 fallthrough
             default:
@@ -695,7 +684,7 @@ extension PositionLocationManager {
         switch status {
             case .allowedAlways, .allowedWhenInUse:
                 self._locationManager.stopMonitoringSignificantLocationChanges()
-                self.updatingLowPowerLocation = false
+                self.isUpdatingLowPowerLocation = false
                 self.updateLocationManagerStateIfNeeded()
                 fallthrough
             default:
@@ -753,18 +742,18 @@ extension PositionLocationManager {
         }
         
         let pendingRequests: [PositionLocationRequest] = self._locationRequests.filter { (request) -> Bool in
-            request.completed == false
+            request.isCompleted == false
         }
         self._locationRequests = pendingRequests
 
         if self._locationRequests.count == 0 {
             self.updateLocationManagerStateIfNeeded()
             
-            if self.updatingLocation == false {
+            if self.isUpdatingLocation == false {
                 self.stopUpdating()
             }
             
-            if self.updatingLowPowerLocation == false {
+            if self.isUpdatingLowPowerLocation == false {
                 self.stopLowPowerUpdating()
             }
         }
@@ -786,9 +775,9 @@ extension PositionLocationManager {
     internal func updateLocationManagerStateIfNeeded() {
         // when not processing requests, set desired accuracy appropriately
         if self._locationRequests.count > 0 {
-            if self.updatingLocation == true {
+            if self.isUpdatingLocation == true {
                 self._locationManager.desiredAccuracy = self.trackingDesiredAccuracyActive
-            } else if self.updatingLowPowerLocation == true {
+            } else if self.isUpdatingLowPowerLocation == true {
                 self._locationManager.desiredAccuracy = self.trackingDesiredAccuracyBackground
             }
             
@@ -842,11 +831,9 @@ extension PositionLocationManager: CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
-        // TODO low power geofence tracking
     }
     
     func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
-        // TODO low power geofence tracking
     }
     
     func locationManager(_ manager: CLLocationManager, didStartMonitoringFor region: CLRegion) {
@@ -893,14 +880,13 @@ internal class PositionLocationRequest {
     internal var desiredAccuracy: Double = kCLLocationAccuracyBest
     internal var lifespan: TimeInterval = PositionLocationManager.OneShotRequestTimeOut {
         didSet {
-            self.expired = false
+            self.isExpired = false
             self._expirationTimer?.invalidate()
             self._expirationTimer = Timer.scheduledTimer(timeInterval: self.lifespan, target: self, selector: #selector(handleTimerFired(_:)), userInfo: nil, repeats: false)
         }
     }
-    
-    internal var completed: Bool = false
-    internal var expired: Bool = false
+    internal var isCompleted: Bool = false
+    internal var isExpired: Bool = false
 
     internal var timeOutHandler: TimeOutCompletionHandler?
     internal var completionHandler: Position.OneShotCompletionHandler?
