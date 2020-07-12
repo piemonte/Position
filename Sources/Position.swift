@@ -32,16 +32,6 @@ import CoreLocation
 
 // MARK: - types
 
-/// Completion handler for one-shot location requests
-public typealias OneShotCompletionHandler = (_: CLLocation?, _: Error?) -> ()
-
-/// Time based filter constant
-public let TimeFilterNone: TimeInterval = 0.0
-/// Time based filter constant
-public let TimeFilter5Minutes: TimeInterval = 5.0 * 60.0
-/// Time based filter constant
-public let TimeFilter10Minutes: TimeInterval = 10.0 * 60.0
-
 /// Location authorization status
 public enum LocationAuthorizationStatus: Int, CustomStringConvertible {
     case notDetermined = 0
@@ -117,6 +107,16 @@ public class Position {
     
     // MARK: - types
     
+    /// Completion handler for one-shot location requests
+    public typealias OneShotCompletionHandler = (Swift.Result<CLLocation, Error>) -> Void
+
+    /// Time based filter constant
+    public static let TimeFilterNone: TimeInterval = 0.0
+    /// Time based filter constant
+    public static let TimeFilter5Minutes: TimeInterval = 5.0 * 60.0
+    /// Time based filter constant
+    public static let TimeFilter10Minutes: TimeInterval = 10.0 * 60.0
+
     // MARK: - singleton
     
     /// Shared singleton
@@ -496,15 +496,15 @@ internal protocol PositionLocationManagerDelegate: AnyObject {
     func positionLocationManager(_ positionLocationManager: PositionLocationManager, didVisit visit: CLVisit?)
 }
 
-// MARK: - constants
-
-private let OneShotRequestTimeOut: TimeInterval = 0.5 * 60.0
-private let PositionRequestQueueIdentifier = "PositionRequestQueueIdentifier"
-private let PositionRequestQueueSpecificKey = DispatchSpecificKey<()>()
-
 // MARK: - PositionLocationManager
 
 internal class PositionLocationManager: NSObject {
+
+    // MARK: - types
+    
+    internal static let OneShotRequestTimeOut: TimeInterval = 0.5 * 60.0
+    internal static let RequestQueueIdentifier = "PositionRequestQueueIdentifier"
+    internal static let RequestQueueSpecificKey = DispatchSpecificKey<()>()
 
     internal weak var delegate: PositionLocationManagerDelegate?
     
@@ -599,14 +599,14 @@ extension PositionLocationManager {
 
 extension PositionLocationManager {
    
-    internal func performOneShotLocationUpdate(withDesiredAccuracy desiredAccuracy: Double, completionHandler: @escaping OneShotCompletionHandler) {
+    internal func performOneShotLocationUpdate(withDesiredAccuracy desiredAccuracy: Double, completionHandler: Position.OneShotCompletionHandler? = nil) {
         if self.locationServicesStatus == .allowedAlways ||
             self.locationServicesStatus == .allowedWhenInUse {
             
             self.executeClosureAsyncOnRequestQueueIfNecessary {
                 let request = PositionLocationRequest()
                 request.desiredAccuracy = desiredAccuracy
-                request.lifespan = OneShotRequestTimeOut
+                request.lifespan = PositionLocationManager.OneShotRequestTimeOut
                 request.timeOutHandler = {
                     self.processLocationRequests()
                 }
@@ -627,11 +627,9 @@ extension PositionLocationManager {
             }
             
         } else {
-            
             DispatchQueue.main.async {
-                completionHandler(nil, PositionErrorType.restricted)
+                completionHandler?(.failure(PositionErrorType.restricted))
             }
-            
         }
     }
     
@@ -710,9 +708,7 @@ extension PositionLocationManager {
             // check if a request completed, meaning expired or met horizontal accuracy
             //print("desiredAccuracy \(request.desiredAccuracy) horizontal \(self.location?.horizontalAccuracy)")
             if let location = self.locations?.first {
-                guard
-                    request.expired == true || location.horizontalAccuracy < request.desiredAccuracy
-                else {
+                guard request.isExpired == true || location.horizontalAccuracy < request.desiredAccuracy else {
                     return false
                 }
                 return true
@@ -721,15 +717,22 @@ extension PositionLocationManager {
         }
         
         for request in completeRequests {
-            if request.completed == false {
-                request.completed = true
-                if request.expired {
+            guard request.isCompleted == false else {
+                continue
+            }
+            request.isCompleted = true
+            if request.isExpired {
+                self.executeClosureSyncOnMainQueueIfNecessary {
+                    request.completionHandler?(.failure(PositionErrorType.timedOut))
+                }
+            } else {
+                if let location = self.locations?.first {
                     self.executeClosureSyncOnMainQueueIfNecessary {
-                        request.completionHandler?(nil, PositionErrorType.timedOut)
+                        request.completionHandler?(.success(location))
                     }
                 } else {
                     self.executeClosureSyncOnMainQueueIfNecessary {
-                        request.completionHandler?(self.locations?.first, nil)
+                        request.completionHandler?(.failure(PositionErrorType.timedOut))
                     }
                 }
             }
