@@ -886,12 +886,12 @@ internal class PositionLocationRequest {
 
     // MARK: - types
     
-    internal typealias TimeOutCompletionHandler = () -> (Void)
+    internal typealias TimeOutCompletionHandler = () -> Void
 
     // MARK: - properties
     
     internal var desiredAccuracy: Double = kCLLocationAccuracyBest
-    internal var lifespan: TimeInterval = OneShotRequestTimeOut {
+    internal var lifespan: TimeInterval = PositionLocationManager.OneShotRequestTimeOut {
         didSet {
             self.expired = false
             self._expirationTimer?.invalidate()
@@ -912,7 +912,7 @@ internal class PositionLocationRequest {
     // MARK: - object lifecycle
     
     deinit {
-        self.expired = true
+        self.isExpired = true
         self._expirationTimer?.invalidate()
         self._expirationTimer = nil
         
@@ -923,7 +923,7 @@ internal class PositionLocationRequest {
     // MARK: - funcs
 
     internal func cancelRequest() {
-        self.expired = true
+        self.isExpired = true
         self._expirationTimer?.invalidate()
         self._expirationTimer = nil
 
@@ -938,14 +938,14 @@ extension PositionLocationRequest {
     
     @objc internal func handleTimerFired(_ timer: Timer) {
         DispatchQueue.main.async {
-            self.expired = true
+            self.isExpired = true
             self._expirationTimer?.invalidate()
             self._expirationTimer = nil
             
             if let timeOutHandler = self.timeOutHandler {
                 timeOutHandler()
-                self.timeOutHandler = nil
             }
+            self.timeOutHandler = nil
         }
     }
     
