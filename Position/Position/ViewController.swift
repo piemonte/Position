@@ -124,14 +124,18 @@ extension ViewController {
         let position = Position.shared
         if position.locationServicesStatus == .allowedWhenInUse ||
            position.locationServicesStatus == .allowedAlways {
-            position.performOneShotLocationUpdate(withDesiredAccuracy: 150) { (location, error) -> () in
-                if let pos = location {
-                    if pos.horizontalAccuracy > 0 {
-                        let region = MKCoordinateRegion(center: pos.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
+            position.performOneShotLocationUpdate(withDesiredAccuracy: 150) { (result) -> () in
+                switch result {
+                case .success(let location):
+                    if location.horizontalAccuracy > 0 {
+                        let region = MKCoordinateRegion(center: location.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
                         self._mapView?.setRegion(region, animated: true)
                     }
+                    break
+                case .failure:
+                    //print("one shot locatiString(describing: on update \(location) error \(error)")
+                    break
                 }
-                //print("one shot locatiString(describing: on update \(location) error \(error)")
             }
         } else if position.locationServicesStatus == .notAvailable {
             //print("location is not available")
