@@ -100,6 +100,7 @@ public protocol PositionObserver: AnyObject {
 
     /// Error handling
     func position(_ position: Position, didFailWithError error: Error?)
+    
 }
 
 /// 🛰 Position, Swift and efficient location positioning.
@@ -189,7 +190,7 @@ open class Position {
     }
 
     /// Last determined location
-    public var location: CLLocation? {
+    public var lastLocation: CLLocation? {
         get {
             return self._positionLocationManager.locations?.first
         }
@@ -197,15 +198,15 @@ open class Position {
     
     // MARK: - ivars
     
-    internal var _authorizationObservers: NSHashTable<AnyObject>?
-    internal var _observers: NSHashTable<AnyObject>?
-    internal var _positionLocationManager: PositionLocationManager
-    internal var _updating: Bool = false
+    internal private(set) var _authorizationObservers: NSHashTable<AnyObject>?
+    internal private(set) var _observers: NSHashTable<AnyObject>?
+    
+    internal private(set) var _positionLocationManager: PositionLocationManager = PositionLocationManager()
+    internal private(set) var _updating: Bool = false
     
     // MARK: - object lifecycle
 
     public init() {
-        self._positionLocationManager = PositionLocationManager()
         self._positionLocationManager.delegate = self
         
         self.addBatteryObservers()
@@ -225,7 +226,7 @@ extension Position {
     /// Adds an authorization observer.
     ///
     /// - Parameter observer: Observing instance.
-    public func addAuthorizationObserver(_ observer: PositionAuthorizationObserver?) {
+    public func addAuthorizationObserver(_ observer: PositionAuthorizationObserver) {
         if self._authorizationObservers == nil {
             self._authorizationObservers = NSHashTable.weakObjects()
         }
@@ -238,7 +239,7 @@ extension Position {
     /// Removes an authorization observer.
     ///
     /// - Parameter observer: Observing instance.
-    public func removeAuthorizationObserver(_ observer: PositionAuthorizationObserver?) {
+    public func removeAuthorizationObserver(_ observer: PositionAuthorizationObserver) {
         if self._authorizationObservers?.contains(observer) == true {
             self._authorizationObservers?.remove(observer)
         }
@@ -250,7 +251,7 @@ extension Position {
     /// Adds a position observer.
     ///
     /// - Parameter observer: Observing instance.
-    public func addObserver(_ observer: PositionObserver?) {
+    public func addObserver(_ observer: PositionObserver) {
         if self._observers == nil {
             self._observers = NSHashTable.weakObjects()
         }
@@ -263,7 +264,7 @@ extension Position {
     /// Removes a position observer.
     ///
     /// - Parameter observer: Observing instance.
-    public func removeObserver(_ observer: PositionObserver?) {
+    public func removeObserver(_ observer: PositionObserver) {
         if self._observers?.contains(observer) == true {
             self._observers?.remove(observer)
         }
@@ -489,7 +490,7 @@ extension Position: PositionLocationManagerDelegate {
 }
 
 // MARK: -
-// MARK: -
+// MARK: - Internal
 
 // MARK: - PositionLocationManagerDelegate
 
@@ -509,8 +510,7 @@ internal class PositionLocationManager: NSObject {
 
     // MARK: - types
     
-    internal static let OneShotRequestTimeOut: TimeInterval = 0.5 * 60.0
-    internal static let RequestQueueIdentifier = "PositionRequestQueueIdentifier"
+    internal static let OneShotRequestDefaultTimeOut: TimeInterval = 0.5 * 60.0
     internal static let RequestQueueSpecificKey = DispatchSpecificKey<()>()
 
     internal weak var delegate: PositionLocationManagerDelegate?
@@ -549,7 +549,7 @@ internal class PositionLocationManager: NSObject {
     // MARK: - object lifecycle
     
     public override init() {
-        self._requestQueue = DispatchQueue(label: PositionLocationManager.RequestQueueIdentifier, autoreleaseFrequency: .workItem, target: DispatchQueue.global())
+        self._requestQueue = DispatchQueue(label: "PositionLocationManagerRequestQueue", autoreleaseFrequency: .workItem, target: DispatchQueue.global())
         self._requestQueue.setSpecific(key: PositionLocationManager.RequestQueueSpecificKey, value: ())
 
         super.init()
@@ -557,6 +557,11 @@ internal class PositionLocationManager: NSObject {
         self._locationManager.delegate = self
         self._locationManager.desiredAccuracy = kCLLocationAccuracyBest
         self._locationManager.pausesLocationUpdatesAutomatically = false
+        if #available(iOSApplicationExtension 9.0, *) {
+            if CLLocationManager.backgroundCapabilitiesEnabled {
+                self._locationManager.allowsBackgroundLocationUpdates = true
+            }
+        }
     }
 }
 
@@ -612,7 +617,7 @@ extension PositionLocationManager {
             self.executeClosureAsyncOnRequestQueueIfNecessary {
                 let request = PositionLocationRequest()
                 request.desiredAccuracy = desiredAccuracy
-                request.lifespan = PositionLocationManager.OneShotRequestTimeOut
+                request.lifespan = PositionLocationManager.OneShotRequestDefaultTimeOut
                 request.timeOutHandler = {
                     self.processLocationRequests()
                 }
@@ -881,7 +886,7 @@ internal class PositionLocationRequest {
     // MARK: - properties
     
     internal var desiredAccuracy: Double = kCLLocationAccuracyBest
-    internal var lifespan: TimeInterval = PositionLocationManager.OneShotRequestTimeOut {
+    internal var lifespan: TimeInterval = PositionLocationManager.OneShotRequestDefaultTimeOut {
         didSet {
             self.isExpired = false
             self._expirationTimer?.invalidate()

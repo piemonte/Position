@@ -29,6 +29,17 @@
 import Foundation
 import CoreLocation
 
+extension CLLocationManager {
+    
+    public static var backgroundCapabilitiesEnabled: Bool {
+         guard let capabilities = Bundle.main.infoDictionary?["UIBackgroundModes"] as? [String] else {
+             return false
+         }
+         return capabilities.contains("location")
+     }
+    
+}
+
 extension CLLocation {
     
     /// Calculates the location coordinate for a given bearing and distance from an origin.

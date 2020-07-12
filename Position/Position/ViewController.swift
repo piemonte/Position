@@ -159,7 +159,6 @@ extension ViewController: PositionAuthorizationObserver {
 
 extension ViewController: PositionObserver {
 	
-    // location
     public func position(_ position: Position, didUpdateOneShotLocation location: CLLocation?) {
 //        print("position, one-shot location updated \(location)")
     }
@@ -180,7 +179,7 @@ extension ViewController: PositionObserver {
     
     // error handling
     public func position(_ position: Position, didFailWithError error: Error?) {
-//        print("position, failed with error \(error)")
+        print("position, failed with error \(error?.localizedDescription)")
     }
 
 }
