@@ -147,7 +147,7 @@ public class Position {
     /// When `true`, location will reduce power usage from adjusted accuracy when backgrounded.
     public var adjustLocationUseWhenBackgrounded: Bool = false {
         didSet {
-            if self._positionLocationManager.updatingLowPowerLocation == true {
+            if self._positionLocationManager.isUpdatingLowPowerLocation == true {
                 self._positionLocationManager.stopLowPowerUpdating()
                 self._positionLocationManager.startUpdating()
             }
@@ -178,6 +178,20 @@ public class Position {
         }
         set {
             self._positionLocationManager.trackingDesiredAccuracyBackground = newValue
+        }
+    }
+    
+    /// `true` when location services are updating
+    public var isUpdatingLocation: Bool {
+        get {
+            return self._positionLocationManager.isUpdatingLocation == true || self._positionLocationManager.isUpdatingLowPowerLocation == true
+        }
+    }
+
+    /// Last determined location
+    public var location: CLLocation? {
+        get {
+            return self._positionLocationManager.locations?.first
         }
     }
     
@@ -260,7 +274,7 @@ extension Position {
     
 }
 
-// MARK: - permissions and access
+// MARK: - authorization / permission
 
 extension Position {
 
@@ -306,7 +320,7 @@ extension Position {
     /// - Parameters:
     ///   - desiredAccuracy: Minimum accuracy to meet before for request.
     ///   - completionHandler: Completion handler for when the location is determined.
-    public func performOneShotLocationUpdate(withDesiredAccuracy desiredAccuracy: Double, completionHandler: @escaping OneShotCompletionHandler) {
+    public func performOneShotLocationUpdate(withDesiredAccuracy desiredAccuracy: Double, completionHandler: Position.OneShotCompletionHandler? = nil) {
         self._positionLocationManager.performOneShotLocationUpdate(withDesiredAccuracy: desiredAccuracy, completionHandler: completionHandler)
     }
 
