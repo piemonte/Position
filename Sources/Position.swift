@@ -68,9 +68,6 @@ public enum LocationAuthorizationStatus: Int, CustomStringConvertible {
     }
 }
 
-/// Position error domain
-public let PositionErrorDomain = "PositionErrorDomain"
-
 /// Possible error types
 public enum PositionErrorType: Error, CustomStringConvertible {
     case timedOut
