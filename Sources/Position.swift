@@ -889,7 +889,7 @@ internal class PositionLocationRequest {
     internal var expired: Bool = false
 
     internal var timeOutHandler: TimeOutCompletionHandler?
-    internal var completionHandler: OneShotCompletionHandler?
+    internal var completionHandler: Position.OneShotCompletionHandler?
     
     // MARK: - ivars
 
