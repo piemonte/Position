@@ -103,7 +103,7 @@ public protocol PositionObserver: AnyObject {
 }
 
 /// 🛰 Position, Swift and efficient location positioning.
-public class Position {
+open class Position {
     
     // MARK: - types
     
@@ -204,7 +204,7 @@ public class Position {
     
     // MARK: - object lifecycle
 
-    init() {
+    public init() {
         self._positionLocationManager = PositionLocationManager()
         self._positionLocationManager.delegate = self
         
@@ -368,7 +368,7 @@ extension Position {
 
 extension Position {
     
-    // application
+    // add / remove
     
     internal func addAppObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(handleApplicationDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: UIApplication.shared)
@@ -390,7 +390,9 @@ extension Position {
         NotificationCenter.default.removeObserver(self, name: UIDevice.batteryStateDidChangeNotification, object: UIApplication.shared)
     }
     
-    @objc internal func handleApplicationDidBecomeActive(_ notification: Notification) {
+    // handlers
+    
+    @objc fileprivate func handleApplicationDidBecomeActive(_ notification: Notification) {
         self.checkAuthorizationStatusForServices()
         
         // if position is not updating, don't modify state
@@ -404,7 +406,7 @@ extension Position {
         }        
     }
 
-    @objc internal func handleApplicationWillResignActive(_ notification: Notification) {
+    @objc fileprivate func handleApplicationWillResignActive(_ notification: Notification) {
         if self._updating == true {
             return
         }
@@ -416,7 +418,7 @@ extension Position {
         self.updateLocationAccuracyIfNecessary()
     }
 
-    @objc internal func handleBatteryLevelChanged(_ notification: Notification) {
+    @objc fileprivate func handleBatteryLevelChanged(_ notification: Notification) {
         let batteryLevel = UIDevice.current.batteryLevel
         if batteryLevel < 0 {
             return
@@ -424,7 +426,7 @@ extension Position {
         self.updateLocationAccuracyIfNecessary()
     }
 
-    @objc internal func handleBatteryStateChanged(_ notification: Notification) {
+    @objc fileprivate func handleBatteryStateChanged(_ notification: Notification) {
         self.updateLocationAccuracyIfNecessary()
     }
     
@@ -476,8 +478,10 @@ extension Position: PositionLocationManagerDelegate {
 
     internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didVisit visit: CLVisit?) {
         DispatchQueue.main.async {
-            for observer in self._observers?.allObjects as? [PositionObserver] ?? [] {
-                observer.position(self, didVisit: visit)
+            if let observers = self._observers?.allObjects as? [PositionObserver] {
+                observers.forEach({ (observer) in
+                    observer.position(self, didVisit: visit)
+                })
             }
         }
     }
@@ -538,16 +542,15 @@ internal class PositionLocationManager: NSObject {
 
     // MARK: - ivars
     
-    internal var _locationManager: CLLocationManager 
+    internal var _locationManager: CLLocationManager = CLLocationManager()
     internal var _locationRequests: [PositionLocationRequest] = []
     internal var _requestQueue: DispatchQueue
     
     // MARK: - object lifecycle
     
-    override init() {
-        self._requestQueue = DispatchQueue(label: PositionRequestQueueIdentifier, autoreleaseFrequency: .workItem, target: DispatchQueue.global())
-        self._requestQueue.setSpecific(key: PositionRequestQueueSpecificKey, value: ())
-        self._locationManager = CLLocationManager()
+    public override init() {
+        self._requestQueue = DispatchQueue(label: PositionLocationManager.RequestQueueIdentifier, autoreleaseFrequency: .workItem, target: DispatchQueue.global())
+        self._requestQueue.setSpecific(key: PositionLocationManager.RequestQueueSpecificKey, value: ())
 
         super.init()
 
@@ -767,7 +770,7 @@ extension PositionLocationManager {
             }
             
             self.executeClosureSyncOnMainQueueIfNecessary {
-                handler(nil, error ?? PositionErrorType.cancelled)
+                handler(.failure(error ?? PositionErrorType.cancelled))
             }
         }
     }
@@ -858,7 +861,7 @@ extension PositionLocationManager {
     }
     
     internal func executeClosureAsyncOnRequestQueueIfNecessary(withClosure closure: @escaping () -> Void) {
-        if DispatchQueue.getSpecific(key: PositionRequestQueueSpecificKey) != nil {
+        if DispatchQueue.getSpecific(key: PositionLocationManager.RequestQueueSpecificKey) != nil {
             closure()
         } else {
             self._requestQueue.async(execute: closure)
