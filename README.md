@@ -10,7 +10,7 @@
 | &#128752; | location tracking support |
 | &#128202; | automatically manage energy resources based on tracking |
 | &#128274; | permission check and response support |
-| &#128205; | vCard location sharing |
+| &#128205; | vCard location creation |
 | &#127745; | automatic low-power location tracking adjustment when backgrounded setting |
 | &#128267; | automatic low-power location tracking adjustment from battery monitoring setting |
 | &#128301; | multiple component observer-based architecture |
@@ -110,10 +110,9 @@ You can find [the docs here](https://piemonte.github.io/Position). Documentation
 
 ## Resources
 
-* [Swift Evolution](https://github.com/apple/swift-evolution)
 * [Location and Maps Programming Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/Introduction/Introduction.html)
 * [Core Location Framework Reference](https://developer.apple.com/library/ios/documentation/CoreLocation/Reference/CoreLocation_Framework/index.html)
-* [Core Location in iOS 8](http://nshipster.com/core-location-in-ios-8/)
+* [Core Location – NSHipster](http://nshipster.com/core-location-in-ios-8/)
 
 ## License
 
