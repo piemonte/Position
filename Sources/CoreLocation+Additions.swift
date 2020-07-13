@@ -42,20 +42,23 @@ extension CLLocationManager {
 
 extension CLLocation {
     
-    /// Calculates the location coordinate for a given bearing and distance from an origin.
+    /// Radius of the Earth in meters. 6,371,000m.
+    public static let earthRadiusInMeters = Double(6371e3)
+    
+    /// Calculates the location coordinate for a given bearing and distance from this location as origin.
     ///
     /// - Parameters:
     ///   - bearingDegrees: Bearing in degrees
     ///   - distanceMeters: Distance in meters
     ///   - origin: Coordinate from which the result is calculated
     /// - Returns: Location coordinate at the bearing and distance from origin coordinate.
-    public class func locationCoordinate(withBearing bearingDegrees: Double, distanceMeters: Double, origin: CLLocationCoordinate2D) -> CLLocationCoordinate2D {
+    public func locationCoordinate(withBearing bearingDegrees: Double, distanceMeters: Double) -> CLLocationCoordinate2D {
         let distRadians = distanceMeters / (6372797.6)
         
         let rbearing = bearingDegrees * .pi / 180
         
-        let lat1 = origin.latitude * .pi / 180
-        let lon1 = origin.longitude * .pi / 180
+        let lat1 = self.coordinate.latitude * .pi / 180
+        let lon1 = self.coordinate.longitude * .pi / 180
         
         let lat2 = asin(sin(lat1) * cos(distRadians) + cos(lat1) * sin(distRadians) * cos(rbearing))
         let lon2 = lon1 + atan2(sin(rbearing) * sin(distRadians) * cos(lat1), cos(distRadians) - sin(lat1) * sin(lat2))
