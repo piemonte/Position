@@ -1,86 +1,86 @@
 {
   "warnings": [
     {
-      "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
-      "line": null,
-      "symbol": "PositionLocationManager",
-      "symbol_kind": "source.lang.swift.decl.extension",
+      "file": "/Users/piemonte/Source/Position/Sources/CoreLocation+Additions.swift",
+      "line": 34,
+      "symbol": "CLLocationManager.backgroundCapabilitiesEnabled",
+      "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
-      "line": 47,
+      "line": 37,
       "symbol": "LocationAuthorizationStatus.notDetermined",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
-      "line": 48,
+      "line": 38,
       "symbol": "LocationAuthorizationStatus.notAvailable",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
-      "line": 49,
+      "line": 39,
       "symbol": "LocationAuthorizationStatus.denied",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
-      "line": 50,
+      "line": 40,
       "symbol": "LocationAuthorizationStatus.allowedWhenInUse",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
-      "line": 51,
+      "line": 41,
       "symbol": "LocationAuthorizationStatus.allowedAlways",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
-      "line": 76,
+      "line": 63,
       "symbol": "PositionErrorType.timedOut",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
-      "line": 77,
+      "line": 64,
       "symbol": "PositionErrorType.restricted",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
-      "line": 78,
+      "line": 65,
       "symbol": "PositionErrorType.cancelled",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
-      "line": 108,
+      "line": 95,
       "symbol": "PositionObserver.position(_:didUpdateFloor:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
-      "line": 109,
+      "line": 96,
       "symbol": "PositionObserver.position(_:didVisit:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/piemonte/Source/Position/Sources/Position.swift",
-      "line": 204,
-      "symbol": "Position.deinit",
+      "line": 209,
+      "symbol": "Position.init()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     }

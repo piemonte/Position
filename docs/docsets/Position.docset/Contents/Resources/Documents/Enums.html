@@ -8,13 +8,22 @@
     <script src="js/jquery.min.js" defer></script>
     <script src="js/jazzy.js" defer></script>
     
+    <script src="js/lunr.min.js" defer></script>
+    <script src="js/typeahead.jquery.js" defer></script>
+    <script src="js/jazzy.search.js" defer></script>
   </head>
   <body>
+    <a name="//apple_ref/swift/Section/Enumerations" class="dashAnchor"></a>
     <a title="Enumerations  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">Position Docs</a> (77% documented)</p>
+        <p><a href="index.html">Position 0.7.1 Docs</a> (77% documented)</p>
         <p class="header-right"><a href="https://github.com/piemonte/Position"><img src="img/gh.png"/>View on GitHub</a></p>
+        <p class="header-right">
+          <form role="search" action="search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </p>
       </div>
     </header>
     <div class="content-wrapper">
@@ -36,23 +45,6 @@
             </ul>
           </li>
           <li class="nav-group-name">
-            <a href="Global Variables.html">Global Variables</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a href="Global Variables.html#/s:8Position0A11ErrorDomainSSvp">PositionErrorDomain</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Global Variables.html#/s:8Position19TimeFilter10MinutesSdvp">TimeFilter10Minutes</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Global Variables.html#/s:8Position18TimeFilter5MinutesSdvp">TimeFilter5Minutes</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Global Variables.html#/s:8Position14TimeFilterNoneSdvp">TimeFilterNone</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
             <a href="Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
@@ -69,6 +61,9 @@
               <li class="nav-group-task">
                 <a href="Extensions/CLLocation.html">CLLocation</a>
               </li>
+              <li class="nav-group-task">
+                <a href="Extensions/CLLocationManager.html">CLLocationManager</a>
+              </li>
             </ul>
           </li>
           <li class="nav-group-name">
@@ -79,14 +74,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="Protocols/PositionObserver.html">PositionObserver</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a href="Typealiases.html">Type Aliases</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a href="Typealiases.html#/s:8Position24OneShotCompletionHandlera">OneShotCompletionHandler</a>
               </li>
             </ul>
           </li>
@@ -104,9 +91,11 @@
               <div class="task-name-container">
                 <a name="/types"></a>
                 <a name="//apple_ref/swift/Section/types" class="dashAnchor"></a>
-                <a href="#/types">
-                  <h3 class="section-name">types</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/types"></a>
+                  <h3 class="section-name"><p>types</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -130,7 +119,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">LocationAuthorizationStatus</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="kt">CustomStringConvertible</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">LocationAuthorizationStatus</span> <span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="kt">CustomStringConvertible</span></code></pre>
 
                         </div>
                       </div>
@@ -158,7 +147,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">PositionErrorType</span><span class="p">:</span> <span class="kt">Error</span><span class="p">,</span> <span class="kt">CustomStringConvertible</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">PositionErrorType</span> <span class="p">:</span> <span class="kt">Error</span><span class="p">,</span> <span class="kt">CustomStringConvertible</span></code></pre>
 
                         </div>
                       </div>
@@ -170,8 +159,8 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="https://patrickpiemonte.com" target="_blank" rel="external">Patrick Piemonte</a>. All rights reserved. (Last updated: 2019-04-03)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.4</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2020 <a class="link" href="https://patrickpiemonte.com" target="_blank" rel="external">Patrick Piemonte</a>. All rights reserved. (Last updated: 2020-07-14)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

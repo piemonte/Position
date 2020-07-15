@@ -8,13 +8,21 @@
     <script src="js/jquery.min.js" defer></script>
     <script src="js/jazzy.js" defer></script>
     
+    <script src="js/lunr.min.js" defer></script>
+    <script src="js/typeahead.jquery.js" defer></script>
+    <script src="js/jazzy.search.js" defer></script>
   </head>
   <body>
     <a title="Position  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">Position Docs</a> (77% documented)</p>
+        <p><a href="index.html">Position 0.7.1 Docs</a> (77% documented)</p>
         <p class="header-right"><a href="https://github.com/piemonte/Position"><img src="img/gh.png"/>View on GitHub</a></p>
+        <p class="header-right">
+          <form role="search" action="search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </p>
       </div>
     </header>
     <div class="content-wrapper">
@@ -36,23 +44,6 @@
             </ul>
           </li>
           <li class="nav-group-name">
-            <a href="Global Variables.html">Global Variables</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a href="Global Variables.html#/s:8Position0A11ErrorDomainSSvp">PositionErrorDomain</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Global Variables.html#/s:8Position19TimeFilter10MinutesSdvp">TimeFilter10Minutes</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Global Variables.html#/s:8Position18TimeFilter5MinutesSdvp">TimeFilter5Minutes</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Global Variables.html#/s:8Position14TimeFilterNoneSdvp">TimeFilterNone</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
             <a href="Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
@@ -69,6 +60,9 @@
               <li class="nav-group-task">
                 <a href="Extensions/CLLocation.html">CLLocation</a>
               </li>
+              <li class="nav-group-task">
+                <a href="Extensions/CLLocationManager.html">CLLocationManager</a>
+              </li>
             </ul>
           </li>
           <li class="nav-group-name">
@@ -82,23 +76,15 @@
               </li>
             </ul>
           </li>
-          <li class="nav-group-name">
-            <a href="Typealiases.html">Type Aliases</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a href="Typealiases.html#/s:8Position24OneShotCompletionHandlera">OneShotCompletionHandler</a>
-              </li>
-            </ul>
-          </li>
         </ul>
       </nav>
       <article class="main-content">
         <section>
           <section class="section">
             
-            <p><code><a href="Classes/Position.html">Position</a></code> is a <a href="https://developer.apple.com/swift/">Swift</a> and efficient location positioning library for iOS.</p>
+            <p><code><a href="Classes/Position.html">Position</a></code> is a lightweight and efficient location positioning library for iOS.</p>
 
-<p><a href="http://cocoadocs.org/docsets/Position/"><img src="https://img.shields.io/cocoapods/v/Position.svg?style=flat" alt="Pod Version"></a> <a href="https://travis-ci.org/piemonte/Position"><img src="https://travis-ci.org/piemonte/Position.svg?branch=master" alt="Build Status"></a> <a href="https://developer.apple.com/swift"><img src="https://img.shields.io/badge/language-swift%205.0-brightgreen.svg" alt="Swift Version"></a> <a href="https://github.com/piemonte/Position/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-lightgrey.svg" alt="GitHub license"></a></p>
+<p><a href="https://travis-ci.com/piemonte/Position"><img src="https://travis-ci.com/piemonte/Position.svg?branch=master" alt="Build Status"></a> <a href="http://cocoadocs.org/docsets/Position/"><img src="https://img.shields.io/cocoapods/v/Position.svg?style=flat" alt="Pod Version"></a> <a href="https://developer.apple.com/swift"><img src="https://img.shields.io/badge/language-swift%205.0-brightgreen.svg" alt="Swift Version"></a> <a href="https://github.com/piemonte/Position/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-lightgrey.svg" alt="GitHub license"></a></p>
 
 <table><thead>
 <tr>
@@ -107,24 +93,28 @@
 </tr>
 </thead><tbody>
 <tr>
-<td style="text-align: center">&#128038;</td>
-<td style="text-align: left"><a href="https://developer.apple.com/swift/">Swift 5</a></td>
-</tr>
-<tr>
-<td style="text-align: center">&#128301;</td>
-<td style="text-align: left">observer pattern support</td>
-</tr>
-<tr>
 <td style="text-align: center">&#9732;</td>
-<td style="text-align: left">“one shot” closure based location requests ( more robust than iOS 9 CoreLocation API</td>
-</tr>
-<tr>
-<td style="text-align: center">&#128274;</td>
-<td style="text-align: left">authorization check and response support</td>
+<td style="text-align: left">“one shot” customizable location requests</td>
 </tr>
 <tr>
 <td style="text-align: center">&#127756;</td>
-<td style="text-align: left">distance and time-based filtering</td>
+<td style="text-align: left">distance and time-based location filtering</td>
+</tr>
+<tr>
+<td style="text-align: center">&#128752;</td>
+<td style="text-align: left">location tracking support</td>
+</tr>
+<tr>
+<td style="text-align: center">&#128202;</td>
+<td style="text-align: left">automatically manage energy resources based on tracking</td>
+</tr>
+<tr>
+<td style="text-align: center">&#128274;</td>
+<td style="text-align: left">permission check and response support</td>
+</tr>
+<tr>
+<td style="text-align: center">&#128205;</td>
+<td style="text-align: left">vCard location creation</td>
 </tr>
 <tr>
 <td style="text-align: center">&#127745;</td>
@@ -134,6 +124,10 @@
 <td style="text-align: center">&#128267;</td>
 <td style="text-align: left">automatic low-power location tracking adjustment from battery monitoring setting</td>
 </tr>
+<tr>
+<td style="text-align: center">&#128301;</td>
+<td style="text-align: left">multiple component observer-based architecture</td>
+</tr>
 </tbody></table>
 
 <p>Need a different version of Swift?</p>
@@ -141,7 +135,6 @@
 <ul>
 <li><code>5.0</code> - Target your Podfile to the latest release or master</li>
 <li><code>4.2</code> - Target your Podfile to the <code>swift4.2</code> branch</li>
-<li><code>4.0</code> - Target your Podfile to the <code>swift4.0</code> branch</li>
 </ul>
 <h2 id='quick-start' class='heading'>Quick Start</h2>
 
@@ -203,6 +196,10 @@
 </code></pre>
 
 <p><strong>Remember</strong> when creating location-based apps, respect the privacy of your users and be responsible for how you use their location. This is especially true if your application requires location permission <code>kCLAuthorizationStatusAuthorizedAlways</code>.</p>
+
+<p>To share a location using a vCard, simply call the vCard function on any location object instance.</p>
+<pre class="highlight swift"><code>   <span class="k">let</span> <span class="nv">fileURL</span> <span class="o">=</span> <span class="n">location</span><span class="o">.</span><span class="nf">vCard</span><span class="p">()</span>
+</code></pre>
 <h2 id='documentation' class='heading'>Documentation</h2>
 
 <p>You can find <a href="https://piemonte.github.io/Position">the docs here</a>. Documentation is generated with <a href="https://github.com/realm/jazzy">jazzy</a> and hosted on <a href="https://pages.github.com">GitHub-Pages</a>.</p>
@@ -218,10 +215,9 @@
 <h2 id='resources' class='heading'>Resources</h2>
 
 <ul>
-<li><a href="https://github.com/apple/swift-evolution">Swift Evolution</a></li>
 <li><a href="https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/Introduction/Introduction.html">Location and Maps Programming Guide</a></li>
 <li><a href="https://developer.apple.com/library/ios/documentation/CoreLocation/Reference/CoreLocation_Framework/index.html">Core Location Framework Reference</a></li>
-<li><a href="http://nshipster.com/core-location-in-ios-8/">Core Location in iOS 8</a></li>
+<li><a href="http://nshipster.com/core-location-in-ios-8/">Core Location – NSHipster</a></li>
 </ul>
 <h2 id='license' class='heading'>License</h2>
 
@@ -230,8 +226,8 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="https://patrickpiemonte.com" target="_blank" rel="external">Patrick Piemonte</a>. All rights reserved. (Last updated: 2019-04-03)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.4</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2020 <a class="link" href="https://patrickpiemonte.com" target="_blank" rel="external">Patrick Piemonte</a>. All rights reserved. (Last updated: 2020-07-14)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>
