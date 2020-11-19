@@ -1,8 +1,8 @@
 Pod::Spec.new do |s|
   s.name = 'Position'
-  s.version = '0.8.0'
+  s.version = '0.8.1'
   s.license = 'MIT'
-  s.summary = 'Lightweight and efficient location positioning in Swift'
+  s.summary = 'Efficient location positioning in Swift'
   s.homepage = 'https://github.com/piemonte/Position'
   s.social_media_url = 'http://twitter.com/piemonte'
   s.authors = { 'patrick piemonte' => "patrick.piemonte@gmail.com" }
