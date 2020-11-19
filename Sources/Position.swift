@@ -117,7 +117,10 @@ open class Position {
     public static let TimeFilter5Minutes: TimeInterval = 5.0 * 60.0
     /// Time based filter constant
     public static let TimeFilter10Minutes: TimeInterval = 10.0 * 60.0
-
+    
+    /// A statute mile to be 8 furlongs or 1609.344 meters
+    public static let MetersToMilesRatio: Double = 1609.344
+    
     // MARK: - singleton
     
     /// Shared singleton
