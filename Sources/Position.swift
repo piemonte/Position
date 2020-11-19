@@ -190,9 +190,9 @@ open class Position {
     }
 
     /// Last determined location
-    public var lastLocation: CLLocation? {
+    public var location: CLLocation? {
         get {
-            return self._positionLocationManager.locations?.first
+            return self._positionLocationManager.location
         }
     }
     
@@ -513,6 +513,8 @@ internal class PositionLocationManager: NSObject {
     internal static let OneShotRequestDefaultTimeOut: TimeInterval = 0.5 * 60.0
     internal static let RequestQueueSpecificKey = DispatchSpecificKey<()>()
 
+    // MARK: - properties
+    
     internal weak var delegate: PositionLocationManagerDelegate?
     
     internal var distanceFilter: Double = 0.0 {
@@ -535,8 +537,10 @@ internal class PositionLocationManager: NSObject {
         }
     }
     
-    internal var locations: [CLLocation]?
-
+    internal var location: CLLocation? {
+        return self._locationManager.location
+    }
+    
     internal var isUpdatingLocation: Bool = false
     internal var isUpdatingLowPowerLocation: Bool = false
 
@@ -545,7 +549,8 @@ internal class PositionLocationManager: NSObject {
     internal var _locationManager: CLLocationManager = CLLocationManager()
     internal var _locationRequests: [PositionLocationRequest] = []
     internal var _requestQueue: DispatchQueue
-    
+    internal var _locations: [CLLocation]?
+
     // MARK: - object lifecycle
     
     public override init() {
@@ -710,7 +715,7 @@ extension PositionLocationManager {
     internal func processLocationRequests() {
         guard self._locationRequests.count > 0 else {
             DispatchQueue.main.async {
-                self.delegate?.positionLocationManager(self, didUpdateTrackingLocations: self.locations)
+                self.delegate?.positionLocationManager(self, didUpdateTrackingLocations: self._locations)
             }
             return
         }
@@ -718,7 +723,7 @@ extension PositionLocationManager {
         let completeRequests: [PositionLocationRequest] = self._locationRequests.filter { (request) -> Bool in
             // check if a request completed, meaning expired or met horizontal accuracy
             //print("desiredAccuracy \(request.desiredAccuracy) horizontal \(self.location?.horizontalAccuracy)")
-            if let location = self.locations?.first {
+            if let location = self._locations?.first {
                 guard request.isExpired == true || location.horizontalAccuracy < request.desiredAccuracy else {
                     return false
                 }
@@ -737,7 +742,7 @@ extension PositionLocationManager {
                     request.completionHandler?(.failure(PositionErrorType.timedOut))
                 }
             } else {
-                if let location = self.locations?.first {
+                if let location = self._locations?.first {
                     self.executeClosureSyncOnMainQueueIfNecessary {
                         request.completionHandler?(.success(location))
                     }
@@ -801,7 +806,7 @@ extension PositionLocationManager: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         self.executeClosureAsyncOnRequestQueueIfNecessary {
             // update last location
-            self.locations = locations
+            self._locations = locations
             // update one-shot requests
             self.processLocationRequests()
         }
