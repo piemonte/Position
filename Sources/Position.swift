@@ -824,6 +824,22 @@ extension PositionLocationManager: CLLocationManagerDelegate {
         }
     }
 
+    @available(iOS 14, *)
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        self.executeClosureAsyncOnRequestQueueIfNecessary {
+            switch manager.authorizationStatus {
+            case .denied, .restricted:
+                self.completeLocationRequests(withError: PositionErrorType.restricted)
+                break
+            default:
+                break
+            }
+            DispatchQueue.main.async {
+                self.delegate?.positionLocationManager(self, didChangeLocationAuthorizationStatus: self.locationServicesStatus)
+            }
+        }
+    }
+
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         self.executeClosureAsyncOnRequestQueueIfNecessary {
             switch status {
