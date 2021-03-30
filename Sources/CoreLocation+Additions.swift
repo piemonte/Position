@@ -30,21 +30,21 @@ import Foundation
 import CoreLocation
 
 extension CLLocationManager {
-    
+
     public static var backgroundCapabilitiesEnabled: Bool {
          guard let capabilities = Bundle.main.infoDictionary?["UIBackgroundModes"] as? [String] else {
              return false
          }
          return capabilities.contains("location")
      }
-    
+
 }
 
 extension CLLocation {
-    
+
     /// Radius of the Earth in meters. 6,371,000m.
     public static let earthRadiusInMeters = Double(6371e3)
-    
+
     /// Calculates the location coordinate for a given bearing and distance from this location as origin.
     ///
     /// - Parameters:
@@ -54,18 +54,18 @@ extension CLLocation {
     /// - Returns: Location coordinate at the bearing and distance from origin coordinate.
     public func locationCoordinate(withBearing bearingDegrees: Double, distanceMeters: Double) -> CLLocationCoordinate2D {
         let distRadians = distanceMeters / (6372797.6)
-        
+
         let rbearing = bearingDegrees * .pi / 180
-        
+
         let lat1 = self.coordinate.latitude * .pi / 180
         let lon1 = self.coordinate.longitude * .pi / 180
-        
+
         let lat2 = asin(sin(lat1) * cos(distRadians) + cos(lat1) * sin(distRadians) * cos(rbearing))
         let lon2 = lon1 + atan2(sin(rbearing) * sin(distRadians) * cos(lat1), cos(distRadians) - sin(lat1) * sin(lat2))
-        
+
         return CLLocationCoordinate2D(latitude: (lat2 * 180 / .pi), longitude: (lon2 * 180 / .pi))
     }
-    
+
     /// Creates a Virtual Contact File (VCF) or vCard for the location.
     ///
     /// - Returns: Local file path URL.
@@ -73,11 +73,11 @@ extension CLLocation {
         guard let cachesPathString = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first else {
             return nil
         }
-        
+
         guard CLLocationCoordinate2DIsValid(self.coordinate) else {
             return nil
         }
-        
+
         let vCardString = [
             "BEGIN:VCARD",
             "VERSION:3.0",
@@ -87,15 +87,15 @@ extension CLLocation {
             "item1.X-ABLabel:map url",
             "END:VCARD"
             ].joined(separator: "\n")
-        
+
         let vCardFilePath = (cachesPathString as NSString).appendingPathComponent("\(name).loc.vcf")
         do {
             try vCardString.write(toFile: vCardFilePath, atomically: true, encoding: String.Encoding.utf8)
         } catch let error {
             print("error, \(error), saving vCard \(vCardString) to file path \(vCardFilePath)")
         }
-        
+
         return URL(fileURLWithPath: vCardFilePath)
     }
-    
+
 }
