@@ -33,39 +33,39 @@ import CoreLocation
 public class ViewController: UIViewController {
 
     // MARK: - ivars
-    
-    internal var _mapView: MKMapView?
-    internal var _permissionLocationButton: UIButton?
-    internal var _locationLookupButton: UIButton?
-    
+
+    private var _mapView: MKMapView?
+    private var _permissionLocationButton: UIButton?
+    private var _locationLookupButton: UIButton?
+
     // MARK: - object lifecycle
-    
+
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
-    
+
     required public init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)!
     }
-    
+
     deinit {
     }
 
     // MARK: - view lifecycle
-    
+
     override public func viewDidLoad() {
         super.viewDidLoad()
 
         self.view.autoresizingMask = ([.flexibleWidth, .flexibleHeight])
         self.view.backgroundColor = UIColor.lightGray
-        
+
         self._mapView = MKMapView(frame: self.view.bounds)
         if let mapView = self._mapView {
             self.view.addSubview(mapView)
         }
-        
+
         let buttonHeight: CGFloat = 60
-        
+
         self._locationLookupButton = UIButton(frame: CGRect(x: 0, y: self.view.bounds.size.height - buttonHeight, width: self.view.bounds.size.width, height: buttonHeight))
         if let locationButton = self._locationLookupButton {
             locationButton.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
@@ -75,7 +75,7 @@ public class ViewController: UIViewController {
             locationButton.addTarget(self, action: #selector(handleOneShotLocationButton(_:)), for: .touchUpInside)
             self.view.addSubview(locationButton)
         }
-        
+
         self._permissionLocationButton = UIButton(frame: CGRect(x: 0, y: self.view.bounds.size.height - (buttonHeight * 2), width: self.view.bounds.size.width, height: buttonHeight))
         if let permissionLocationButton = self._permissionLocationButton {
             permissionLocationButton.setTitle("Request Permission", for: UIControl.State())
@@ -84,17 +84,17 @@ public class ViewController: UIViewController {
             permissionLocationButton.addTarget(self, action: #selector(handleLocationPermissionButton(_:)), for: .touchUpInside)
             self.view.addSubview(permissionLocationButton)
         }
-        
+
         // setup position
-        
+
         let position = Position.shared
         position.addObserver(self)
         position.distanceFilter = 20
-        
+
         // Example, using settings for AllowedAlways tracking:
         // position.adjustLocationUseWhenBackgrounded = true
         // position.adjustLocationUseFromBatteryLevel = true
-        
+
         // Example, using location tracking
         // if position.locationServicesStatus == .AllowedWhenInUse ||
         //      position.locationServicesStatus == .AllowedAlways {
@@ -106,7 +106,7 @@ public class ViewController: UIViewController {
 // MARK: - UIButton
 
 extension ViewController {
-    
+
     @objc internal func handleLocationPermissionButton(_ button: UIButton) {
         // request permissions based on the type of location support required.
         let position = Position.shared
@@ -116,15 +116,15 @@ extension ViewController {
         } else {
             // request permission
             Position.shared.requestWhenInUseLocationAuthorization()
-            //Position.shared.requestAlwaysLocationAuthorization()
+            // Position.shared.requestAlwaysLocationAuthorization()
         }
     }
-    
+
     @objc internal func handleOneShotLocationButton(_ button: UIButton) {
         let position = Position.shared
         if position.locationServicesStatus == .allowedWhenInUse ||
            position.locationServicesStatus == .allowedAlways {
-            position.performOneShotLocationUpdate(withDesiredAccuracy: 150) { (result) -> () in
+            position.performOneShotLocationUpdate(withDesiredAccuracy: 150) { (result) -> Void in
                 switch result {
                 case .success(let location):
                     if location.horizontalAccuracy > 0 {
@@ -133,12 +133,12 @@ extension ViewController {
                     }
                     break
                 case .failure:
-                    //print("one shot locatiString(describing: on update \(location) error \(error)")
+                    // print("one shot locatiString(describing: on update \(location) error \(error)")
                     break
                 }
             }
         } else if position.locationServicesStatus == .notAvailable {
-            //print("location is not available")
+            // print("location is not available")
         }
     }
 
@@ -158,25 +158,25 @@ extension ViewController: PositionAuthorizationObserver {
 // MARK: - PositionObserver
 
 extension ViewController: PositionObserver {
-	
+
     public func position(_ position: Position, didUpdateOneShotLocation location: CLLocation?) {
 //        print("position, one-shot location updated \(location)")
     }
-    
+
     public func position(_ position: Position, didUpdateTrackingLocations locations: [CLLocation]?) {
 //        print("position, tracking location update \(locations?.last)")
     }
-    
+
     public func position(_ position: Position, didUpdateFloor floor: CLFloor) {
     }
-    
+
     public func position(_ position: Position, didVisit visit: CLVisit?) {
     }
-    
+
     public func position(_ position: Position, didChangeDesiredAccurary desiredAccuracy: Double) {
 //        print("position, changed desired accuracy \(desiredAccuracy)")
     }
-    
+
     // error handling
     public func position(_ position: Position, didFailWithError error: Error?) {
         print("position, failed with error \(error?.localizedDescription)")
