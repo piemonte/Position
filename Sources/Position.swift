@@ -112,14 +112,14 @@ open class Position {
     public typealias OneShotCompletionHandler = (Swift.Result<CLLocation, Error>) -> Void
 
     /// Time based filter constant
-    public static let TimeFilterNone: TimeInterval = 0.0
+    public static let TimeFilterNone: TimeInterval      = 0.0
     /// Time based filter constant
-    public static let TimeFilter5Minutes: TimeInterval = 5.0 * 60.0
+    public static let TimeFilter5Minutes: TimeInterval  = 5.0 * 60.0
     /// Time based filter constant
     public static let TimeFilter10Minutes: TimeInterval = 10.0 * 60.0
 
     /// A statute mile to be 8 furlongs or 1609.344 meters
-    public static let MetersToMilesRatio: Double = 1609.344
+    public static let MilesToMetersRatio: Double        = 1609.344
 
     // MARK: - singleton
 
@@ -396,7 +396,8 @@ extension Position {
 
     // handlers
 
-    @objc fileprivate func handleApplicationDidBecomeActive(_ notification: Notification) {
+    @objc
+    private func handleApplicationDidBecomeActive(_ notification: Notification) {
         self.checkAuthorizationStatusForServices()
 
         // if position is not updating, don't modify state
@@ -410,7 +411,8 @@ extension Position {
         }
     }
 
-    @objc fileprivate func handleApplicationWillResignActive(_ notification: Notification) {
+    @objc
+    private func handleApplicationWillResignActive(_ notification: Notification) {
         if self._updating == true {
             return
         }
@@ -422,7 +424,8 @@ extension Position {
         self.updateLocationAccuracyIfNecessary()
     }
 
-    @objc fileprivate func handleBatteryLevelChanged(_ notification: Notification) {
+    @objc
+    private func handleBatteryLevelChanged(_ notification: Notification) {
         let batteryLevel = UIDevice.current.batteryLevel
         if batteryLevel < 0 {
             return
@@ -430,7 +433,8 @@ extension Position {
         self.updateLocationAccuracyIfNecessary()
     }
 
-    @objc fileprivate func handleBatteryStateChanged(_ notification: Notification) {
+    @objc
+    private func handleBatteryStateChanged(_ notification: Notification) {
         self.updateLocationAccuracyIfNecessary()
     }
 
