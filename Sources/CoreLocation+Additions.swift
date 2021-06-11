@@ -66,6 +66,29 @@ extension CLLocation {
         return CLLocationCoordinate2D(latitude: (lat2 * 180 / .pi), longitude: (lon2 * 180 / .pi))
     }
 
+    /// Calculate the bearing to another location
+    /// - Parameter toLocation: target location
+    /// - Returns: Bearing in degrees.
+    public func bearing(toLocation: CLLocation) -> CLLocationDirection {
+        let fromLat = Measurement(value: self.coordinate.latitude, unit: UnitAngle.degrees).converted(to: .radians).value
+        let fromLon = Measurement(value: self.coordinate.longitude, unit: UnitAngle.degrees).converted(to: .radians).value
+
+        let toLat = Measurement(value: toLocation.coordinate.latitude, unit: UnitAngle.degrees).converted(to: .radians).value
+        let toLon = Measurement(value: toLocation.coordinate.longitude, unit: UnitAngle.degrees).converted(to: .radians).value
+
+        let y = sin(toLon - fromLon) * cos(toLat)
+        let x = cos(fromLat) * sin(toLat) - sin(fromLat) * cos(toLat) * cos(toLon - fromLon)
+
+        var bearingInDegrees: CLLocationDirection = Measurement(value: atan2(y, x), unit: UnitAngle.radians).converted(to: .degrees).value as CLLocationDirection
+        bearingInDegrees = (bearingInDegrees + 360.0).truncatingRemainder(dividingBy: 360.0)
+
+        return bearingInDegrees
+    }
+
+}
+
+extension CLLocation {
+
     /// Creates a Virtual Contact File (VCF) or vCard for the location.
     ///
     /// - Returns: Local file path URL.
