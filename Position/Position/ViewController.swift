@@ -48,9 +48,6 @@ public class ViewController: UIViewController {
         super.init(coder: aDecoder)!
     }
 
-    deinit {
-    }
-
     // MARK: - view lifecycle
 
     override public func viewDidLoad() {
@@ -91,10 +88,6 @@ public class ViewController: UIViewController {
         position.addObserver(self)
         position.distanceFilter = 20
 
-        // Example, using settings for AllowedAlways tracking:
-        // position.adjustLocationUseWhenBackgrounded = true
-        // position.adjustLocationUseFromBatteryLevel = true
-
         // Example, using location tracking
         // if position.locationServicesStatus == .AllowedWhenInUse ||
         //      position.locationServicesStatus == .AllowedAlways {
@@ -107,7 +100,8 @@ public class ViewController: UIViewController {
 
 extension ViewController {
 
-    @objc internal func handleLocationPermissionButton(_ button: UIButton) {
+    @objc
+    internal func handleLocationPermissionButton(_ button: UIButton) {
         // request permissions based on the type of location support required.
         let position = Position.shared
         if position.locationServicesStatus == .allowedWhenInUse ||
@@ -120,7 +114,8 @@ extension ViewController {
         }
     }
 
-    @objc internal func handleOneShotLocationButton(_ button: UIButton) {
+    @objc
+    internal func handleOneShotLocationButton(_ button: UIButton) {
         let position = Position.shared
         if position.locationServicesStatus == .allowedWhenInUse ||
            position.locationServicesStatus == .allowedAlways {
@@ -131,7 +126,6 @@ extension ViewController {
                         let region = MKCoordinateRegion(center: location.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
                         self._mapView?.setRegion(region, animated: true)
                     }
-                    break
                 case .failure:
                     // print("one shot locatiString(describing: on update \(location) error \(error)")
                     break
@@ -148,7 +142,7 @@ extension ViewController {
 
 extension ViewController: PositionAuthorizationObserver {
 
-    public func position(_ position: Position, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
+    public func position(_ position: Position, didChangeLocationAuthorizationStatus status: Position.LocationAuthorizationStatus) {
         // location authorization did change, this may even be triggered on application resume if the user updated settings
         print("position, location authorization status \(status)")
     }
