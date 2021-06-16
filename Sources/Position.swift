@@ -30,54 +30,6 @@ import UIKit
 import Foundation
 import CoreLocation
 
-// MARK: - types
-
-/// Location authorization status
-public enum LocationAuthorizationStatus: Int, CustomStringConvertible {
-    case notDetermined = 0
-    case notAvailable
-    case denied
-    case allowedWhenInUse
-    case allowedAlways
-
-    public var description: String {
-        get {
-            switch self {
-            case .notDetermined:
-                return "Not Determined"
-            case .notAvailable:
-                return "Not Available"
-            case .denied:
-                return "Denied"
-            case .allowedWhenInUse:
-                return "When In Use"
-            case .allowedAlways:
-                return "Allowed Always"
-            }
-        }
-    }
-}
-
-/// Possible error types
-public enum PositionErrorType: Error, CustomStringConvertible {
-    case timedOut
-    case restricted
-    case cancelled
-
-    public var description: String {
-        get {
-            switch self {
-            case .timedOut:
-                return "Timed out"
-            case .restricted:
-                return "Restricted"
-            case .cancelled:
-                return "Cancelled"
-            }
-        }
-    }
-}
-
 /// Position location authorization protocol.
 public protocol PositionAuthorizationObserver: AnyObject {
     /// Permission change authorization status, this may be triggered on application resume if the app settings have changed
@@ -107,6 +59,59 @@ public protocol PositionObserver: AnyObject {
 open class Position {
 
     // MARK: - types
+
+    /// Location authorization status
+    public enum LocationAuthorizationStatus: Int, CustomStringConvertible {
+        case notDetermined = 0
+        case notAvailable
+        case denied
+        case allowedWhenInUse
+        case allowedAlways
+
+        public var description: String {
+            get {
+                switch self {
+                case .notDetermined:
+                    return "Not Determined"
+                case .notAvailable:
+                    return "Not Available"
+                case .denied:
+                    return "Denied"
+                case .allowedWhenInUse:
+                    return "When In Use"
+                case .allowedAlways:
+                    return "Allowed Always"
+                }
+            }
+        }
+    }
+
+    /// Location accuracy authorization status
+    public enum LocationAccuracyAuthorizationStatus: Int {
+        case fullAccuracy = 0
+        case reducedAccuracy
+    }
+
+    /// Possible error types
+    public enum ErrorType: Error, CustomStringConvertible {
+        case timedOut
+        case restricted
+        case cancelled
+
+        public var description: String {
+            get {
+                switch self {
+                case .timedOut:
+                    return "Timed out"
+                case .restricted:
+                    return "Restricted"
+                case .cancelled:
+                    return "Cancelled"
+                }
+            }
+        }
+    }
+
 
     /// Completion handler for one-shot location requests
     public typealias OneShotCompletionHandler = (Swift.Result<CLLocation, Error>) -> Void
