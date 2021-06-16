@@ -42,9 +42,6 @@ extension CLLocationManager {
 
 extension CLLocation {
 
-    /// Radius of the Earth in meters. 6,371,000m.
-    public static let earthRadiusInMeters = Double(6371e3)
-
     /// Calculates the location coordinate for a given bearing and distance from this location as origin.
     ///
     /// - Parameters:
@@ -119,6 +116,26 @@ extension CLLocation {
         }
 
         return URL(fileURLWithPath: vCardFilePath)
+    }
+
+}
+
+extension CLLocationCoordinate2D {
+
+    /// WGS-84 radius of the earth, in meters, at the given point.
+    /// https://en.wikipedia.org/wiki/Earth_radius#Geocentric_radius
+    public var earthRadiusInMeters: Double {
+        let WGS84EquatorialRadius  = 6_378_137.0
+        let WGS84PolarRadius = 6_356_752.3
+        let a = WGS84EquatorialRadius
+        let b = WGS84PolarRadius
+
+        let phi = Measurement(value: self.latitude, unit: UnitAngle.degrees).converted(to: .radians).value
+
+        let numerator = pow(a * a * cos(phi), 2) + pow(b * b * sin(phi), 2)
+        let denominator = pow(a * cos(phi), 2) + pow(b * sin(phi), 2)
+        let radius = sqrt(numerator/denominator)
+        return radius
     }
 
 }
