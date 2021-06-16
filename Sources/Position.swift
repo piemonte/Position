@@ -603,11 +603,13 @@ extension PositionLocationManager {
     }
 
     internal func requestAlwaysAuthorization() {
-        self._locationManager.requestAlwaysAuthorization()
+        _locationManager.requestAlwaysAuthorization()
     }
 
     internal func requestWhenInUseAuthorization() {
-        self._locationManager.requestWhenInUseAuthorization()
+        _locationManager.requestWhenInUseAuthorization()
+    }
+
     }
 
 }
@@ -654,10 +656,10 @@ extension PositionLocationManager {
         switch self.locationServicesStatus {
             case .allowedAlways,
                  .allowedWhenInUse:
-                self._locationManager.startUpdatingLocation()
-                self._locationManager.startMonitoringVisits()
-                self.isUpdatingLocation = true
-                self.updateLocationManagerStateIfNeeded()
+                _locationManager.startUpdatingLocation()
+                _locationManager.startMonitoringVisits()
+                isUpdatingLocation = true
+                updateLocationManagerStateIfNeeded()
                 fallthrough
             default:
                 break
@@ -669,10 +671,10 @@ extension PositionLocationManager {
             case .allowedAlways,
                  .allowedWhenInUse:
                 if self.isUpdatingLocation == true {
-                    self._locationManager.stopUpdatingLocation()
-                    self._locationManager.stopMonitoringVisits()
-                    self.isUpdatingLocation = false
-                    self.updateLocationManagerStateIfNeeded()
+                    _locationManager.stopUpdatingLocation()
+                    _locationManager.stopMonitoringVisits()
+                    isUpdatingLocation = false
+                    updateLocationManagerStateIfNeeded()
                 }
                 fallthrough
             default:
@@ -684,9 +686,9 @@ extension PositionLocationManager {
         let status: LocationAuthorizationStatus = self.locationServicesStatus
         switch status {
             case .allowedAlways, .allowedWhenInUse:
-                self._locationManager.startMonitoringSignificantLocationChanges()
-                self.isUpdatingLowPowerLocation = true
-                self.updateLocationManagerStateIfNeeded()
+                _locationManager.startMonitoringSignificantLocationChanges()
+                isUpdatingLowPowerLocation = true
+                updateLocationManagerStateIfNeeded()
                 fallthrough
             default:
                 break
@@ -697,9 +699,9 @@ extension PositionLocationManager {
         let status: LocationAuthorizationStatus = self.locationServicesStatus
         switch status {
             case .allowedAlways, .allowedWhenInUse:
-                self._locationManager.stopMonitoringSignificantLocationChanges()
-                self.isUpdatingLowPowerLocation = false
-                self.updateLocationManagerStateIfNeeded()
+                _locationManager.stopMonitoringSignificantLocationChanges()
+                isUpdatingLowPowerLocation = false
+                updateLocationManagerStateIfNeeded()
                 fallthrough
             default:
                 break
@@ -755,26 +757,26 @@ extension PositionLocationManager {
             }
         }
 
-        let pendingRequests: [PositionLocationRequest] = self._locationRequests.filter { request -> Bool in
+        let pendingRequests: [PositionLocationRequest] = _locationRequests.filter { request -> Bool in
             request.isCompleted == false
         }
-        self._locationRequests = pendingRequests
+        _locationRequests = pendingRequests
 
-        if self._locationRequests.count == 0 {
+        if _locationRequests.count == 0 {
             self.updateLocationManagerStateIfNeeded()
 
-            if self.isUpdatingLocation == false {
-                self.stopUpdating()
+            if isUpdatingLocation == false {
+                stopUpdating()
             }
 
-            if self.isUpdatingLowPowerLocation == false {
-                self.stopLowPowerUpdating()
+            if isUpdatingLowPowerLocation == false {
+                stopLowPowerUpdating()
             }
         }
     }
 
     internal func completeLocationRequests(withError error: Error?) {
-        for locationRequest in self._locationRequests {
+        for locationRequest in _locationRequests {
             locationRequest.cancelRequest()
             guard let handler = locationRequest.completionHandler else {
                 continue
@@ -828,9 +830,7 @@ extension PositionLocationManager: CLLocationManagerDelegate {
             switch manager.authorizationStatus {
             case .denied, .restricted:
                 self.completeLocationRequests(withError: PositionErrorType.restricted)
-                break
-            default:
-                break
+            default: break
             }
             DispatchQueue.main.async {
                 self.delegate?.positionLocationManager(self, didChangeLocationAuthorizationStatus: self.locationServicesStatus)
@@ -843,9 +843,7 @@ extension PositionLocationManager: CLLocationManagerDelegate {
             switch status {
             case .denied, .restricted:
                 self.completeLocationRequests(withError: PositionErrorType.restricted)
-                break
-            default:
-                break
+            default: break
             }
             DispatchQueue.main.async {
                 self.delegate?.positionLocationManager(self, didChangeLocationAuthorizationStatus: self.locationServicesStatus)
@@ -857,7 +855,7 @@ extension PositionLocationManager: CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didVisit visit: CLVisit) {
-        self.delegate?.positionLocationManager(self, didVisit: visit)
+        delegate?.positionLocationManager(self, didVisit: visit)
     }
 
     func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
@@ -870,7 +868,7 @@ extension PositionLocationManager: CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
-        self.delegate?.positionLocationManager(self, didFailWithError: error)
+        delegate?.positionLocationManager(self, didFailWithError: error)
     }
 
 }
@@ -910,9 +908,13 @@ internal class PositionLocationRequest {
     internal var desiredAccuracy: Double = kCLLocationAccuracyBest
     internal var lifespan: TimeInterval = PositionLocationManager.OneShotRequestDefaultTimeOut {
         didSet {
-            self.isExpired = false
-            self._expirationTimer?.invalidate()
-            self._expirationTimer = Timer.scheduledTimer(timeInterval: self.lifespan, target: self, selector: #selector(handleTimerFired(_:)), userInfo: nil, repeats: false)
+            isExpired = false
+            _expirationTimer?.invalidate()
+            _expirationTimer = Timer.scheduledTimer(timeInterval: self.lifespan,
+                                                    target: self,
+                                                    selector: #selector(handleTimerFired(_:)),
+                                                    userInfo: nil,
+                                                    repeats: false)
         }
     }
     internal var isCompleted: Bool = false
@@ -928,22 +930,22 @@ internal class PositionLocationRequest {
     // MARK: - object lifecycle
 
     deinit {
-        self.isExpired = true
-        self._expirationTimer?.invalidate()
-        self._expirationTimer = nil
+        isExpired = true
+        _expirationTimer?.invalidate()
+        _expirationTimer = nil
 
-        self.timeOutHandler = nil
-        self.completionHandler = nil
+        timeOutHandler = nil
+        completionHandler = nil
     }
 
     // MARK: - funcs
 
     internal func cancelRequest() {
-        self.isExpired = true
-        self._expirationTimer?.invalidate()
-        self._expirationTimer = nil
+        isExpired = true
+        _expirationTimer?.invalidate()
+        _expirationTimer = nil
 
-        self.timeOutHandler = nil
+        timeOutHandler = nil
         // Note: completion handler will be processed on the request process loop
     }
 }
