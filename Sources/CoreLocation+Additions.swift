@@ -50,17 +50,20 @@ extension CLLocation {
     ///   - origin: Coordinate from which the result is calculated
     /// - Returns: Location coordinate at the bearing and distance from origin coordinate.
     public func locationCoordinate(withBearing bearingDegrees: Double, distanceMeters: Double) -> CLLocationCoordinate2D {
-        let distRadians = distanceMeters / (6372797.6)
+        let sigma = distanceMeters / coordinate.earthRadiusInMeters
 
-        let rbearing = bearingDegrees * .pi / 180
+        let bearingRadians = Measurement(value: bearingDegrees, unit: UnitAngle.degrees).converted(to: .radians).value
 
-        let lat1 = self.coordinate.latitude * .pi / 180
-        let lon1 = self.coordinate.longitude * .pi / 180
+        let lat1 = Measurement(value: self.coordinate.latitude, unit: UnitAngle.degrees).converted(to: .radians).value
+        let lon1 = Measurement(value: self.coordinate.longitude, unit: UnitAngle.degrees).converted(to: .radians).value
 
-        let lat2 = asin(sin(lat1) * cos(distRadians) + cos(lat1) * sin(distRadians) * cos(rbearing))
-        let lon2 = lon1 + atan2(sin(rbearing) * sin(distRadians) * cos(lat1), cos(distRadians) - sin(lat1) * sin(lat2))
+        let lat2 = asin(sin(lat1) * cos(sigma) + cos(lat1) * sin(sigma) * cos(bearingRadians))
+        let lon2 = lon1 + atan2(sin(bearingRadians) * sin(sigma) * cos(lat1), cos(sigma) - sin(lat1) * sin(lat2))
 
-        return CLLocationCoordinate2D(latitude: (lat2 * 180 / .pi), longitude: (lon2 * 180 / .pi))
+        let lat3 = Measurement(value: lat2, unit: UnitAngle.radians).converted(to: .degrees).value
+        let lon3 = Measurement(value: lon2, unit: UnitAngle.radians).converted(to: .degrees).value
+
+        return CLLocationCoordinate2D(latitude: lat3, longitude: lon3)
     }
 
     /// Calculate the bearing to another location
