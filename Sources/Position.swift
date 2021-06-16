@@ -33,7 +33,7 @@ import CoreLocation
 /// Position location authorization protocol.
 public protocol PositionAuthorizationObserver: AnyObject {
     /// Permission change authorization status, this may be triggered on application resume if the app settings have changed
-    func position(_ position: Position, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus)
+    func position(_ position: Position, didChangeLocationAuthorizationStatus status: Position.LocationAuthorizationStatus)
 }
 
 /// Position location updates protocol.
@@ -53,6 +53,9 @@ public protocol PositionObserver: AnyObject {
     /// Error handling
     func position(_ position: Position, didFailWithError error: Error?)
 
+}
+
+public protocol PositionHeadingObserver: AnyObject {
 }
 
 /// 🛰 Position, Swift and efficient location positioning.
@@ -501,7 +504,7 @@ extension Position: PositionLocationManagerDelegate {
 // MARK: - PositionLocationManagerDelegate
 
 internal protocol PositionLocationManagerDelegate: AnyObject {
-    func positionLocationManager(_ positionLocationManager: PositionLocationManager, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus)
+    func positionLocationManager(_ positionLocationManager: PositionLocationManager, didChangeLocationAuthorizationStatus status: Position.LocationAuthorizationStatus)
     func positionLocationManager(_ positionLocationManager: PositionLocationManager, didFailWithError error: Error?)
 
     func positionLocationManager(_ positionLocationManager: PositionLocationManager, didUpdateOneShotLocation location: CLLocation?)
@@ -580,7 +583,7 @@ internal class PositionLocationManager: NSObject {
 
 extension PositionLocationManager {
 
-    internal var locationServicesStatus: LocationAuthorizationStatus {
+    internal var locationServicesStatus: Position.LocationAuthorizationStatus {
         get {
             guard CLLocationManager.locationServicesEnabled() == true else {
                 return .notAvailable
@@ -616,6 +619,17 @@ extension PositionLocationManager {
         }
     }
 
+    @available(iOS 14, *)
+    internal var accuracyServiceStatus: Position.LocationAccuracyAuthorizationStatus {
+        get {
+            switch _locationManager.accuracyAuthorization {
+            case .fullAccuracy:
+                return .fullAccuracy
+            case .reducedAccuracy:
+                return .reducedAccuracy
+            @unknown default:
+                return .reducedAccuracy
+            }
         }
     }
 
@@ -627,6 +641,23 @@ extension PositionLocationManager {
         _locationManager.requestWhenInUseAuthorization()
     }
 
+    @available(iOS 14, *)
+    internal func requestAccuracyAuthorization(_ completionHandler: ((Bool) -> Void)? = nil) {
+        guard _locationManager.accuracyAuthorization != .fullAccuracy else {
+            DispatchQueue.main.async {
+                completionHandler?(true)
+            }
+            return
+        }
+        _locationManager.requestTemporaryFullAccuracyAuthorization(withPurposeKey: "OneTimeLocation") { [weak self] (error) in
+            guard let self = self else {
+                DispatchQueue.main.async {
+                    completionHandler?(false)
+                }
+                return
+            }
+            self._locationManager.accuracyAuthorization == .fullAccuracy ? completionHandler?(true) : completionHandler?(false)
+        }
     }
 
 }
@@ -664,7 +695,7 @@ extension PositionLocationManager {
 
         } else {
             DispatchQueue.main.async {
-                completionHandler?(.failure(PositionErrorType.restricted))
+                completionHandler?(.failure(Position.ErrorType.restricted))
             }
         }
     }
@@ -700,7 +731,7 @@ extension PositionLocationManager {
     }
 
     internal func startLowPowerUpdating() {
-        let status: LocationAuthorizationStatus = self.locationServicesStatus
+        let status: Position.LocationAuthorizationStatus = self.locationServicesStatus
         switch status {
             case .allowedAlways, .allowedWhenInUse:
                 _locationManager.startMonitoringSignificantLocationChanges()
@@ -713,7 +744,7 @@ extension PositionLocationManager {
     }
 
     internal func stopLowPowerUpdating() {
-        let status: LocationAuthorizationStatus = self.locationServicesStatus
+        let status: Position.LocationAuthorizationStatus = self.locationServicesStatus
         switch status {
             case .allowedAlways, .allowedWhenInUse:
                 _locationManager.stopMonitoringSignificantLocationChanges()
@@ -759,7 +790,7 @@ extension PositionLocationManager {
             request.isCompleted = true
             if request.isExpired {
                 self.executeClosureSyncOnMainQueueIfNecessary {
-                    request.completionHandler?(.failure(PositionErrorType.timedOut))
+                    request.completionHandler?(.failure(Position.ErrorType.timedOut))
                 }
             } else {
                 if let location = self._locations?.first {
@@ -768,7 +799,7 @@ extension PositionLocationManager {
                     }
                 } else {
                     self.executeClosureSyncOnMainQueueIfNecessary {
-                        request.completionHandler?(.failure(PositionErrorType.timedOut))
+                        request.completionHandler?(.failure(Position.ErrorType.timedOut))
                     }
                 }
             }
@@ -800,7 +831,7 @@ extension PositionLocationManager {
             }
 
             self.executeClosureSyncOnMainQueueIfNecessary {
-                handler(.failure(error ?? PositionErrorType.cancelled))
+                handler(.failure(error ?? Position.ErrorType.cancelled))
             }
         }
     }
@@ -824,7 +855,8 @@ extension PositionLocationManager {
 extension PositionLocationManager: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        self.executeClosureAsyncOnRequestQueueIfNecessary {
+        self.executeClosureAsyncOnRequestQueueIfNecessary { [weak self] in
+            guard let self = self else { return }
             // update last location
             self._locations = locations
             // update one-shot requests
@@ -833,9 +865,11 @@ extension PositionLocationManager: CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        self.executeClosureAsyncOnRequestQueueIfNecessary {
+        self.executeClosureAsyncOnRequestQueueIfNecessary { [weak self] in
+            guard let self = self else { return }
             self.completeLocationRequests(withError: error)
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
                 self.delegate?.positionLocationManager(self, didFailWithError: error)
             }
         }
@@ -843,26 +877,30 @@ extension PositionLocationManager: CLLocationManagerDelegate {
 
     @available(iOS 14, *)
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        self.executeClosureAsyncOnRequestQueueIfNecessary {
+        self.executeClosureAsyncOnRequestQueueIfNecessary { [weak self] in
+            guard let self = self else { return }
             switch manager.authorizationStatus {
             case .denied, .restricted:
-                self.completeLocationRequests(withError: PositionErrorType.restricted)
+                self.completeLocationRequests(withError: Position.ErrorType.restricted)
             default: break
             }
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
                 self.delegate?.positionLocationManager(self, didChangeLocationAuthorizationStatus: self.locationServicesStatus)
             }
         }
     }
 
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        self.executeClosureAsyncOnRequestQueueIfNecessary {
+        self.executeClosureAsyncOnRequestQueueIfNecessary { [weak self] in
+            guard let self = self else { return }
             switch status {
             case .denied, .restricted:
-                self.completeLocationRequests(withError: PositionErrorType.restricted)
+                self.completeLocationRequests(withError: Position.ErrorType.restricted)
             default: break
             }
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
                 self.delegate?.positionLocationManager(self, didChangeLocationAuthorizationStatus: self.locationServicesStatus)
             }
         }
@@ -973,7 +1011,8 @@ extension PositionLocationRequest {
 
     @objc
     internal func handleTimerFired(_ timer: Timer) {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             self.isExpired = true
             self._expirationTimer?.invalidate()
             self._expirationTimer = nil
