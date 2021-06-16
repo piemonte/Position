@@ -581,24 +581,36 @@ extension PositionLocationManager {
                 return .notAvailable
             }
 
-            var status: LocationAuthorizationStatus = .notDetermined
-            switch CLLocationManager.authorizationStatus() {
-                case .authorizedAlways:
-                    status = .allowedAlways
-                    break
-                case .authorizedWhenInUse:
-                    status = .allowedWhenInUse
-                    break
-                case .denied, .restricted:
-                    status = .denied
-                    break
-                case .notDetermined:
-                    fallthrough
-                @unknown default:
-                    status = .notDetermined
-                    break
+            if #available(iOS 14.0, *) {
+                switch _locationManager.authorizationStatus {
+                    case .authorizedAlways:
+                        return .allowedAlways
+                    case .authorizedWhenInUse:
+                        return .allowedWhenInUse
+                    case .denied, .restricted:
+                        return .denied
+                    case .notDetermined:
+                        fallthrough
+                    @unknown default:
+                        return .notDetermined
+                }
+            } else {
+                switch CLLocationManager.authorizationStatus() {
+                    case .authorizedAlways:
+                        return .allowedAlways
+                    case .authorizedWhenInUse:
+                        return .allowedWhenInUse
+                    case .denied, .restricted:
+                        return .denied
+                    case .notDetermined:
+                        fallthrough
+                    @unknown default:
+                        return .notDetermined
+                }
             }
-            return status
+        }
+    }
+
         }
     }
 
