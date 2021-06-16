@@ -44,11 +44,13 @@ public protocol PositionObserver: AnyObject {
 
     /// Location positioning tracking updates
     func position(_ position: Position, didUpdateTrackingLocations locations: [CLLocation]?)
-    func position(_ position: Position, didUpdateFloor floor: CLFloor)
-    func position(_ position: Position, didVisit visit: CLVisit?)
 
     /// Location accuracy updates
     func position(_ position: Position, didChangeDesiredAccurary desiredAccuracy: Double)
+
+    // Location extras
+    func position(_ position: Position, didUpdateFloor floor: CLFloor)
+    func position(_ position: Position, didVisit visit: CLVisit?)
 
     /// Error handling
     func position(_ position: Position, didFailWithError error: Error?)
@@ -114,7 +116,6 @@ open class Position {
             }
         }
     }
-
 
     /// Completion handler for one-shot location requests
     public typealias OneShotCompletionHandler = (Swift.Result<CLLocation, Error>) -> Void
@@ -299,6 +300,19 @@ extension Position {
     /// Request location authorization for in app use only.
     public func requestWhenInUseLocationAuthorization() {
         _positionLocationManager.requestWhenInUseAuthorization()
+    }
+
+    @available(iOS 14, *)
+    public var locationAccuracyAuthorizationStatus: LocationAccuracyAuthorizationStatus {
+        _positionLocationManager.locationAccuracyAuthorizationStatus
+    }
+
+    /// Request one time accuracy authorization. Be sure to include "FullAccuracyPurpose" to your Info.plist.
+    @available(iOS 14, *)
+    public func requestOneTimeFullAccuracyAuthorization(_ completionHandler: ((Bool) -> Void)? = nil) {
+        _positionLocationManager.requestAccuracyAuthorization { completed in
+            completionHandler?(completed)
+        }
     }
 
 }
@@ -620,7 +634,7 @@ extension PositionLocationManager {
     }
 
     @available(iOS 14, *)
-    internal var accuracyServiceStatus: Position.LocationAccuracyAuthorizationStatus {
+    internal var locationAccuracyAuthorizationStatus: Position.LocationAccuracyAuthorizationStatus {
         get {
             switch _locationManager.accuracyAuthorization {
             case .fullAccuracy:
@@ -649,7 +663,9 @@ extension PositionLocationManager {
             }
             return
         }
-        _locationManager.requestTemporaryFullAccuracyAuthorization(withPurposeKey: "OneTimeLocation") { [weak self] (error) in
+
+        // Add the purpose key to your app's Info.plist to provide users with a purpose of your request.
+        _locationManager.requestTemporaryFullAccuracyAuthorization(withPurposeKey: "FullAccuracyPurpose") { [weak self] (error) in
             guard let self = self else {
                 DispatchQueue.main.async {
                     completionHandler?(false)
