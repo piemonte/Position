@@ -350,7 +350,8 @@ extension Position {
 
     internal func checkAuthorizationStatusForServices() {
         if self._positionLocationManager.locationServicesStatus == .denied {
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
                 for observer in self._observers?.allObjects as? [PositionAuthorizationObserver] ?? [] {
                     observer.position(self, didChangeLocationAuthorizationStatus: .denied)
                 }
@@ -384,7 +385,7 @@ extension Position {
     }
 }
 
-// MARK: - NSNotifications
+// MARK: - Notifications
 
 extension Position {
 
@@ -461,7 +462,8 @@ extension Position {
 extension Position: PositionLocationManagerDelegate {
 
     internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             for observer in self._observers?.allObjects as? [PositionAuthorizationObserver] ?? [] {
                 observer.position(self, didChangeLocationAuthorizationStatus: status)
             }
@@ -469,7 +471,8 @@ extension Position: PositionLocationManagerDelegate {
     }
 
     internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didFailWithError error: Error?) {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             for observer in self._observers?.allObjects as? [PositionObserver] ?? [] {
                 observer.position(self, didFailWithError: error)
             }
@@ -477,7 +480,8 @@ extension Position: PositionLocationManagerDelegate {
     }
 
     internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didUpdateOneShotLocation location: CLLocation?) {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             for observer in self._observers?.allObjects as? [PositionObserver] ?? [] {
                 observer.position(self, didUpdateOneShotLocation: location)
             }
@@ -485,7 +489,8 @@ extension Position: PositionLocationManagerDelegate {
     }
 
     internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didUpdateTrackingLocations locations: [CLLocation]?) {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             for observer in self._observers?.allObjects as? [PositionObserver] ?? [] {
                 observer.position(self, didUpdateTrackingLocations: locations)
             }
@@ -493,7 +498,8 @@ extension Position: PositionLocationManagerDelegate {
     }
 
     internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didUpdateFloor floor: CLFloor) {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             for observer in self._observers?.allObjects as? [PositionObserver] ?? [] {
                 observer.position(self, didUpdateFloor: floor)
             }
@@ -501,7 +507,8 @@ extension Position: PositionLocationManagerDelegate {
     }
 
     internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didVisit visit: CLVisit?) {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             if let observers = self._observers?.allObjects as? [PositionObserver] {
                 observers.forEach({ observer in
                     observer.position(self, didVisit: visit)
@@ -585,10 +592,8 @@ internal class PositionLocationManager: NSObject {
         self._locationManager.delegate = self
         self._locationManager.desiredAccuracy = kCLLocationAccuracyBest
         self._locationManager.pausesLocationUpdatesAutomatically = false
-        if #available(iOSApplicationExtension 9.0, *) {
-            if CLLocationManager.backgroundCapabilitiesEnabled {
-                self._locationManager.allowsBackgroundLocationUpdates = true
-            }
+        if CLLocationManager.backgroundCapabilitiesEnabled {
+            self._locationManager.allowsBackgroundLocationUpdates = true
         }
     }
 }
@@ -683,10 +688,9 @@ extension PositionLocationManager {
 extension PositionLocationManager {
 
     internal func performOneShotLocationUpdate(withDesiredAccuracy desiredAccuracy: Double, completionHandler: Position.OneShotCompletionHandler? = nil) {
-        if self.locationServicesStatus == .allowedAlways ||
-            self.locationServicesStatus == .allowedWhenInUse {
-
-            self.executeClosureAsyncOnRequestQueueIfNecessary {
+        if locationServicesStatus == .allowedAlways ||
+            locationServicesStatus == .allowedWhenInUse {
+            _requestQueue.async {
                 let request = PositionLocationRequest()
                 request.desiredAccuracy = desiredAccuracy
                 request.lifespan = PositionLocationManager.OneShotRequestDefaultTimeOut
@@ -708,7 +712,6 @@ extension PositionLocationManager {
                     self.isUpdatingLocation = false
                 }
             }
-
         } else {
             DispatchQueue.main.async {
                 completionHandler?(.failure(Position.ErrorType.restricted))
@@ -804,17 +807,14 @@ extension PositionLocationManager {
                 continue
             }
             request.isCompleted = true
-            if request.isExpired {
-                self.executeClosureSyncOnMainQueueIfNecessary {
+
+            DispatchQueue.main.async {
+                if request.isExpired {
                     request.completionHandler?(.failure(Position.ErrorType.timedOut))
-                }
-            } else {
-                if let location = self._locations?.first {
-                    self.executeClosureSyncOnMainQueueIfNecessary {
-                        request.completionHandler?(.success(location))
-                    }
                 } else {
-                    self.executeClosureSyncOnMainQueueIfNecessary {
+                    if let location = self._locations?.first {
+                        request.completionHandler?(.success(location))
+                    } else {
                         request.completionHandler?(.failure(Position.ErrorType.timedOut))
                     }
                 }
@@ -826,8 +826,8 @@ extension PositionLocationManager {
         }
         _locationRequests = pendingRequests
 
-        if _locationRequests.count == 0 {
-            self.updateLocationManagerStateIfNeeded()
+        if _locationRequests.isEmpty {
+            updateLocationManagerStateIfNeeded()
 
             if isUpdatingLocation == false {
                 stopUpdating()
@@ -846,7 +846,7 @@ extension PositionLocationManager {
                 continue
             }
 
-            self.executeClosureSyncOnMainQueueIfNecessary {
+            DispatchQueue.main.async {
                 handler(.failure(error ?? Position.ErrorType.cancelled))
             }
         }
@@ -854,14 +854,14 @@ extension PositionLocationManager {
 
     internal func updateLocationManagerStateIfNeeded() {
         // when not processing requests, set desired accuracy appropriately
-        if self._locationRequests.count > 0 {
-            if self.isUpdatingLocation == true {
-                self._locationManager.desiredAccuracy = self.trackingDesiredAccuracyActive
-            } else if self.isUpdatingLowPowerLocation == true {
-                self._locationManager.desiredAccuracy = self.trackingDesiredAccuracyBackground
+        if _locationRequests.count > 0 {
+            if isUpdatingLocation == true {
+                _locationManager.desiredAccuracy = trackingDesiredAccuracyActive
+            } else if isUpdatingLowPowerLocation == true {
+                _locationManager.desiredAccuracy = trackingDesiredAccuracyBackground
             }
 
-            self._locationManager.distanceFilter = self.distanceFilter
+            _locationManager.distanceFilter = distanceFilter
         }
     }
 }
@@ -871,7 +871,7 @@ extension PositionLocationManager {
 extension PositionLocationManager: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        self.executeClosureAsyncOnRequestQueueIfNecessary { [weak self] in
+        _requestQueue.async { [weak self] in
             guard let self = self else { return }
             // update last location
             self._locations = locations
@@ -881,7 +881,7 @@ extension PositionLocationManager: CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        self.executeClosureAsyncOnRequestQueueIfNecessary { [weak self] in
+        _requestQueue.async { [weak self] in
             guard let self = self else { return }
             self.completeLocationRequests(withError: error)
             DispatchQueue.main.async { [weak self] in
@@ -893,7 +893,7 @@ extension PositionLocationManager: CLLocationManagerDelegate {
 
     @available(iOS 14, *)
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        self.executeClosureAsyncOnRequestQueueIfNecessary { [weak self] in
+        _requestQueue.async { [weak self] in
             guard let self = self else { return }
             switch manager.authorizationStatus {
             case .denied, .restricted:
@@ -908,7 +908,7 @@ extension PositionLocationManager: CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        self.executeClosureAsyncOnRequestQueueIfNecessary { [weak self] in
+        _requestQueue.async { [weak self] in
             guard let self = self else { return }
             switch status {
             case .denied, .restricted:
@@ -940,28 +940,6 @@ extension PositionLocationManager: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
         delegate?.positionLocationManager(self, didFailWithError: error)
-    }
-
-}
-
-// MARK: - queues
-
-extension PositionLocationManager {
-
-    internal func executeClosureSyncOnMainQueueIfNecessary(withClosure closure: @escaping () -> Void) {
-        if Thread.isMainThread {
-            closure()
-        } else {
-            DispatchQueue.main.sync(execute: closure)
-        }
-    }
-
-    internal func executeClosureAsyncOnRequestQueueIfNecessary(withClosure closure: @escaping () -> Void) {
-        if DispatchQueue.getSpecific(key: PositionLocationManager.RequestQueueSpecificKey) != nil {
-            closure()
-        } else {
-            self._requestQueue.async(execute: closure)
-        }
     }
 
 }
