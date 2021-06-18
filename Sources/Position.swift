@@ -57,7 +57,11 @@ public protocol PositionObserver: AnyObject {
 
 }
 
+/// Position heading updates protocol.
 public protocol PositionHeadingObserver: AnyObject {
+
+    func position(_ postiion: Position, didUpdateHeading heading: CLHeading)
+
 }
 
 /// 🛰 Position, Swift and efficient location positioning.
@@ -204,6 +208,11 @@ open class Position {
         _positionLocationManager.location
     }
 
+    /// Last determined heading
+    public var heading: CLHeading? {
+        _positionLocationManager.heading
+    }
+
     // MARK: - ivars
 
     internal private(set) var _authorizationObservers: NSHashTable<AnyObject>?
@@ -317,7 +326,7 @@ extension Position {
 
 }
 
-// MARK: - location
+// MARK: - location & heading
 
 extension Position {
 
@@ -342,6 +351,22 @@ extension Position {
         _positionLocationManager.stopLowPowerUpdating()
         _updating = false
     }
+}
+
+// MARK: - heading
+
+extension Position {
+
+    /// Start heading updates.
+    public func startUpdatingHeading() {
+        _positionLocationManager.startUpdatingHeading()
+    }
+
+    /// Stop heading updates.
+    public func stopUpdatingHeading() {
+        _positionLocationManager.stopUpdatingHeading()
+    }
+
 }
 
 // MARK: - private functions
@@ -571,6 +596,10 @@ internal class PositionLocationManager: NSObject {
         _locationManager.location
     }
 
+    internal var heading: CLHeading? {
+        _locationManager.heading
+    }
+
     internal var isUpdatingLocation: Bool = false
     internal var isUpdatingLowPowerLocation: Bool = false
 
@@ -774,6 +803,19 @@ extension PositionLocationManager {
                 break
         }
     }
+
+}
+
+extension PositionLocationManager {
+
+    internal func startUpdatingHeading() {
+        _locationManager.startUpdatingHeading()
+    }
+
+    internal func stopUpdatingHeading() {
+        _locationManager.stopUpdatingHeading()
+    }
+
 
 }
 
