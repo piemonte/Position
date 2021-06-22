@@ -28,6 +28,7 @@
 
 import Foundation
 import CoreLocation
+import simd
 
 extension CLLocationManager {
 
@@ -43,6 +44,7 @@ extension CLLocationManager {
 extension CLLocation {
 
     /// Calculates the location coordinate for a given bearing and distance from this location as origin.
+    /// https://www.movable-type.co.uk/scripts/latlong.html
     ///
     /// - Parameters:
     ///   - bearingDegrees: Bearing in degrees
@@ -67,6 +69,7 @@ extension CLLocation {
     }
 
     /// Calculate the bearing to another location
+    ///
     /// - Parameter toLocation: target location
     /// - Returns: Bearing in degrees.
     public func bearing(toLocation: CLLocation) -> CLLocationDirection {
@@ -103,6 +106,37 @@ extension CLLocationCoordinate2D {
         let denominator = pow(a * cos(phi), 2) + pow(b * sin(phi), 2)
         let radius = sqrt(numerator/denominator)
         return radius
+    }
+
+}
+
+extension CLLocation {
+
+    public func translation(fromLocation location: CLLocation) -> simd_double3 {
+        let midPoint = CLLocation(latitude: self.coordinate.latitude, longitude: location.coordinate.longitude)
+
+        let distanceLatitude = location.distance(from: midPoint)
+        let translationLatitude = location.coordinate.latitude > midPoint.coordinate.latitude ? distanceLatitude
+                                                                                              : -distanceLatitude
+        let distanceLongitude = distance(from: midPoint)
+        let translationLongitude = coordinate.longitude > midPoint.coordinate.longitude ? -distanceLongitude
+                                                                                        : distanceLongitude
+
+        let translationAltitude = location.altitude - self.altitude
+
+        return simd_double3(translationLatitude, translationLongitude, translationAltitude)
+    }
+
+    func translate(_ translation: simd_double3) -> CLLocation {
+        let coordinateLatitude = self.locationCoordinate(withBearing: 0, distanceMeters: translation.x)
+        let coordinateLongitude = self.locationCoordinate(withBearing: 90, distanceMeters: translation.y)
+        let coordinate = CLLocationCoordinate2D( latitude: coordinateLatitude.latitude, longitude: coordinateLongitude.longitude)
+        let altitude = self.altitude + translation.z
+        return CLLocation(coordinate: coordinate,
+                          altitude: altitude,
+                          horizontalAccuracy: self.horizontalAccuracy,
+                          verticalAccuracy: self.verticalAccuracy,
+                          timestamp: self.timestamp)
     }
 
 }
