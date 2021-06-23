@@ -141,7 +141,7 @@ extension CLLocation {
 
 }
 
-// MARK: -
+// MARK: - vCard
 
 extension CLLocation {
 
@@ -175,6 +175,54 @@ extension CLLocation {
         }
 
         return URL(fileURLWithPath: vCardFilePath)
+    }
+
+}
+
+// MARK: - Strings
+
+extension CLLocation {
+
+    /// Pretty description of a distance from this location to another.
+    /// - Parameters:
+    ///   - location: Location from which to display distance.
+    ///   - locale: Locale to display the units of measurement.
+    /// - Returns: A pretty description string of a distance in the specified locale.
+    public func prettyDistanceDescription(fromLocation location: CLLocation, locale: Locale = Locale.current) -> String {
+        let distanceInMeters = self.distance(from: location)
+        let formatter = MeasurementFormatter()
+        formatter.unitStyle = .medium
+        let distance = Measurement(value: distanceInMeters, unit: UnitLength.meters)
+        formatter.locale = locale
+        return formatter.string(from: distance)
+    }
+
+}
+
+extension CLPlacemark {
+
+    /// Short and pretty description of the placemark.
+    /// - Returns: sublocality or locality or subadministrative area, administrative area
+    public func prettyShortDescription() -> String {
+        var shortDescription = ""
+        if let sublocality = self.subLocality {
+            shortDescription += sublocality
+        }
+        if shortDescription.isEmpty {
+            if let locality = self.locality {
+                shortDescription += locality
+            }
+        }
+        if shortDescription.isEmpty {
+            if let subadministrativeArea = self.subAdministrativeArea {
+                shortDescription += subadministrativeArea
+            }
+            if let administrativeArea = self.administrativeArea, !shortDescription.isEmpty {
+                shortDescription += ", "
+                shortDescription += administrativeArea
+            }
+        }
+        return shortDescription
     }
 
 }
