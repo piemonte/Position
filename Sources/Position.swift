@@ -59,9 +59,7 @@ public protocol PositionObserver: AnyObject {
 
 /// Position heading updates protocol.
 public protocol PositionHeadingObserver: AnyObject {
-
-    func position(_ postiion: Position, didUpdateHeading heading: CLHeading)
-
+    func position(_ postiion: Position, didUpdateHeading newHeading: CLHeading)
 }
 
 /// 🛰 Position, Swift and efficient location positioning.
@@ -522,6 +520,12 @@ extension Position: PositionLocationManagerDelegate {
         }
     }
 
+    func positionLocationManager(_ positionLocationManager: PositionLocationManager, didUpdateHeading newHeading: CLHeading) {
+       for observer in self._observers?.allObjects as? [PositionHeadingObserver] ?? [] {
+            observer.position(self, didUpdateHeading: newHeading)
+        }
+    }
+
     internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didUpdateFloor floor: CLFloor) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
@@ -555,6 +559,9 @@ internal protocol PositionLocationManagerDelegate: AnyObject {
 
     func positionLocationManager(_ positionLocationManager: PositionLocationManager, didUpdateOneShotLocation location: CLLocation?)
     func positionLocationManager(_ positionLocationManager: PositionLocationManager, didUpdateTrackingLocations location: [CLLocation]?)
+    func positionLocationManager(_ positionLocationManager: PositionLocationManager, didUpdateHeading newHeading: CLHeading)
+
+    // extras
     func positionLocationManager(_ positionLocationManager: PositionLocationManager, didUpdateFloor floor: CLFloor)
     func positionLocationManager(_ positionLocationManager: PositionLocationManager, didVisit visit: CLVisit?)
 }
@@ -920,6 +927,10 @@ extension PositionLocationManager: CLLocationManagerDelegate {
             // update one-shot requests
             self.processLocationRequests()
         }
+    }
+
+    func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
+        self.delegate?.positionLocationManager(self, didUpdateHeading: newHeading)
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

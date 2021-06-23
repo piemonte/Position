@@ -66,8 +66,8 @@ public class ViewController: UIViewController {
         self._locationLookupButton = UIButton(frame: CGRect(x: 0, y: self.view.bounds.size.height - buttonHeight, width: self.view.bounds.size.width, height: buttonHeight))
         if let locationButton = self._locationLookupButton {
             locationButton.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
-            locationButton.setTitle("Request Location", for: UIControl.State())
-            locationButton.titleLabel!.font = UIFont(name: "AvenirNext-Medium", size: 16)
+            locationButton.setTitle("Request Location", for: .normal)
+            locationButton.titleLabel!.font = UIFont.systemFont(ofSize: 16)
             locationButton.backgroundColor = UIColor(red: 115/255, green: 57/255, blue: 248/255, alpha: 1)
             locationButton.addTarget(self, action: #selector(handleOneShotLocationButton(_:)), for: .touchUpInside)
             self.view.addSubview(locationButton)
@@ -75,8 +75,8 @@ public class ViewController: UIViewController {
 
         self._permissionLocationButton = UIButton(frame: CGRect(x: 0, y: self.view.bounds.size.height - (buttonHeight * 2), width: self.view.bounds.size.width, height: buttonHeight))
         if let permissionLocationButton = self._permissionLocationButton {
-            permissionLocationButton.setTitle("Request Permission", for: UIControl.State())
-            permissionLocationButton.titleLabel!.font = UIFont(name: "AvenirNext-Medium", size: 16)
+            permissionLocationButton.setTitle("Request Permission", for: .normal)
+            permissionLocationButton.titleLabel!.font = UIFont.systemFont(ofSize: 16)
             permissionLocationButton.backgroundColor = UIColor(red: 50/255, green: 153/255, blue: 252/255, alpha: 1)
             permissionLocationButton.addTarget(self, action: #selector(handleLocationPermissionButton(_:)), for: .touchUpInside)
             self.view.addSubview(permissionLocationButton)
