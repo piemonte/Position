@@ -183,7 +183,7 @@ extension CLLocation {
 
 extension CLLocation {
 
-    /// Pretty description of a distance from this location to another.
+    /// Pretty description of a distance from the location to another.
     /// - Parameters:
     ///   - location: Location from which to display distance.
     ///   - locale: Locale to display the units of measurement.
