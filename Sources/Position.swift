@@ -730,7 +730,8 @@ extension PositionLocationManager {
                 let request = PositionLocationRequest()
                 request.desiredAccuracy = desiredAccuracy
                 request.lifespan = PositionLocationManager.OneShotRequestDefaultTimeOut
-                request.timeOutHandler = {
+                request.timeOutHandler = { [weak self] in
+                    guard let self = self else { return }
                     self.processLocationRequests()
                 }
                 request.completionHandler = completionHandler
@@ -930,7 +931,7 @@ extension PositionLocationManager: CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
-        self.delegate?.positionLocationManager(self, didUpdateHeading: newHeading)
+        delegate?.positionLocationManager(self, didUpdateHeading: newHeading)
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
