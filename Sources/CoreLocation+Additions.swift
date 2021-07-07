@@ -222,6 +222,15 @@ extension CLPlacemark {
                 shortDescription += administrativeArea
             }
         }
+        if shortDescription.isEmpty {
+            if let areaOfInterest = areasOfInterest?.first {
+                shortDescription += areaOfInterest
+            } else if let inlandWater = inlandWater {
+                shortDescription += inlandWater
+            } else if let ocean = ocean {
+                shortDescription += ocean
+            }
+        }
         return shortDescription
     }
 
