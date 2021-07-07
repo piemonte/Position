@@ -142,29 +142,29 @@ open class Position {
     /// Distance in meters a device must move before updating location.
     public var distanceFilter: Double {
         get {
-            _positionLocationManager.distanceFilter
+            _deviceLocationManager.distanceFilter
         }
         set {
-            _positionLocationManager.distanceFilter = newValue
+            _deviceLocationManager.distanceFilter = newValue
         }
     }
 
     /// Time that must pass for a device before updating location.
     public var timeFilter: TimeInterval {
         get {
-            _positionLocationManager.timeFilter
+            _deviceLocationManager.timeFilter
         }
         set {
-            _positionLocationManager.timeFilter = newValue
+            _deviceLocationManager.timeFilter = newValue
         }
     }
 
     /// When `true`, location will reduce power usage from adjusted accuracy when backgrounded.
     public var adjustLocationUseWhenBackgrounded: Bool = false {
         didSet {
-            if _positionLocationManager.isUpdatingLowPowerLocation == true {
-                _positionLocationManager.stopLowPowerUpdating()
-                _positionLocationManager.startUpdating()
+            if _deviceLocationManager.isUpdatingLowPowerLocation == true {
+                _deviceLocationManager.stopLowPowerUpdating()
+                _deviceLocationManager.startUpdating()
             }
         }
     }
@@ -179,36 +179,36 @@ open class Position {
     /// Location tracking desired accuracy when the app is active.
     public var trackingDesiredAccuracyWhenActive: Double {
         get {
-            _positionLocationManager.trackingDesiredAccuracyActive
+            _deviceLocationManager.trackingDesiredAccuracyActive
         }
         set {
-            _positionLocationManager.trackingDesiredAccuracyActive = newValue
+            _deviceLocationManager.trackingDesiredAccuracyActive = newValue
         }
     }
 
     /// Location tracking desired accuracy when the app is in the background.
     public var trackingDesiredAccuracyWhenInBackground: Double {
         get {
-            _positionLocationManager.trackingDesiredAccuracyBackground
+            _deviceLocationManager.trackingDesiredAccuracyBackground
         }
         set {
-            _positionLocationManager.trackingDesiredAccuracyBackground = newValue
+            _deviceLocationManager.trackingDesiredAccuracyBackground = newValue
         }
     }
 
     /// `true` when location services are updating
     public var isUpdatingLocation: Bool {
-        _positionLocationManager.isUpdatingLocation == true || self._positionLocationManager.isUpdatingLowPowerLocation == true
+        _deviceLocationManager.isUpdatingLocation == true || _deviceLocationManager.isUpdatingLowPowerLocation == true
     }
 
     /// Last determined location
     public var location: CLLocation? {
-        _positionLocationManager.location
+        _deviceLocationManager.location
     }
 
     /// Last determined heading
     public var heading: CLHeading? {
-        _positionLocationManager.heading
+        _deviceLocationManager.heading
     }
 
     // MARK: - ivars
@@ -216,21 +216,21 @@ open class Position {
     internal private(set) var _authorizationObservers: NSHashTable<AnyObject>?
     internal private(set) var _observers: NSHashTable<AnyObject>?
 
-    internal private(set) var _positionLocationManager: PositionLocationManager = PositionLocationManager()
+    internal private(set) var _deviceLocationManager: DeviceLocationManager = DeviceLocationManager()
     internal private(set) var _updating: Bool = false
 
     // MARK: - object lifecycle
 
     public init() {
-        self._positionLocationManager.delegate = self
+        _deviceLocationManager.delegate = self
 
-        self.addBatteryObservers()
-        self.addAppObservers()
+        addBatteryObservers()
+        addAppObservers()
     }
 
     deinit {
-        self.removeAppObservers()
-        self.removeBatteryObservers()
+        removeAppObservers()
+        removeBatteryObservers()
     }
 }
 
@@ -296,28 +296,28 @@ extension Position {
 
     /// Authorization status for location services.
     public var locationServicesStatus: LocationAuthorizationStatus {
-        _positionLocationManager.locationServicesStatus
+        _deviceLocationManager.locationServicesStatus
     }
 
     /// Request location authorization for in use always.
     public func requestAlwaysLocationAuthorization() {
-        _positionLocationManager.requestAlwaysAuthorization()
+        _deviceLocationManager.requestAlwaysAuthorization()
     }
 
     /// Request location authorization for in app use only.
     public func requestWhenInUseLocationAuthorization() {
-        _positionLocationManager.requestWhenInUseAuthorization()
+        _deviceLocationManager.requestWhenInUseAuthorization()
     }
 
     @available(iOS 14, *)
     public var locationAccuracyAuthorizationStatus: LocationAccuracyAuthorizationStatus {
-        _positionLocationManager.locationAccuracyAuthorizationStatus
+        _deviceLocationManager.locationAccuracyAuthorizationStatus
     }
 
     /// Request one time accuracy authorization. Be sure to include "FullAccuracyPurpose" to your Info.plist.
     @available(iOS 14, *)
     public func requestOneTimeFullAccuracyAuthorization(_ completionHandler: ((Bool) -> Void)? = nil) {
-        _positionLocationManager.requestAccuracyAuthorization { completed in
+        _deviceLocationManager.requestAccuracyAuthorization { completed in
             completionHandler?(completed)
         }
     }
@@ -334,19 +334,19 @@ extension Position {
     ///   - desiredAccuracy: Minimum accuracy to meet before for request.
     ///   - completionHandler: Completion handler for when the location is determined.
     public func performOneShotLocationUpdate(withDesiredAccuracy desiredAccuracy: Double, completionHandler: Position.OneShotCompletionHandler? = nil) {
-        _positionLocationManager.performOneShotLocationUpdate(withDesiredAccuracy: desiredAccuracy, completionHandler: completionHandler)
+        _deviceLocationManager.performOneShotLocationUpdate(withDesiredAccuracy: desiredAccuracy, completionHandler: completionHandler)
     }
 
     /// Start positioning updates.
     public func startUpdating() {
-        _positionLocationManager.startUpdating()
+        _deviceLocationManager.startUpdating()
         _updating = true
     }
 
     /// Stop positioning updates.
     public func stopUpdating() {
-        _positionLocationManager.stopUpdating()
-        _positionLocationManager.stopLowPowerUpdating()
+        _deviceLocationManager.stopUpdating()
+        _deviceLocationManager.stopLowPowerUpdating()
         _updating = false
     }
 }
@@ -357,12 +357,12 @@ extension Position {
 
     /// Start heading updates.
     public func startUpdatingHeading() {
-        _positionLocationManager.startUpdatingHeading()
+        _deviceLocationManager.startUpdatingHeading()
     }
 
     /// Stop heading updates.
     public func stopUpdatingHeading() {
-        _positionLocationManager.stopUpdatingHeading()
+        _deviceLocationManager.stopUpdatingHeading()
     }
 
 }
@@ -372,7 +372,7 @@ extension Position {
 extension Position {
 
     internal func checkAuthorizationStatusForServices() {
-        if self._positionLocationManager.locationServicesStatus == .denied {
+        if _deviceLocationManager.locationServicesStatus == .denied {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
                 for observer in self._observers?.allObjects as? [PositionAuthorizationObserver] ?? [] {
@@ -383,12 +383,12 @@ extension Position {
     }
 
     internal func updateLocationAccuracyIfNecessary() {
-        if self.adjustLocationUseFromBatteryLevel == true {
+        if adjustLocationUseFromBatteryLevel == true {
             switch UIDevice.current.batteryState {
                 case .full,
                      .charging:
-                    _positionLocationManager.trackingDesiredAccuracyActive = kCLLocationAccuracyNearestTenMeters
-                    _positionLocationManager.trackingDesiredAccuracyBackground = kCLLocationAccuracyHundredMeters
+                    _deviceLocationManager.trackingDesiredAccuracyActive = kCLLocationAccuracyNearestTenMeters
+                    _deviceLocationManager.trackingDesiredAccuracyBackground = kCLLocationAccuracyHundredMeters
                     break
                 case .unplugged,
                      .unknown:
@@ -396,11 +396,11 @@ extension Position {
                 @unknown default:
                     let batteryLevel: Float = UIDevice.current.batteryLevel
                     if batteryLevel < 0.15 {
-                        _positionLocationManager.trackingDesiredAccuracyActive = kCLLocationAccuracyThreeKilometers
-                        _positionLocationManager.trackingDesiredAccuracyBackground = kCLLocationAccuracyThreeKilometers
+                        _deviceLocationManager.trackingDesiredAccuracyActive = kCLLocationAccuracyThreeKilometers
+                        _deviceLocationManager.trackingDesiredAccuracyBackground = kCLLocationAccuracyThreeKilometers
                     } else {
-                        _positionLocationManager.trackingDesiredAccuracyActive = kCLLocationAccuracyHundredMeters
-                        _positionLocationManager.trackingDesiredAccuracyBackground = kCLLocationAccuracyKilometer
+                        _deviceLocationManager.trackingDesiredAccuracyActive = kCLLocationAccuracyHundredMeters
+                        _deviceLocationManager.trackingDesiredAccuracyBackground = kCLLocationAccuracyKilometer
                     }
                     break
             }
@@ -447,7 +447,7 @@ extension Position {
 
         // internally, locationManager will adjust desiredaccuracy to trackingDesiredAccuracyBackground
         if adjustLocationUseWhenBackgrounded == true {
-            _positionLocationManager.stopLowPowerUpdating()
+            _deviceLocationManager.stopLowPowerUpdating()
         }
     }
 
@@ -458,7 +458,7 @@ extension Position {
         }
 
         if adjustLocationUseWhenBackgrounded == true {
-            _positionLocationManager.startLowPowerUpdating()
+            _deviceLocationManager.startLowPowerUpdating()
         }
 
         updateLocationAccuracyIfNecessary()
@@ -480,11 +480,11 @@ extension Position {
 
 }
 
-// MARK: - PositionLocationManagerDelegate
+// MARK: - DeviceLocationManagerDelegate
 
-extension Position: PositionLocationManagerDelegate {
+extension Position: DeviceLocationManagerDelegate {
 
-    internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
+    internal func deviceLocationManager(_ deviceLocationManager: DeviceLocationManager, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             for observer in self._observers?.allObjects as? [PositionAuthorizationObserver] ?? [] {
@@ -493,7 +493,7 @@ extension Position: PositionLocationManagerDelegate {
         }
     }
 
-    internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didFailWithError error: Error?) {
+    internal func deviceLocationManager(_ deviceLocationManager: DeviceLocationManager, didFailWithError error: Error?) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             for observer in self._observers?.allObjects as? [PositionObserver] ?? [] {
@@ -502,7 +502,7 @@ extension Position: PositionLocationManagerDelegate {
         }
     }
 
-    internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didUpdateOneShotLocation location: CLLocation?) {
+    internal func deviceLocationManager(_ deviceLocationManager: DeviceLocationManager, didUpdateOneShotLocation location: CLLocation?) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             for observer in self._observers?.allObjects as? [PositionObserver] ?? [] {
@@ -511,7 +511,7 @@ extension Position: PositionLocationManagerDelegate {
         }
     }
 
-    internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didUpdateTrackingLocations locations: [CLLocation]?) {
+    internal func deviceLocationManager(_ deviceLocationManager: DeviceLocationManager, didUpdateTrackingLocations locations: [CLLocation]?) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             for observer in self._observers?.allObjects as? [PositionObserver] ?? [] {
@@ -520,13 +520,13 @@ extension Position: PositionLocationManagerDelegate {
         }
     }
 
-    func positionLocationManager(_ positionLocationManager: PositionLocationManager, didUpdateHeading newHeading: CLHeading) {
+    func deviceLocationManager(_ deviceLocationManager: DeviceLocationManager, didUpdateHeading newHeading: CLHeading) {
        for observer in self._observers?.allObjects as? [PositionHeadingObserver] ?? [] {
             observer.position(self, didUpdateHeading: newHeading)
         }
     }
 
-    internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didUpdateFloor floor: CLFloor) {
+    internal func deviceLocationManager(_ deviceLocationManager: DeviceLocationManager, didUpdateFloor floor: CLFloor) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             for observer in self._observers?.allObjects as? [PositionObserver] ?? [] {
@@ -535,7 +535,7 @@ extension Position: PositionLocationManagerDelegate {
         }
     }
 
-    internal func positionLocationManager(_ positionLocationManager: PositionLocationManager, didVisit visit: CLVisit?) {
+    internal func deviceLocationManager(_ deviceLocationManager: DeviceLocationManager, didVisit visit: CLVisit?) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             if let observers = self._observers?.allObjects as? [PositionObserver] {
@@ -543,532 +543,6 @@ extension Position: PositionLocationManagerDelegate {
                     observer.position(self, didVisit: visit)
                 })
             }
-        }
-    }
-
-}
-
-// MARK: -
-// MARK: - Internal
-
-// MARK: - PositionLocationManagerDelegate
-
-internal protocol PositionLocationManagerDelegate: AnyObject {
-    func positionLocationManager(_ positionLocationManager: PositionLocationManager, didChangeLocationAuthorizationStatus status: Position.LocationAuthorizationStatus)
-    func positionLocationManager(_ positionLocationManager: PositionLocationManager, didFailWithError error: Error?)
-
-    func positionLocationManager(_ positionLocationManager: PositionLocationManager, didUpdateOneShotLocation location: CLLocation?)
-    func positionLocationManager(_ positionLocationManager: PositionLocationManager, didUpdateTrackingLocations location: [CLLocation]?)
-    func positionLocationManager(_ positionLocationManager: PositionLocationManager, didUpdateHeading newHeading: CLHeading)
-
-    // extras
-    func positionLocationManager(_ positionLocationManager: PositionLocationManager, didUpdateFloor floor: CLFloor)
-    func positionLocationManager(_ positionLocationManager: PositionLocationManager, didVisit visit: CLVisit?)
-}
-
-// MARK: - PositionLocationManager
-
-internal class PositionLocationManager: NSObject {
-
-    // MARK: - types
-
-    internal static let OneShotRequestDefaultTimeOut: TimeInterval = 0.5 * 60.0
-    internal static let RequestQueueSpecificKey = DispatchSpecificKey<()>()
-
-    // MARK: - properties
-
-    internal weak var delegate: PositionLocationManagerDelegate?
-
-    internal var distanceFilter: Double = 0.0 {
-        didSet {
-            updateLocationManagerStateIfNeeded()
-        }
-    }
-
-    internal var timeFilter: TimeInterval = 0.0
-
-    internal var trackingDesiredAccuracyActive: Double = kCLLocationAccuracyHundredMeters {
-        didSet {
-            updateLocationManagerStateIfNeeded()
-        }
-    }
-
-    internal var trackingDesiredAccuracyBackground: Double = kCLLocationAccuracyKilometer {
-        didSet {
-            updateLocationManagerStateIfNeeded()
-        }
-    }
-
-    internal var location: CLLocation? {
-        _locationManager.location
-    }
-
-    internal var heading: CLHeading? {
-        _locationManager.heading
-    }
-
-    internal var isUpdatingLocation: Bool = false
-    internal var isUpdatingLowPowerLocation: Bool = false
-
-    // MARK: - ivars
-
-    internal var _locationManager: CLLocationManager = CLLocationManager()
-    internal var _locationRequests: [PositionLocationRequest] = []
-    internal var _requestQueue: DispatchQueue
-    internal var _locations: [CLLocation]?
-
-    // MARK: - object lifecycle
-
-    override public init() {
-        self._requestQueue = DispatchQueue(label: "PositionLocationManagerRequestQueue", autoreleaseFrequency: .workItem, target: DispatchQueue.global())
-        self._requestQueue.setSpecific(key: PositionLocationManager.RequestQueueSpecificKey, value: ())
-
-        super.init()
-
-        self._locationManager.delegate = self
-        self._locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        self._locationManager.pausesLocationUpdatesAutomatically = false
-        if CLLocationManager.backgroundCapabilitiesEnabled {
-            self._locationManager.allowsBackgroundLocationUpdates = true
-        }
-    }
-}
-
-// MARK: - permissions
-
-extension PositionLocationManager {
-
-    internal var locationServicesStatus: Position.LocationAuthorizationStatus {
-        get {
-            guard CLLocationManager.locationServicesEnabled() == true else {
-                return .notAvailable
-            }
-
-            if #available(iOS 14.0, *) {
-                switch _locationManager.authorizationStatus {
-                    case .authorizedAlways:
-                        return .allowedAlways
-                    case .authorizedWhenInUse:
-                        return .allowedWhenInUse
-                    case .denied, .restricted:
-                        return .denied
-                    case .notDetermined:
-                        fallthrough
-                    @unknown default:
-                        return .notDetermined
-                }
-            } else {
-                switch CLLocationManager.authorizationStatus() {
-                    case .authorizedAlways:
-                        return .allowedAlways
-                    case .authorizedWhenInUse:
-                        return .allowedWhenInUse
-                    case .denied, .restricted:
-                        return .denied
-                    case .notDetermined:
-                        fallthrough
-                    @unknown default:
-                        return .notDetermined
-                }
-            }
-        }
-    }
-
-    @available(iOS 14, *)
-    internal var locationAccuracyAuthorizationStatus: Position.LocationAccuracyAuthorizationStatus {
-        get {
-            switch _locationManager.accuracyAuthorization {
-            case .fullAccuracy:
-                return .fullAccuracy
-            case .reducedAccuracy:
-                return .reducedAccuracy
-            @unknown default:
-                return .reducedAccuracy
-            }
-        }
-    }
-
-    internal func requestAlwaysAuthorization() {
-        _locationManager.requestAlwaysAuthorization()
-    }
-
-    internal func requestWhenInUseAuthorization() {
-        _locationManager.requestWhenInUseAuthorization()
-    }
-
-    @available(iOS 14, *)
-    internal func requestAccuracyAuthorization(_ completionHandler: ((Bool) -> Void)? = nil) {
-        guard _locationManager.accuracyAuthorization != .fullAccuracy else {
-            DispatchQueue.main.async {
-                completionHandler?(true)
-            }
-            return
-        }
-
-        // Add the purpose key to your app's Info.plist to provide users with a purpose of your request.
-        _locationManager.requestTemporaryFullAccuracyAuthorization(withPurposeKey: "FullAccuracyPurpose") { [weak self] (error) in
-            guard let self = self else {
-                DispatchQueue.main.async {
-                    completionHandler?(false)
-                }
-                return
-            }
-            self._locationManager.accuracyAuthorization == .fullAccuracy ? completionHandler?(true) : completionHandler?(false)
-        }
-    }
-
-}
-
-// MARK: - location services
-
-extension PositionLocationManager {
-
-    internal func performOneShotLocationUpdate(withDesiredAccuracy desiredAccuracy: Double, completionHandler: Position.OneShotCompletionHandler? = nil) {
-        if locationServicesStatus == .allowedAlways ||
-            locationServicesStatus == .allowedWhenInUse {
-            _requestQueue.async {
-                let request = PositionLocationRequest()
-                request.desiredAccuracy = desiredAccuracy
-                request.lifespan = PositionLocationManager.OneShotRequestDefaultTimeOut
-                request.timeOutHandler = { [weak self] in
-                    guard let self = self else { return }
-                    self.processLocationRequests()
-                }
-                request.completionHandler = completionHandler
-
-                self._locationRequests.append(request)
-
-                self.startLowPowerUpdating()
-                self._locationManager.desiredAccuracy = kCLLocationAccuracyBest
-                self._locationManager.distanceFilter = kCLDistanceFilterNone
-
-                // activate location to process request
-                if self.isUpdatingLocation == false {
-                    self.startUpdating()
-                    // flag signals to turn off updating once complete
-                    self.isUpdatingLocation = false
-                }
-            }
-        } else {
-            DispatchQueue.main.async {
-                completionHandler?(.failure(Position.ErrorType.restricted))
-            }
-        }
-    }
-
-    internal func startUpdating() {
-        switch self.locationServicesStatus {
-            case .allowedAlways,
-                 .allowedWhenInUse:
-                _locationManager.startUpdatingLocation()
-                _locationManager.startMonitoringVisits()
-                isUpdatingLocation = true
-                updateLocationManagerStateIfNeeded()
-                fallthrough
-            default:
-                break
-        }
-    }
-
-    internal func stopUpdating() {
-        switch self.locationServicesStatus {
-            case .allowedAlways,
-                 .allowedWhenInUse:
-                if self.isUpdatingLocation == true {
-                    _locationManager.stopUpdatingLocation()
-                    _locationManager.stopMonitoringVisits()
-                    isUpdatingLocation = false
-                    updateLocationManagerStateIfNeeded()
-                }
-                fallthrough
-            default:
-                break
-        }
-    }
-
-    internal func startLowPowerUpdating() {
-        let status: Position.LocationAuthorizationStatus = self.locationServicesStatus
-        switch status {
-            case .allowedAlways, .allowedWhenInUse:
-                _locationManager.startMonitoringSignificantLocationChanges()
-                isUpdatingLowPowerLocation = true
-                updateLocationManagerStateIfNeeded()
-                fallthrough
-            default:
-                break
-        }
-    }
-
-    internal func stopLowPowerUpdating() {
-        let status: Position.LocationAuthorizationStatus = self.locationServicesStatus
-        switch status {
-            case .allowedAlways, .allowedWhenInUse:
-                _locationManager.stopMonitoringSignificantLocationChanges()
-                isUpdatingLowPowerLocation = false
-                updateLocationManagerStateIfNeeded()
-                fallthrough
-            default:
-                break
-        }
-    }
-
-}
-
-extension PositionLocationManager {
-
-    internal func startUpdatingHeading() {
-        _locationManager.startUpdatingHeading()
-    }
-
-    internal func stopUpdatingHeading() {
-        _locationManager.stopUpdatingHeading()
-    }
-
-
-}
-
-// MARK: - private methods
-
-extension PositionLocationManager {
-
-    // only called from the request queue
-    internal func processLocationRequests() {
-        guard self._locationRequests.count > 0 else {
-            DispatchQueue.main.async {
-                self.delegate?.positionLocationManager(self, didUpdateTrackingLocations: self._locations)
-            }
-            return
-        }
-
-        let completeRequests: [PositionLocationRequest] = self._locationRequests.filter { request -> Bool in
-            // check if a request completed, meaning expired or met horizontal accuracy
-            // print("desiredAccuracy \(request.desiredAccuracy) horizontal \(self.location?.horizontalAccuracy)")
-            if let location = self._locations?.first {
-                guard request.isExpired == true || location.horizontalAccuracy < request.desiredAccuracy else {
-                    return false
-                }
-                return true
-            }
-            return false
-        }
-
-        for request in completeRequests {
-            guard request.isCompleted == false else {
-                continue
-            }
-            request.isCompleted = true
-
-            DispatchQueue.main.async {
-                if request.isExpired {
-                    request.completionHandler?(.failure(Position.ErrorType.timedOut))
-                } else {
-                    if let location = self._locations?.first {
-                        request.completionHandler?(.success(location))
-                    } else {
-                        request.completionHandler?(.failure(Position.ErrorType.timedOut))
-                    }
-                }
-            }
-        }
-
-        let pendingRequests: [PositionLocationRequest] = _locationRequests.filter { request -> Bool in
-            request.isCompleted == false
-        }
-        _locationRequests = pendingRequests
-
-        if _locationRequests.isEmpty {
-            updateLocationManagerStateIfNeeded()
-
-            if isUpdatingLocation == false {
-                stopUpdating()
-            }
-
-            if isUpdatingLowPowerLocation == false {
-                stopLowPowerUpdating()
-            }
-        }
-    }
-
-    internal func completeLocationRequests(withError error: Error?) {
-        for locationRequest in _locationRequests {
-            locationRequest.cancelRequest()
-            guard let handler = locationRequest.completionHandler else {
-                continue
-            }
-
-            DispatchQueue.main.async {
-                handler(.failure(error ?? Position.ErrorType.cancelled))
-            }
-        }
-    }
-
-    internal func updateLocationManagerStateIfNeeded() {
-        // when not processing requests, set desired accuracy appropriately
-        if _locationRequests.count > 0 {
-            if isUpdatingLocation == true {
-                _locationManager.desiredAccuracy = trackingDesiredAccuracyActive
-            } else if isUpdatingLowPowerLocation == true {
-                _locationManager.desiredAccuracy = trackingDesiredAccuracyBackground
-            }
-
-            _locationManager.distanceFilter = distanceFilter
-        }
-    }
-}
-
-// MARK: - CLLocationManagerDelegate
-
-extension PositionLocationManager: CLLocationManagerDelegate {
-
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        _requestQueue.async { [weak self] in
-            guard let self = self else { return }
-            // update last location
-            self._locations = locations
-            // update one-shot requests
-            self.processLocationRequests()
-        }
-    }
-
-    func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
-        delegate?.positionLocationManager(self, didUpdateHeading: newHeading)
-    }
-
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        _requestQueue.async { [weak self] in
-            guard let self = self else { return }
-            self.completeLocationRequests(withError: error)
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                self.delegate?.positionLocationManager(self, didFailWithError: error)
-            }
-        }
-    }
-
-    @available(iOS 14, *)
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        _requestQueue.async { [weak self] in
-            guard let self = self else { return }
-            switch manager.authorizationStatus {
-            case .denied, .restricted:
-                self.completeLocationRequests(withError: Position.ErrorType.restricted)
-            default: break
-            }
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                self.delegate?.positionLocationManager(self, didChangeLocationAuthorizationStatus: self.locationServicesStatus)
-            }
-        }
-    }
-
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        _requestQueue.async { [weak self] in
-            guard let self = self else { return }
-            switch status {
-            case .denied, .restricted:
-                self.completeLocationRequests(withError: Position.ErrorType.restricted)
-            default: break
-            }
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                self.delegate?.positionLocationManager(self, didChangeLocationAuthorizationStatus: self.locationServicesStatus)
-            }
-        }
-    }
-
-    func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
-    }
-
-    func locationManager(_ manager: CLLocationManager, didVisit visit: CLVisit) {
-        delegate?.positionLocationManager(self, didVisit: visit)
-    }
-
-    func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
-    }
-
-    func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
-    }
-
-    func locationManager(_ manager: CLLocationManager, didStartMonitoringFor region: CLRegion) {
-    }
-
-    func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
-        delegate?.positionLocationManager(self, didFailWithError: error)
-    }
-
-}
-
-// MARK: - PositionLocationRequest
-
-internal class PositionLocationRequest {
-
-    // MARK: - types
-
-    internal typealias TimeOutCompletionHandler = () -> Void
-
-    // MARK: - properties
-
-    internal var desiredAccuracy: Double = kCLLocationAccuracyBest
-    internal var lifespan: TimeInterval = PositionLocationManager.OneShotRequestDefaultTimeOut {
-        didSet {
-            isExpired = false
-            _expirationTimer?.invalidate()
-            _expirationTimer = Timer.scheduledTimer(timeInterval: self.lifespan,
-                                                    target: self,
-                                                    selector: #selector(handleTimerFired(_:)),
-                                                    userInfo: nil,
-                                                    repeats: false)
-        }
-    }
-    internal var isCompleted: Bool = false
-    internal var isExpired: Bool = false
-
-    internal var timeOutHandler: TimeOutCompletionHandler?
-    internal var completionHandler: Position.OneShotCompletionHandler?
-
-    // MARK: - ivars
-
-    internal var _expirationTimer: Timer?
-
-    // MARK: - object lifecycle
-
-    deinit {
-        isExpired = true
-        _expirationTimer?.invalidate()
-        _expirationTimer = nil
-
-        timeOutHandler = nil
-        completionHandler = nil
-    }
-
-    // MARK: - funcs
-
-    internal func cancelRequest() {
-        isExpired = true
-        _expirationTimer?.invalidate()
-        _expirationTimer = nil
-
-        timeOutHandler = nil
-        // Note: completion handler will be processed on the request process loop
-    }
-}
-
-// MARK: - Timer
-
-extension PositionLocationRequest {
-
-    @objc
-    internal func handleTimerFired(_ timer: Timer) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            self.isExpired = true
-            self._expirationTimer?.invalidate()
-            self._expirationTimer = nil
-
-            if let timeOutHandler = self.timeOutHandler {
-                timeOutHandler()
-            }
-            self.timeOutHandler = nil
         }
     }
 
