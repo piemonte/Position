@@ -203,35 +203,88 @@ extension CLPlacemark {
 
     /// Short and pretty description of the placemark.
     /// - Returns: sublocality or locality or subadministrative area, administrative area
-    public func prettyShortDescription() -> String {
-        var shortDescription = ""
-        if let sublocality = self.subLocality {
-            shortDescription += sublocality
+    public func prettyDescription() -> String {
+        var prettyDescription = ""
+        if let areaOfInterest = areasOfInterest?.first {
+            prettyDescription += areaOfInterest
         }
-        if shortDescription.isEmpty {
+        if prettyDescription.isEmpty {
+            if let sublocality = self.subLocality {
+                prettyDescription += sublocality
+            }
+        }
+        if prettyDescription.isEmpty {
             if let locality = self.locality {
-                shortDescription += locality
+                prettyDescription += locality
             }
         }
-        if shortDescription.isEmpty {
+        if prettyDescription.isEmpty {
             if let subadministrativeArea = self.subAdministrativeArea {
-                shortDescription += subadministrativeArea
+                prettyDescription += subadministrativeArea
             }
-            if let administrativeArea = self.administrativeArea, !shortDescription.isEmpty {
-                shortDescription += ", "
-                shortDescription += administrativeArea
+            if let administrativeArea = self.administrativeArea {
+                if !prettyDescription.isEmpty {
+                    prettyDescription += ", "
+                }
+                prettyDescription += administrativeArea
             }
         }
-        if shortDescription.isEmpty {
-            if let areaOfInterest = areasOfInterest?.first {
-                shortDescription += areaOfInterest
-            } else if let inlandWater = inlandWater {
-                shortDescription += inlandWater
+        if prettyDescription.isEmpty {
+            if let inlandWater = inlandWater {
+                prettyDescription += inlandWater
             } else if let ocean = ocean {
-                shortDescription += ocean
+                prettyDescription += ocean
             }
         }
-        return shortDescription
+        if prettyDescription.isEmpty {
+            if let country = country {
+                prettyDescription += country
+            }
+        }
+        return prettyDescription
+    }
+
+    public func prettyDescription(withZoomLevel zoomLevel: Double) -> String {
+        var prettyDescription = ""
+        if let areaOfInterest = areasOfInterest?.first {
+            prettyDescription += areaOfInterest
+        }
+        if prettyDescription.isEmpty {
+            if let sublocality = self.subLocality {
+                prettyDescription += sublocality
+            }
+        }
+        prettyDescription = zoomLevel >= 14 ? prettyDescription : ""
+        if prettyDescription.isEmpty {
+            if let locality = self.locality {
+                prettyDescription += locality
+            }
+        }
+        prettyDescription = zoomLevel >= 10 ? prettyDescription : ""
+        if prettyDescription.isEmpty {
+            if let subadministrativeArea = self.subAdministrativeArea {
+                prettyDescription += subadministrativeArea
+            }
+        }
+        prettyDescription = zoomLevel >= 5 ? prettyDescription : ""
+        if prettyDescription.isEmpty {
+            if let administrativeArea = self.administrativeArea {
+                prettyDescription += administrativeArea
+            }
+        }
+        if prettyDescription.isEmpty {
+            if let inlandWater = inlandWater {
+                prettyDescription += inlandWater
+            } else if let ocean = ocean {
+                prettyDescription += ocean
+            }
+        }
+        if prettyDescription.isEmpty {
+            if let country = country {
+                prettyDescription += country
+            }
+        }
+        return prettyDescription
     }
 
 }
