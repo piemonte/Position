@@ -202,7 +202,7 @@ extension CLLocation {
 extension CLPlacemark {
 
     /// Short and pretty description of the placemark.
-    /// - Returns: sublocality or locality or subadministrative area, administrative area
+    /// - Returns: area of interest, sublocality or locality or subadministrative area, administrative area
     public func prettyDescription() -> String {
         var prettyDescription = ""
         if let areaOfInterest = areasOfInterest?.first {
@@ -246,8 +246,15 @@ extension CLPlacemark {
 
     public func prettyDescription(withZoomLevel zoomLevel: Double) -> String {
         var prettyDescription = ""
-        if let areaOfInterest = areasOfInterest?.first {
+        if let areaOfInterest = areasOfInterest?.first, zoomLevel >= 18 {
             prettyDescription += areaOfInterest
+        }
+        if prettyDescription.isEmpty {
+            if let inlandWater = inlandWater {
+                prettyDescription += inlandWater
+            } else if let ocean = ocean {
+                prettyDescription += ocean
+            }
         }
         if prettyDescription.isEmpty {
             if let sublocality = self.subLocality {
@@ -256,11 +263,25 @@ extension CLPlacemark {
         }
         prettyDescription = zoomLevel >= 14 ? prettyDescription : ""
         if prettyDescription.isEmpty {
+            if let inlandWater = inlandWater {
+                prettyDescription += inlandWater
+            } else if let ocean = ocean {
+                prettyDescription += ocean
+            }
+        }
+        if prettyDescription.isEmpty {
             if let locality = self.locality {
                 prettyDescription += locality
             }
         }
         prettyDescription = zoomLevel >= 10 ? prettyDescription : ""
+        if prettyDescription.isEmpty {
+            if let inlandWater = inlandWater {
+                prettyDescription += inlandWater
+            } else if let ocean = ocean {
+                prettyDescription += ocean
+            }
+        }
         if prettyDescription.isEmpty {
             if let subadministrativeArea = self.subAdministrativeArea {
                 prettyDescription += subadministrativeArea
@@ -268,15 +289,15 @@ extension CLPlacemark {
         }
         prettyDescription = zoomLevel >= 5 ? prettyDescription : ""
         if prettyDescription.isEmpty {
-            if let administrativeArea = self.administrativeArea {
-                prettyDescription += administrativeArea
-            }
-        }
-        if prettyDescription.isEmpty {
             if let inlandWater = inlandWater {
                 prettyDescription += inlandWater
             } else if let ocean = ocean {
                 prettyDescription += ocean
+            }
+        }
+        if prettyDescription.isEmpty {
+            if let administrativeArea = self.administrativeArea {
+                prettyDescription += administrativeArea
             }
         }
         if prettyDescription.isEmpty {
