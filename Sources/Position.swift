@@ -215,6 +215,7 @@ open class Position {
 
     internal private(set) var _authorizationObservers: NSHashTable<AnyObject>?
     internal private(set) var _observers: NSHashTable<AnyObject>?
+    internal private(set) var _headingObservers: NSHashTable<AnyObject>?
 
     internal private(set) var _deviceLocationManager: DeviceLocationManager = DeviceLocationManager()
     internal private(set) var _updating: Bool = false
@@ -263,7 +264,7 @@ extension Position {
         }
     }
 
-    /// Adds a position observer.
+    /// Adds a position location observer.
     ///
     /// - Parameter observer: Observing instance.
     public func addObserver(_ observer: PositionObserver) {
@@ -276,7 +277,7 @@ extension Position {
         }
     }
 
-    /// Removes a position observer.
+    /// Removes a position location observer.
     ///
     /// - Parameter observer: Observing instance.
     public func removeObserver(_ observer: PositionObserver) {
@@ -287,6 +288,32 @@ extension Position {
             _observers = nil
         }
     }
+
+    /// Adds a position heading observer.
+    ///
+    /// - Parameter observer: Observing instance.
+    public func addHeadingObserver(_ observer: PositionHeadingObserver) {
+        if _headingObservers == nil {
+            _headingObservers = NSHashTable.weakObjects()
+        }
+
+        if _headingObservers?.contains(observer) == false {
+            _headingObservers?.add(observer)
+        }
+    }
+
+    /// Removes a position heading observer.
+    ///
+    /// - Parameter observer: Observing instance.
+    public func removeHeadingObserver(_ observer: PositionHeadingObserver) {
+        if _headingObservers?.contains(observer) == true {
+            _headingObservers?.remove(observer)
+        }
+        if _headingObservers?.count == 0 {
+            _headingObservers = nil
+        }
+    }
+
 
 }
 
