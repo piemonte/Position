@@ -17,19 +17,19 @@
     <a title="Protocols  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">Position 0.7.1 Docs</a> (78% documented)</p>
-        <p class="header-right"><a href="https://github.com/piemonte/Position"><img src="img/gh.png"/>View on GitHub</a></p>
-        <p class="header-right">
+        <p><a href="index.html">Position 0.9.9 Docs</a> (76% documented)</p>
+        <p class="header-right"><a href="https://github.com/piemonte/Position"><img src="img/gh.png" alt="GitHub"/>View on GitHub</a></p>
+        <div class="header-right">
           <form role="search" action="search.json">
             <input type="text" placeholder="Search documentation" data-typeahead>
           </form>
-        </p>
+        </div>
       </div>
     </header>
     <div class="content-wrapper">
       <p id="breadcrumbs">
         <a href="index.html">Position Reference</a>
-        <img id="carat" src="img/carat.png" />
+        <img id="carat" src="img/carat.png" alt=""/>
         Protocols  Reference
       </p>
     </div>
@@ -42,16 +42,31 @@
               <li class="nav-group-task">
                 <a href="Classes/Position.html">Position</a>
               </li>
+              <li class="nav-group-task">
+                <a href="Classes/Position/LocationAuthorizationStatus.html">– LocationAuthorizationStatus</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/Position/LocationAccuracyAuthorizationStatus.html">– LocationAccuracyAuthorizationStatus</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/Position/ErrorType.html">– ErrorType</a>
+              </li>
             </ul>
           </li>
           <li class="nav-group-name">
-            <a href="Enums.html">Enumerations</a>
+            <a href="Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="Enums/LocationAuthorizationStatus.html">LocationAuthorizationStatus</a>
+                <a href="Extensions/CLLocation.html">CLLocation</a>
               </li>
               <li class="nav-group-task">
-                <a href="Enums/PositionErrorType.html">PositionErrorType</a>
+                <a href="Extensions/CLLocationCoordinate2D.html">CLLocationCoordinate2D</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Extensions/CLLocationManager.html">CLLocationManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Extensions/CLPlacemark.html">CLPlacemark</a>
               </li>
             </ul>
           </li>
@@ -60,6 +75,9 @@
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a href="Protocols/PositionAuthorizationObserver.html">PositionAuthorizationObserver</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Protocols/PositionHeadingObserver.html">PositionHeadingObserver</a>
               </li>
               <li class="nav-group-task">
                 <a href="Protocols/PositionObserver.html">PositionObserver</a>
@@ -77,15 +95,6 @@
           </section>
           <section class="section task-group-section">
             <div class="task-group">
-              <div class="task-name-container">
-                <a name="/types"></a>
-                <a name="//apple_ref/swift/Section/types" class="dashAnchor"></a>
-                <div class="section-name-container">
-                  <a class="section-name-link" href="#/types"></a>
-                  <h3 class="section-name"><p>types</p>
-</h3>
-                </div>
-              </div>
               <ul>
                 <li class="item">
                   <div>
@@ -143,16 +152,43 @@
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:8Position0A15HeadingObserverP"></a>
+                    <a name="//apple_ref/swift/Protocol/PositionHeadingObserver" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8Position0A15HeadingObserverP">PositionHeadingObserver</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Position heading updates protocol.</p>
+
+                        <a href="Protocols/PositionHeadingObserver.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">PositionHeadingObserver</span> <span class="p">:</span> <span class="kt">AnyObject</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="https://patrickpiemonte.com" target="_blank" rel="external">Patrick Piemonte</a>. All rights reserved. (Last updated: 2020-07-21)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2022 <a class="link" href="https://patrickpiemonte.com" target="_blank" rel="external noopener">patrick piemonte</a>. All rights reserved. (Last updated: 2022-09-24)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>
   </body>
-</div>
 </html>

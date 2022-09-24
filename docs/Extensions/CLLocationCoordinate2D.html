@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>PositionAuthorizationObserver Protocol Reference</title>
+    <title>CLLocationCoordinate2D Extension Reference</title>
     <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
     <meta charset='utf-8'>
@@ -13,8 +13,8 @@
     <script src="../js/jazzy.search.js" defer></script>
   </head>
   <body>
-    <a name="//apple_ref/swift/Protocol/PositionAuthorizationObserver" class="dashAnchor"></a>
-    <a title="PositionAuthorizationObserver Protocol Reference"></a>
+    <a name="//apple_ref/swift/Extension/CLLocationCoordinate2D" class="dashAnchor"></a>
+    <a title="CLLocationCoordinate2D Extension Reference"></a>
     <header>
       <div class="content-wrapper">
         <p><a href="../index.html">Position 0.9.9 Docs</a> (76% documented)</p>
@@ -30,7 +30,7 @@
       <p id="breadcrumbs">
         <a href="../index.html">Position Reference</a>
         <img id="carat" src="../img/carat.png" alt=""/>
-        PositionAuthorizationObserver Protocol Reference
+        CLLocationCoordinate2D Extension Reference
       </p>
     </div>
     <div class="content-wrapper">
@@ -89,16 +89,15 @@
       <article class="main-content">
         <section>
           <section class="section">
-            <h1>PositionAuthorizationObserver</h1>
+            <h1>CLLocationCoordinate2D</h1>
               <div class="declaration">
                 <div class="language">
                   
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">PositionAuthorizationObserver</span> <span class="p">:</span> <span class="kt">AnyObject</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">CLLocationCoordinate2D</span></code></pre>
 
                 </div>
               </div>
-            <p>Position location authorization protocol.</p>
-
+            
           </section>
           <section class="section task-group-section">
             <div class="task-group">
@@ -106,9 +105,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:8Position0A21AuthorizationObserverP8position_017didChangeLocationB6StatusyA2AC_AF0gbH0OtF"></a>
-                    <a name="//apple_ref/swift/Method/position(_:didChangeLocationAuthorizationStatus:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:8Position0A21AuthorizationObserverP8position_017didChangeLocationB6StatusyA2AC_AF0gbH0OtF">position(_:<wbr>didChangeLocationAuthorizationStatus:<wbr>)</a>
+                    <a name="/s:So22CLLocationCoordinate2DV8PositionE19earthRadiusInMetersSdvp"></a>
+                    <a name="//apple_ref/swift/Property/earthRadiusInMeters" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So22CLLocationCoordinate2DV8PositionE19earthRadiusInMetersSdvp">earthRadiusInMeters</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -116,14 +115,15 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Permission change authorization status, this may be triggered on application resume if the app settings have changed</p>
+                        <p>WGS-84 radius of the earth, in meters, at the given point.
+<a href="https://en.wikipedia.org/wiki/Earth_radius#Geocentric_radius">https://en.wikipedia.org/wiki/Earth_radius#Geocentric_radius</a></p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">position</span><span class="p">(</span><span class="n">_</span> <span class="nv">position</span><span class="p">:</span> <span class="kt"><a href="../Classes/Position.html">Position</a></span><span class="p">,</span> <span class="n">didChangeLocationAuthorizationStatus</span> <span class="nv">status</span><span class="p">:</span> <span class="kt"><a href="../Classes/Position.html">Position</a></span><span class="o">.</span><span class="kt">LocationAuthorizationStatus</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">earthRadiusInMeters</span><span class="p">:</span> <span class="kt">Double</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>

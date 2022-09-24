@@ -17,19 +17,19 @@
     <a title="Position Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">Position 0.7.1 Docs</a> (78% documented)</p>
-        <p class="header-right"><a href="https://github.com/piemonte/Position"><img src="../img/gh.png"/>View on GitHub</a></p>
-        <p class="header-right">
+        <p><a href="../index.html">Position 0.9.9 Docs</a> (76% documented)</p>
+        <p class="header-right"><a href="https://github.com/piemonte/Position"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
+        <div class="header-right">
           <form role="search" action="../search.json">
             <input type="text" placeholder="Search documentation" data-typeahead>
           </form>
-        </p>
+        </div>
       </div>
     </header>
     <div class="content-wrapper">
       <p id="breadcrumbs">
         <a href="../index.html">Position Reference</a>
-        <img id="carat" src="../img/carat.png" />
+        <img id="carat" src="../img/carat.png" alt=""/>
         Position Class Reference
       </p>
     </div>
@@ -42,16 +42,31 @@
               <li class="nav-group-task">
                 <a href="../Classes/Position.html">Position</a>
               </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Position/LocationAuthorizationStatus.html">– LocationAuthorizationStatus</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Position/LocationAccuracyAuthorizationStatus.html">– LocationAccuracyAuthorizationStatus</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Position/ErrorType.html">– ErrorType</a>
+              </li>
             </ul>
           </li>
           <li class="nav-group-name">
-            <a href="../Enums.html">Enumerations</a>
+            <a href="../Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../Enums/LocationAuthorizationStatus.html">LocationAuthorizationStatus</a>
+                <a href="../Extensions/CLLocation.html">CLLocation</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/PositionErrorType.html">PositionErrorType</a>
+                <a href="../Extensions/CLLocationCoordinate2D.html">CLLocationCoordinate2D</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/CLLocationManager.html">CLLocationManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/CLPlacemark.html">CLPlacemark</a>
               </li>
             </ul>
           </li>
@@ -60,6 +75,9 @@
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a href="../Protocols/PositionAuthorizationObserver.html">PositionAuthorizationObserver</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/PositionHeadingObserver.html">PositionHeadingObserver</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/PositionObserver.html">PositionObserver</a>
@@ -89,11 +107,95 @@
                 <a name="//apple_ref/swift/Section/types" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/types"></a>
-                  <h3 class="section-name"><p>types</p>
+                  <h3 class="section-name"><span>types</span>
 </h3>
                 </div>
               </div>
               <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:8PositionAAC27LocationAuthorizationStatusO"></a>
+                    <a name="//apple_ref/swift/Enum/LocationAuthorizationStatus" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8PositionAAC27LocationAuthorizationStatusO">LocationAuthorizationStatus</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Location authorization status</p>
+
+                        <a href="../Classes/Position/LocationAuthorizationStatus.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">LocationAuthorizationStatus</span> <span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="kt">CustomStringConvertible</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:8PositionAAC35LocationAccuracyAuthorizationStatusO"></a>
+                    <a name="//apple_ref/swift/Enum/LocationAccuracyAuthorizationStatus" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8PositionAAC35LocationAccuracyAuthorizationStatusO">LocationAccuracyAuthorizationStatus</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Location accuracy authorization status</p>
+
+                        <a href="../Classes/Position/LocationAccuracyAuthorizationStatus.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">LocationAccuracyAuthorizationStatus</span> <span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:8PositionAAC9ErrorTypeO"></a>
+                    <a name="//apple_ref/swift/Enum/ErrorType" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8PositionAAC9ErrorTypeO">ErrorType</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Possible error types</p>
+
+                        <a href="../Classes/Position/ErrorType.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ErrorType</span> <span class="p">:</span> <span class="kt">Error</span><span class="p">,</span> <span class="kt">CustomStringConvertible</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -202,6 +304,33 @@
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:8PositionAAC18MilesToMetersRatioSdvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/MilesToMetersRatio" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8PositionAAC18MilesToMetersRatioSdvpZ">MilesToMetersRatio</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A statute mile to be 8 furlongs or 1609.344 meters</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">MilesToMetersRatio</span><span class="p">:</span> <span class="kt">Double</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
             <div class="task-group">
@@ -210,7 +339,7 @@
                 <a name="//apple_ref/swift/Section/singleton" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/singleton"></a>
-                  <h3 class="section-name"><p>singleton</p>
+                  <h3 class="section-name"><span>singleton</span>
 </h3>
                 </div>
               </div>
@@ -250,7 +379,7 @@
                 <a name="//apple_ref/swift/Section/properties" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/properties"></a>
-                  <h3 class="section-name"><p>properties</p>
+                  <h3 class="section-name"><span>properties</span>
 </h3>
                 </div>
               </div>
@@ -447,9 +576,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:8PositionAAC12lastLocationSo10CLLocationCSgvp"></a>
-                    <a name="//apple_ref/swift/Property/lastLocation" class="dashAnchor"></a>
-                    <a class="token" href="#/s:8PositionAAC12lastLocationSo10CLLocationCSgvp">lastLocation</a>
+                    <a name="/s:8PositionAAC8locationSo10CLLocationCSgvp"></a>
+                    <a name="//apple_ref/swift/Property/location" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8PositionAAC8locationSo10CLLocationCSgvp">location</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -464,7 +593,34 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">lastLocation</span><span class="p">:</span> <span class="kt">CLLocation</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">location</span><span class="p">:</span> <span class="kt">CLLocation</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:8PositionAAC7headingSo9CLHeadingCSgvp"></a>
+                    <a name="//apple_ref/swift/Property/heading" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8PositionAAC7headingSo9CLHeadingCSgvp">heading</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Last determined heading</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">heading</span><span class="p">:</span> <span class="kt">CLHeading</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -479,7 +635,7 @@
                 <a name="//apple_ref/swift/Section/object lifecycle" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/object%20lifecycle"></a>
-                  <h3 class="section-name"><p>object lifecycle</p>
+                  <h3 class="section-name"><span>object lifecycle</span>
 </h3>
                 </div>
               </div>
@@ -519,7 +675,7 @@
                 <a name="//apple_ref/swift/Section/observers" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/observers"></a>
-                  <h3 class="section-name"><p>observers</p>
+                  <h3 class="section-name"><span>observers</span>
 </h3>
                 </div>
               </div>
@@ -629,7 +785,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Adds a position observer.</p>
+                        <p>Adds a position location observer.</p>
 
                       </div>
                       <div class="declaration">
@@ -675,7 +831,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Removes a position observer.</p>
+                        <p>Removes a position location observer.</p>
 
                       </div>
                       <div class="declaration">
@@ -683,6 +839,98 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">removeObserver</span><span class="p">(</span><span class="n">_</span> <span class="nv">observer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/PositionObserver.html">PositionObserver</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>observer</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Observing instance.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:8PositionAAC18addHeadingObserveryyAA0acD0_pF"></a>
+                    <a name="//apple_ref/swift/Method/addHeadingObserver(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8PositionAAC18addHeadingObserveryyAA0acD0_pF">addHeadingObserver(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Adds a position heading observer.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">addHeadingObserver</span><span class="p">(</span><span class="n">_</span> <span class="nv">observer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/PositionHeadingObserver.html">PositionHeadingObserver</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>observer</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Observing instance.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:8PositionAAC21removeHeadingObserveryyAA0acD0_pF"></a>
+                    <a name="//apple_ref/swift/Method/removeHeadingObserver(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8PositionAAC21removeHeadingObserveryyAA0acD0_pF">removeHeadingObserver(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Removes a position heading observer.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">removeHeadingObserver</span><span class="p">(</span><span class="n">_</span> <span class="nv">observer</span><span class="p">:</span> <span class="kt"><a href="../Protocols/PositionHeadingObserver.html">PositionHeadingObserver</a></span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -716,7 +964,7 @@
                 <a name="//apple_ref/swift/Section/authorization / permission" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/authorization%20%2F%20permission"></a>
-                  <h3 class="section-name"><p>authorization / permission</p>
+                  <h3 class="section-name"><span>authorization / permission</span>
 </h3>
                 </div>
               </div>
@@ -724,9 +972,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:8PositionAAC22locationServicesStatusAA021LocationAuthorizationD0Ovp"></a>
+                    <a name="/s:8PositionAAC22locationServicesStatusAB021LocationAuthorizationD0Ovp"></a>
                     <a name="//apple_ref/swift/Property/locationServicesStatus" class="dashAnchor"></a>
-                    <a class="token" href="#/s:8PositionAAC22locationServicesStatusAA021LocationAuthorizationD0Ovp">locationServicesStatus</a>
+                    <a class="token" href="#/s:8PositionAAC22locationServicesStatusAB021LocationAuthorizationD0Ovp">locationServicesStatus</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -741,7 +989,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">locationServicesStatus</span><span class="p">:</span> <span class="kt"><a href="../Enums/LocationAuthorizationStatus.html">LocationAuthorizationStatus</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">locationServicesStatus</span><span class="p">:</span> <span class="kt"><a href="../Classes/Position/LocationAuthorizationStatus.html">LocationAuthorizationStatus</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -802,15 +1050,70 @@
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:8PositionAAC35locationAccuracyAuthorizationStatusAB08LocationcdE0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/locationAccuracyAuthorizationStatus" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8PositionAAC35locationAccuracyAuthorizationStatusAB08LocationcdE0Ovp">locationAccuracyAuthorizationStatus</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">locationAccuracyAuthorizationStatus</span><span class="p">:</span> <span class="kt"><a href="../Classes/Position/LocationAccuracyAuthorizationStatus.html">LocationAccuracyAuthorizationStatus</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:8PositionAAC39requestOneTimeFullAccuracyAuthorizationyyySbcSgF"></a>
+                    <a name="//apple_ref/swift/Method/requestOneTimeFullAccuracyAuthorization(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8PositionAAC39requestOneTimeFullAccuracyAuthorizationyyySbcSgF">requestOneTimeFullAccuracyAuthorization(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Request one time accuracy authorization. Be sure to include &ldquo;FullAccuracyPurpose&rdquo; to your Info.plist.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@available(iOS 14, *)</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">requestOneTimeFullAccuracyAuthorization</span><span class="p">(</span><span class="n">_</span> <span class="nv">completionHandler</span><span class="p">:</span> <span class="p">((</span><span class="kt">Bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
             <div class="task-group">
               <div class="task-name-container">
-                <a name="/location"></a>
-                <a name="//apple_ref/swift/Section/location" class="dashAnchor"></a>
+                <a name="/location%20%26%20heading"></a>
+                <a name="//apple_ref/swift/Section/location &amp; heading" class="dashAnchor"></a>
                 <div class="section-name-container">
-                  <a class="section-name-link" href="#/location"></a>
-                  <h3 class="section-name"><p>location</p>
+                  <a class="section-name-link" href="#/location%20%26%20heading"></a>
+                  <h3 class="section-name"><span>location &amp; heading</span>
 </h3>
                 </div>
               </div>
@@ -929,14 +1232,80 @@
                 </li>
               </ul>
             </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/heading"></a>
+                <a name="//apple_ref/swift/Section/heading" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/heading"></a>
+                  <h3 class="section-name"><span>heading</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:8PositionAAC20startUpdatingHeadingyyF"></a>
+                    <a name="//apple_ref/swift/Method/startUpdatingHeading()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8PositionAAC20startUpdatingHeadingyyF">startUpdatingHeading()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Start heading updates.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">startUpdatingHeading</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:8PositionAAC19stopUpdatingHeadingyyF"></a>
+                    <a name="//apple_ref/swift/Method/stopUpdatingHeading()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8PositionAAC19stopUpdatingHeadingyyF">stopUpdatingHeading()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Stop heading updates.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">stopUpdatingHeading</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="https://patrickpiemonte.com" target="_blank" rel="external">Patrick Piemonte</a>. All rights reserved. (Last updated: 2020-07-21)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2022 <a class="link" href="https://patrickpiemonte.com" target="_blank" rel="external noopener">patrick piemonte</a>. All rights reserved. (Last updated: 2022-09-24)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>
   </body>
-</div>
 </html>
