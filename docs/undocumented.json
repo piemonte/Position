@@ -9,14 +9,14 @@
     },
     {
       "file": "/Users/piemonte/Source/Position/Sources/CoreLocation+Additions.swift",
-      "line": 116,
+      "line": 128,
       "symbol": "CLLocation.translation(fromLocation:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/piemonte/Source/Position/Sources/CoreLocation+Additions.swift",
-      "line": 282,
+      "line": 294,
       "symbol": "CLPlacemark.prettyDescription(withZoomLevel:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
