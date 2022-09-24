@@ -228,7 +228,7 @@ extension CLPlacemark {
     /// Address description of a placemark
     /// - Returns: Formatted string address
     public func stringFromPlacemark() -> String? {
-        if var postalAddress = self.postalAddress {
+        if let postalAddress = self.postalAddress {
             let postalFormatter = CNPostalAddressFormatter()
             return postalFormatter.string(for: postalAddress)
         } else {
