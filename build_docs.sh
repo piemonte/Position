@@ -6,7 +6,7 @@
 
 jazzy \
     --clean \
-    --author 'Patrick Piemonte' \
+    --author 'patrick piemonte' \
     --author_url 'https://patrickpiemonte.com' \
     --github_url 'https://github.com/piemonte/Position' \
     --sdk iphonesimulator \
