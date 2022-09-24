@@ -1,4 +1,4 @@
-`Position` is a lightweight and efficient location positioning library for iOS.
+`Position` is a lightweight location positioning library for iOS.
 
 [![Build Status](https://travis-ci.com/piemonte/Position.svg?branch=master)](https://travis-ci.com/piemonte/Position) [![Pod Version](https://img.shields.io/cocoapods/v/Position.svg?style=flat)](http://cocoadocs.org/docsets/Position/) [![Swift Version](https://img.shields.io/badge/language-swift%205.0-brightgreen.svg)](https://developer.apple.com/swift) [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/piemonte/Position/blob/master/LICENSE)
 
@@ -15,14 +15,9 @@
 | &#128267; | automatic low-power location tracking adjustment from battery monitoring setting |
 | &#128301; | multiple component observer-based architecture |
 
-Need a different version of Swift?
-
-* `5.0` - Target your Podfile to the latest release or master
-* `4.2` - Target your Podfile to the `swift4.2` branch
-
 ## Quick Start
 
-`Position` is available for installation using the Cocoa dependency manager [CocoaPods](http://cocoapods.org/). Alternatively, you can simply copy the `Position` source files into your Xcode project.
+`Position` is available for installation using the [Swift Package Manager](https://www.swift.org/package-manager/) or the Cocoa dependency manager [CocoaPods](http://cocoapods.org/). Alternatively, you can simply copy the `Position` source files into your Xcode project.
 
 ```ruby
 # CocoaPods
