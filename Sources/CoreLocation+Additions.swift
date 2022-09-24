@@ -28,6 +28,7 @@
 
 import Foundation
 import CoreLocation
+import Contacts
 import simd
 
 extension CLLocationManager {
@@ -200,6 +201,40 @@ extension CLLocation {
 }
 
 extension CLPlacemark {
+
+    /// Short description of a placemark
+    /// - Parameters:
+    ///   - address: Address of a place
+    ///   - locality: Locality of a place
+    ///   - administrativeArea: administrative area of a place
+    /// - Returns: Short formatted string address
+    public static func shortStringFromAddressElements(address: String?,
+                                                     locality: String?,
+                                                     administrativeArea: String?) -> String? {
+        let postalAddress = CNMutablePostalAddress()
+        if let address = address {
+            postalAddress.street = address
+        }
+        if let locality = locality {
+            postalAddress.city = locality
+        }
+        if let administrativeArea = administrativeArea {
+            postalAddress.state = administrativeArea
+        }
+        let postalFormatter = CNPostalAddressFormatter()
+        return postalFormatter.string(for: postalAddress)
+    }
+
+    /// Address description of a placemark
+    /// - Returns: Formatted string address
+    public func stringFromPlacemark() -> String? {
+        if var postalAddress = self.postalAddress {
+            let postalFormatter = CNPostalAddressFormatter()
+            return postalFormatter.string(for: postalAddress)
+        } else {
+            return nil
+        }
+    }
 
     /// Short and pretty description of the placemark.
     /// - Returns: area of interest, sublocality or locality or subadministrative area, administrative area
