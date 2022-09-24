@@ -69,13 +69,13 @@ extension CLLocation {
         return CLLocationCoordinate2D(latitude: lat3, longitude: lon3)
     }
 
-    /// Calculate the bearing to another location
+    /// Calculate the bearing from this location object to another
     ///
     /// - Parameter toLocation: target location
     /// - Returns: Bearing in degrees.
     public func bearing(toLocation: CLLocation) -> CLLocationDirection {
-        let fromLat = Measurement(value: self.coordinate.latitude, unit: UnitAngle.degrees).converted(to: .radians).value
-        let fromLon = Measurement(value: self.coordinate.longitude, unit: UnitAngle.degrees).converted(to: .radians).value
+        let fromLat = Measurement(value: coordinate.latitude, unit: UnitAngle.degrees).converted(to: .radians).value
+        let fromLon = Measurement(value: coordinate.longitude, unit: UnitAngle.degrees).converted(to: .radians).value
 
         let toLat = Measurement(value: toLocation.coordinate.latitude, unit: UnitAngle.degrees).converted(to: .radians).value
         let toLon = Measurement(value: toLocation.coordinate.longitude, unit: UnitAngle.degrees).converted(to: .radians).value
@@ -89,6 +89,18 @@ extension CLLocation {
         return bearingInDegrees
     }
 
+    /// Calcualtes the bearing angle from this location object to another with device heading
+    /// - Parameters:
+    ///   - toLocation: to location point
+    ///   - heading: heading in degrees of device
+    /// - Returns: Bearing angle  in radians.
+    public func bearingAngleInRadians(toLocation: CLLocation, with heading: CLHeading) -> Double? {
+        guard heading.headingAccuracy >= 0 else { return nil }
+        let bearing = bearing(toLocation: toLocation)
+        let bearingInRadians = Measurement(value: bearing, unit: UnitAngle.degrees).converted(to: .radians).value
+        let headingInRadians = Measurement(value: heading.trueHeading, unit: UnitAngle.degrees).converted(to: .radians).value
+        return bearingInRadians - headingInRadians
+    }
 }
 
 extension CLLocationCoordinate2D {
