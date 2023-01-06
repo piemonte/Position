@@ -8,11 +8,12 @@
 | &#9732; | “one shot” customizable location requests |
 | &#127756; | distance and time-based location filtering |
 | &#128752; | location tracking support |
-| &#128202; | automatically manage energy resources based on tracking |
+| &#128752; | device heading support |
 | &#128274; | permission check and response support |
+| &#127760; | geospatial math utilities |
+| &#127961; | place data formatting utilities |
+| &#128202; | automatic low-battery location modes |
 | &#128205; | vCard location creation |
-| &#127745; | automatic low-power location tracking adjustment when backgrounded setting |
-| &#128267; | automatic low-power location tracking adjustment from battery monitoring setting |
 | &#128301; | multiple component observer-based architecture |
 
 ## Quick Start
