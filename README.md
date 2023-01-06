@@ -8,7 +8,7 @@
 | &#9732; | “one shot” customizable location requests |
 | &#127756; | distance and time-based location filtering |
 | &#128752; | location tracking support |
-| &#128752; | device heading support |
+| &#129517; | device heading support |
 | &#128274; | permission check and response support |
 | &#127760; | geospatial math utilities |
 | &#127961; | place data formatting utilities |
