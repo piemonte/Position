@@ -94,7 +94,7 @@ To share a location using a vCard, simply call the vCard function on any locatio
 
 ## Core Location Additions
 
-Position is bundled with a variety of [additions to Core Location](https://github.com/piemonte/Position/blob/main/Sources/CoreLocation%2BAdditions.swift), such as geospatial math utilities. For example, one can calculation the direction between two coordinate points enabling [directional views](https://gist.github.com/piemonte/e7876775f43e73e30b09f0fc1a77cad0) and other waypoint representations. 
+Position is bundled with a variety of [additions to Core Location](https://github.com/piemonte/Position/blob/main/Sources/CoreLocation%2BAdditions.swift), such as geospatial math utilities. For example, one can calculation the direction between two coordinate points enabling [directional views](https://gist.github.com/piemonte/eb4bc7daef5b6359ec32b24b034f0c42) and other waypoint representations. 
 
 ## Documentation
 
