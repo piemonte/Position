@@ -1,6 +1,6 @@
 `Position` is a lightweight location positioning library for iOS.
 
-[![Build Status](https://travis-ci.com/piemonte/Position.svg?branch=master)](https://travis-ci.com/piemonte/Position) [![Pod Version](https://img.shields.io/cocoapods/v/Position.svg?style=flat)](http://cocoadocs.org/docsets/Position/) [![Swift Version](https://img.shields.io/badge/language-swift%205.0-brightgreen.svg)](https://developer.apple.com/swift) [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/piemonte/Position/blob/master/LICENSE)
+[![Build Status](https://travis-ci.com/piemonte/Position.svg?branch=master)](https://travis-ci.com/piemonte/Position) [![Swift Package Manager](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square)](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square) [![Pod Version](https://img.shields.io/cocoapods/v/Position.svg?style=flat)](http://cocoadocs.org/docsets/Position/) [![Swift Version](https://img.shields.io/badge/language-swift%205.0-brightgreen.svg)](https://developer.apple.com/swift) [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/piemonte/Position/blob/master/LICENSE)
 
 
 |  | Features |
