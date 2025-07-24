@@ -128,37 +128,21 @@ extension DeviceLocationManager {
                 return .notAvailable
             }
 
-            if #available(iOS 14.0, *) {
-                switch _locationManager.authorizationStatus {
-                    case .authorizedAlways:
-                        return .allowedAlways
-                    case .authorizedWhenInUse:
-                        return .allowedWhenInUse
-                    case .denied, .restricted:
-                        return .denied
-                    case .notDetermined:
-                        fallthrough
-                    @unknown default:
-                        return .notDetermined
-                }
-            } else {
-                switch CLLocationManager.authorizationStatus() {
-                    case .authorizedAlways:
-                        return .allowedAlways
-                    case .authorizedWhenInUse:
-                        return .allowedWhenInUse
-                    case .denied, .restricted:
-                        return .denied
-                    case .notDetermined:
-                        fallthrough
-                    @unknown default:
-                        return .notDetermined
-                }
+            switch _locationManager.authorizationStatus {
+                case .authorizedAlways:
+                    return .allowedAlways
+                case .authorizedWhenInUse:
+                    return .allowedWhenInUse
+                case .denied, .restricted:
+                    return .denied
+                case .notDetermined:
+                    fallthrough
+                @unknown default:
+                    return .notDetermined
             }
         }
     }
 
-    @available(iOS 14, *)
     internal var locationAccuracyAuthorizationStatus: Position.LocationAccuracyAuthorizationStatus {
         get {
             switch _locationManager.accuracyAuthorization {
@@ -180,7 +164,6 @@ extension DeviceLocationManager {
         _locationManager.requestWhenInUseAuthorization()
     }
 
-    @available(iOS 14, *)
     internal func requestAccuracyAuthorization(_ completionHandler: ((Bool) -> Void)? = nil) {
         guard _locationManager.accuracyAuthorization != .fullAccuracy else {
             DispatchQueue.main.async {
@@ -300,11 +283,15 @@ extension DeviceLocationManager {
 extension DeviceLocationManager {
 
     internal func startUpdatingHeading() {
+        #if os(iOS)
         _locationManager.startUpdatingHeading()
+        #endif
     }
 
     internal func stopUpdatingHeading() {
+        #if os(iOS)
         _locationManager.stopUpdatingHeading()
+        #endif
     }
 
 
@@ -413,9 +400,11 @@ extension DeviceLocationManager: CLLocationManagerDelegate {
         }
     }
 
+    #if os(iOS)
     func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
         delegate?.deviceLocationManager(self, didUpdateHeading: newHeading)
     }
+    #endif
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         _requestQueue.async { [weak self] in
@@ -428,26 +417,10 @@ extension DeviceLocationManager: CLLocationManagerDelegate {
         }
     }
 
-    @available(iOS 14, *)
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         _requestQueue.async { [weak self] in
             guard let self = self else { return }
             switch manager.authorizationStatus {
-            case .denied, .restricted:
-                self.completeLocationRequests(withError: Position.ErrorType.restricted)
-            default: break
-            }
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                self.delegate?.deviceLocationManager(self, didChangeLocationAuthorizationStatus: self.locationServicesStatus)
-            }
-        }
-    }
-
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        _requestQueue.async { [weak self] in
-            guard let self = self else { return }
-            switch status {
             case .denied, .restricted:
                 self.completeLocationRequests(withError: Position.ErrorType.restricted)
             default: break

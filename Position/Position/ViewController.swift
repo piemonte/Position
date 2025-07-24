@@ -44,8 +44,8 @@ public class ViewController: UIViewController {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
 
-    required public init(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)!
+    required public init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
     }
 
     // MARK: - view lifecycle
@@ -67,7 +67,7 @@ public class ViewController: UIViewController {
         if let locationButton = self._locationLookupButton {
             locationButton.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
             locationButton.setTitle("Request Location", for: .normal)
-            locationButton.titleLabel!.font = UIFont.systemFont(ofSize: 16)
+            locationButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
             locationButton.backgroundColor = UIColor(red: 115/255, green: 57/255, blue: 248/255, alpha: 1)
             locationButton.addTarget(self, action: #selector(handleOneShotLocationButton(_:)), for: .touchUpInside)
             self.view.addSubview(locationButton)
@@ -76,7 +76,7 @@ public class ViewController: UIViewController {
         self._permissionLocationButton = UIButton(frame: CGRect(x: 0, y: self.view.bounds.size.height - (buttonHeight * 2), width: self.view.bounds.size.width, height: buttonHeight))
         if let permissionLocationButton = self._permissionLocationButton {
             permissionLocationButton.setTitle("Request Permission", for: .normal)
-            permissionLocationButton.titleLabel!.font = UIFont.systemFont(ofSize: 16)
+            permissionLocationButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
             permissionLocationButton.backgroundColor = UIColor(red: 50/255, green: 153/255, blue: 252/255, alpha: 1)
             permissionLocationButton.addTarget(self, action: #selector(handleLocationPermissionButton(_:)), for: .touchUpInside)
             self.view.addSubview(permissionLocationButton)
@@ -87,12 +87,6 @@ public class ViewController: UIViewController {
         let position = Position.shared
         position.addObserver(self)
         position.distanceFilter = 20
-
-        // Example, using location tracking
-        // if position.locationServicesStatus == .AllowedWhenInUse ||
-        //      position.locationServicesStatus == .AllowedAlways {
-        //      position.startUpdating()
-        // }
     }
 }
 
@@ -108,9 +102,15 @@ extension ViewController {
             position.locationServicesStatus == .allowedAlways {
             print("app has permission")
         } else {
-            // request permission
-            Position.shared.requestWhenInUseLocationAuthorization()
-            // Position.shared.requestAlwaysLocationAuthorization()
+            // request permission using async/await
+            if #available(iOS 15.0, *) {
+                Task {
+                    let status = await position.requestWhenInUseLocationAuthorization()
+                    print("Authorization status after request: \(status)")
+                }
+            } else {
+                position.requestWhenInUseLocationAuthorization()
+            }
         }
     }
 
@@ -119,20 +119,37 @@ extension ViewController {
         let position = Position.shared
         if position.locationServicesStatus == .allowedWhenInUse ||
            position.locationServicesStatus == .allowedAlways {
-            position.performOneShotLocationUpdate(withDesiredAccuracy: 150) { (result) -> Void in
-                switch result {
-                case .success(let location):
-                    if location.horizontalAccuracy > 0 {
-                        let region = MKCoordinateRegion(center: location.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
-                        self._mapView?.setRegion(region, animated: true)
+            if #available(iOS 15.0, *) {
+                Task {
+                    do {
+                        let location = try await position.performOneShotLocationUpdate(withDesiredAccuracy: 150)
+                        if location.horizontalAccuracy > 0 {
+                            let region = MKCoordinateRegion(center: location.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
+                            await MainActor.run {
+                                self._mapView?.setRegion(region, animated: true)
+                            }
+                        }
+                    } catch {
+                        print("Location update failed: \(error)")
                     }
-                case .failure:
-                    // print("one shot locatiString(describing: on update \(location) error \(error)")
-                    break
+                }
+            } else {
+                position.performOneShotLocationUpdate(withDesiredAccuracy: 150) { result in
+                    switch result {
+                    case .success(let location):
+                        if location.horizontalAccuracy > 0 {
+                            let region = MKCoordinateRegion(center: location.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
+                            DispatchQueue.main.async {
+                                self._mapView?.setRegion(region, animated: true)
+                            }
+                        }
+                    case .failure(let error):
+                        print("Location update failed: \(error)")
+                    }
                 }
             }
         } else if position.locationServicesStatus == .notAvailable {
-            // print("location is not available")
+            print("location is not available")
         }
     }
 
@@ -173,7 +190,7 @@ extension ViewController: PositionObserver {
 
     // error handling
     public func position(_ position: Position, didFailWithError error: Error?) {
-        print("position, failed with error \(error?.localizedDescription)")
+        print("position, failed with error \(String(describing: error?.localizedDescription))")
     }
 
 }

@@ -1,6 +1,6 @@
-`Position` is a lightweight location positioning library for iOS.
+`Position` is a lightweight location positioning library for iOS and macOS.
 
-[![Build Status](https://travis-ci.com/piemonte/Position.svg?branch=master)](https://travis-ci.com/piemonte/Position) [![Swift Package Manager](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square)](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square) [![Pod Version](https://img.shields.io/cocoapods/v/Position.svg?style=flat)](http://cocoadocs.org/docsets/Position/) [![Swift Version](https://img.shields.io/badge/language-swift%205.0-brightgreen.svg)](https://developer.apple.com/swift) [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/piemonte/Position/blob/master/LICENSE)
+[![Swift Package Manager](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square)](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square) [![Pod Version](https://img.shields.io/cocoapods/v/Position.svg?style=flat)](http://cocoadocs.org/docsets/Position/) [![Swift Version](https://img.shields.io/badge/language-swift%205.5-brightgreen.svg)](https://developer.apple.com/swift) [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/piemonte/Position/blob/master/LICENSE)
 
 
 |  | Features |
@@ -22,10 +22,7 @@
 
 ```ruby
 # CocoaPods
-pod "Position", "~> 0.7.0"
-
-# Carthage
-github "piemonte/Position" ~> 0.7.0
+pod "Position", "~> 0.10.0"
 
 # SwiftPM
 let package = Package(
@@ -34,6 +31,13 @@ let package = Package(
     ]
 )
 ```
+
+## Platform Compatibility
+
+`Position` supports iOS 15.0+ and macOS 11.0+. Note that some features are platform-specific:
+- **Heading updates** are only available on iOS
+- **Battery level monitoring** for automatic accuracy adjustment is iOS-only
+- **Visit monitoring** requires iOS 15.0+ or macOS 11.0+
 
 ## Usage
 
