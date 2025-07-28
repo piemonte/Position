@@ -1,123 +1,270 @@
-`Position` is a lightweight location positioning library for iOS and macOS.
+# Position
 
-[![Swift Package Manager](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square)](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square) [![Pod Version](https://img.shields.io/cocoapods/v/Position.svg?style=flat)](http://cocoadocs.org/docsets/Position/) [![Swift Version](https://img.shields.io/badge/language-swift%205.5-brightgreen.svg)](https://developer.apple.com/swift) [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/piemonte/Position/blob/master/LICENSE)
+`Position` is a lightweight, modern location positioning library for iOS and macOS, built with Swift.
 
+[![Swift](https://img.shields.io/badge/Swift-5.9+-orange.svg?style=flat)](https://developer.apple.com/swift)
+[![Platforms](https://img.shields.io/badge/Platforms-iOS%2015.0+%20|%20macOS%2012.0+-blue.svg?style=flat)](https://developer.apple.com/swift)
+[![Swift Package Manager](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg?style=flat)](https://swift.org/package-manager)
+[![CocoaPods](https://img.shields.io/cocoapods/v/Position.svg?style=flat)](https://cocoapods.org/pods/Position)
+[![License](https://img.shields.io/badge/License-MIT-lightgrey.svg?style=flat)](https://github.com/piemonte/Position/blob/main/LICENSE)
+[![CI Status](https://img.shields.io/github/actions/workflow/status/piemonte/Position/swift.yml?branch=main&style=flat)](https://github.com/piemonte/Position/actions)
 
-|  | Features |
-|:---------:|:---------------------------------------------------------------|
-| &#9732; | “one shot” customizable location requests |
-| &#127756; | distance and time-based location filtering |
-| &#128752; | location tracking support |
-| &#129517; | device heading support |
-| &#128274; | permission check and response support |
-| &#127760; | geospatial math utilities |
-| &#127961; | place data formatting utilities |
-| &#128202; | automatic low-battery location modes |
-| &#128205; | vCard location creation |
-| &#128301; | multiple component observer-based architecture |
+## Features
+
+| Feature | Description |
+|:-------:|:------------|
+| 📍 | One-shot customizable location requests with completion handlers |
+| 🌍 | Distance and time-based location filtering for efficient tracking |
+| 📡 | Continuous location tracking with configurable accuracy |
+| 🧭 | Device heading and compass support (iOS only) |
+| 🔐 | Permission management with status monitoring |
+| 📐 | Geospatial math utilities for distance and bearing calculations |
+| 🏢 | Place data formatting and geocoding utilities |
+| 🔋 | Automatic battery-aware location accuracy adjustments (iOS only) |
+| 📍 | vCard location sharing support |
+| 👥 | Observer pattern for multiple listeners |
+| 🏃 | Motion activity detection and tracking |
+| 📱 | Visit monitoring for significant location changes |
+
+## Requirements
+
+- iOS 15.0+ / macOS 12.0+
+- Swift 5.9+
+- Xcode 15.0+
+
+## Installation
+
+### Swift Package Manager (Recommended)
+
+Add Position to your project using Swift Package Manager:
+
+1. In Xcode, select **File > Add Package Dependencies...**
+2. Enter the repository URL: `https://github.com/piemonte/Position`
+3. Select version `1.0.0` or later
+
+Or add it to your `Package.swift`:
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/piemonte/Position", from: "1.0.0")
+]
+```
+
+### CocoaPods
+
+Add Position to your `Podfile`:
+
+```ruby
+pod 'Position', '~> 1.0.0'
+```
+
+Then run:
+```bash
+pod install
+```
 
 ## Quick Start
 
-`Position` is available for installation using the [Swift Package Manager](https://www.swift.org/package-manager/) or the Cocoa dependency manager [CocoaPods](http://cocoapods.org/). Alternatively, you can simply copy the `Position` source files into your Xcode project.
+### 1. Configure Info.plist
 
-```ruby
-# CocoaPods
-pod "Position", "~> 0.10.0"
+Add the appropriate location usage descriptions to your app's `Info.plist`:
 
-# SwiftPM
-let package = Package(
-    dependencies: [
-        .Package(url: "https://github.com/piemonte/Position", majorVersion: 0)
-    ]
-)
+```xml
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>Your app needs location access to provide location-based features.</string>
+
+<!-- Optional: For always authorization -->
+<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+<string>Your app needs location access even in the background to provide continuous tracking.</string>
 ```
 
-## Platform Compatibility
-
-`Position` supports iOS 15.0+ and macOS 11.0+. Note that some features are platform-specific:
-- **Heading updates** are only available on iOS
-- **Battery level monitoring** for automatic accuracy adjustment is iOS-only
-- **Visit monitoring** requires iOS 15.0+ or macOS 11.0+
-
-## Usage
-
-The sample project provides an example of how to integrate `Position`, otherwise you can follow these steps.
-
-Ensure your app’s `Info.plist` file includes both a location usage description, required device capability “location-services”, and  required background mode (if necessary).
-
-See sample project for examples.
-
-Import the file and setup your component to be a PositionObserver, if you’d like it to be a delegate.
+### 2. Basic Usage
 
 ```swift
 import Position
 
-class ViewController: UIViewController, PositionObserver {
-	// ...
-```
-
-Have the component add itself as an observer and configure the appropriate settings.
-
-```swift
+class LocationViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // ...
-
-        Position.shared.addObserver(self)
-        Position.shared.distanceFilter = 20
-
-        if Position.shared.locationServicesStatus == .allowedWhenInUse ||
-           Position.shared.locationServicesStatus == .allowedAlways {
-            Position.shared.performOneShotLocationUpdate(withDesiredAccuracy: 250) { (location, error) -> () in
-                print(location, error)
-            }
-        } else {
-            // request permissions based on the type of location support required.
+        
+        // Check permission status
+        switch Position.shared.locationServicesStatus {
+        case .allowed, .allowedWhenInUse, .allowedAlways:
+            requestLocation()
+        case .notDetermined:
             Position.shared.requestWhenInUseLocationAuthorization()
-            // Position.shared.requestAlwaysLocationAuthorization()
+        case .denied, .restricted:
+            showLocationServicesAlert()
+        @unknown default:
+            break
         }
     }
-```
-
-Observe delegation, if necessary.
-
-```swift
-    func position(position: Position, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
-        // location authorization did change, often this may even be triggered on application resume if the user updated settings
+    
+    func requestLocation() {
+        // One-shot location request
+        Position.shared.performOneShotLocationUpdate(withDesiredAccuracy: 100) { location, error in
+            if let location = location {
+                print("📍 Location: \(location.coordinate)")
+            } else if let error = error {
+                print("❌ Error: \(error)")
+            }
+        }
     }
+}
 ```
 
-**Remember** when creating location-based apps, respect the privacy of your users and be responsible for how you use their location. This is especially true if your application requires location permission `kCLAuthorizationStatusAuthorizedAlways`.
-
-To share a location using a vCard, simply call the vCard function on any location object instance.
+### 3. Continuous Tracking
 
 ```swift
-   let fileURL = location.vCard()
+import Position
+
+class TrackingViewController: UIViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        // Configure tracking parameters
+        Position.shared.distanceFilter = 10 // meters
+        Position.shared.desiredAccuracy = .bestForNavigation
+        Position.shared.activityType = .fitness
+        
+        // Add observer
+        Position.shared.addObserver(self)
+        
+        // Start tracking
+        Position.shared.startUpdatingLocation()
+    }
+    
+    deinit {
+        Position.shared.stopUpdatingLocation()
+        Position.shared.removeObserver(self)
+    }
+}
+
+// MARK: - PositionObserver
+extension TrackingViewController: PositionObserver {
+    func position(_ position: Position, didUpdateLocation location: CLLocation) {
+        print("📍 New location: \(location.coordinate)")
+    }
+    
+    func position(_ position: Position, didUpdateHeading heading: CLHeading) {
+        print("🧭 Heading: \(heading.trueHeading)°")
+    }
+    
+    func position(_ position: Position, didChangeAuthorizationStatus status: LocationAuthorizationStatus) {
+        print("🔐 Authorization changed: \(status)")
+    }
+    
+    func position(_ position: Position, didFailWithError error: Error) {
+        print("❌ Error: \(error)")
+    }
+}
 ```
 
-## Core Location Additions
+## Advanced Features
 
-Position is bundled with a variety of [additions to Core Location](https://github.com/piemonte/Position/blob/main/Sources/CoreLocation%2BAdditions.swift), such as geospatial math utilities. For example, one can calculation the direction between two coordinate points enabling [directional views](https://gist.github.com/piemonte/eb4bc7daef5b6359ec32b24b034f0c42) and other waypoint representations. 
+### Geospatial Calculations
+
+```swift
+import Position
+import CoreLocation
+
+let location1 = CLLocation(latitude: 37.7749, longitude: -122.4194) // San Francisco
+let location2 = CLLocation(latitude: 34.0522, longitude: -118.2437) // Los Angeles
+
+// Calculate distance
+let distance = location1.distance(from: location2)
+print("Distance: \(distance.metersToKilometers) km")
+
+// Calculate bearing
+let bearing = location1.bearing(to: location2)
+print("Bearing: \(bearing)°")
+
+// Calculate midpoint
+let midpoint = location1.midpoint(to: location2)
+print("Midpoint: \(midpoint.coordinate)")
+```
+
+### Visit Monitoring
+
+```swift
+// Start monitoring visits (significant location changes)
+Position.shared.startMonitoringVisits()
+
+// Handle visits in observer
+func position(_ position: Position, didVisit visit: CLVisit) {
+    print("📍 Visit at: \(visit.coordinate)")
+    print("⏰ Arrival: \(visit.arrivalDate)")
+    print("⏱️ Departure: \(visit.departureDate ?? Date())")
+}
+```
+
+### Location Sharing
+
+```swift
+// Create vCard from location
+if let vCardURL = currentLocation.vCard(withTitle: "My Location") {
+    // Share via UIActivityViewController (iOS)
+    let activityVC = UIActivityViewController(
+        activityItems: [vCardURL],
+        applicationActivities: nil
+    )
+    present(activityVC, animated: true)
+}
+```
+
+### Battery-Aware Tracking (iOS)
+
+Position automatically adjusts location accuracy based on battery level:
+
+```swift
+// Enable automatic battery management
+Position.shared.adjustLocationUpdateAccuracyForBatteryLevel = true
+
+// Or manually adjust based on battery
+if UIDevice.current.batteryLevel < 0.2 {
+    Position.shared.desiredAccuracy = .hundredMeters
+}
+```
+
+## Platform Differences
+
+| Feature | iOS | macOS |
+|---------|-----|-------|
+| Location Updates | ✅ | ✅ |
+| Heading Updates | ✅ | ❌ |
+| Visit Monitoring | ✅ | ✅ |
+| Battery Monitoring | ✅ | ❌ |
+| Background Updates | ✅ | ⚠️ Limited |
+| Activity Type | ✅ | ❌ |
+
+## Best Practices
+
+1. **Privacy First**: Always respect user privacy and request only the permissions you need
+2. **Battery Life**: Use appropriate accuracy levels and stop updates when not needed
+3. **Background Usage**: Only request always authorization if truly necessary
+4. **Error Handling**: Always handle location errors gracefully
+5. **Testing**: Test with various permission states and location availability
 
 ## Documentation
 
-You can find [the docs here](https://piemonte.github.io/Position). Documentation is generated with [jazzy](https://github.com/realm/jazzy) and hosted on [GitHub-Pages](https://pages.github.com).
+Complete API documentation is available at [piemonte.github.io/Position](https://piemonte.github.io/Position).
 
-## Community
+## Contributing
 
-- Need help? Use [Stack Overflow](http://stackoverflow.com/questions/tagged/position-swift) with the tag ‘position-swift’.
-- Questions? Use [Stack Overflow](http://stackoverflow.com/questions/tagged/position-swift) with the tag ‘position-swift’.
-- Found a bug? Open an [issue](https://github.com/piemonte/position/issues).
-- Feature idea? Open an [issue](https://github.com/piemonte/position/issues).
-- Want to contribute? Submit a [pull request](https://github.com/piemonte/position/pulls).
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
 
-## Resources
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-* [Location and Maps Programming Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/Introduction/Introduction.html)
-* [Core Location Framework Reference](https://developer.apple.com/library/ios/documentation/CoreLocation/Reference/CoreLocation_Framework/index.html)
-* [Core Location – NSHipster](http://nshipster.com/core-location-in-ios-8/)
+## Support
+
+- 🐛 Found a bug? Open an [issue](https://github.com/piemonte/Position/issues)
+- 💡 Feature idea? Open an [issue](https://github.com/piemonte/Position/issues)
+- 📖 Questions? Check our [documentation](https://piemonte.github.io/Position) or use [Stack Overflow](https://stackoverflow.com/questions/tagged/position-swift) with tag `position-swift`
 
 ## License
 
-Position is available under the MIT license, see the [LICENSE](https://github.com/piemonte/Position/blob/master/LICENSE) file for more information.
+Position is available under the MIT license. See the [LICENSE](LICENSE) file for more information.
