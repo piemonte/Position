@@ -189,7 +189,9 @@ public actor Position {
         get { _adjustLocationUseFromBatteryLevel }
         set {
             #if os(iOS)
-            UIDevice.current.isBatteryMonitoringEnabled = newValue
+            Task { @MainActor in
+                UIDevice.current.isBatteryMonitoringEnabled = newValue
+            }
             #endif
             _adjustLocationUseFromBatteryLevel = newValue
         }
@@ -351,16 +353,18 @@ public actor Position {
     public init() {
         _deviceLocationManager.delegate = self
 
-        Task {
-            await addBatteryObservers()
-            await addAppObservers()
+        Task { @MainActor in
+            addBatteryObservers()
+            addAppObservers()
         }
     }
 
     // Clean up methods should be called before deinit
     public func cleanup() async {
-        await removeAppObservers()
-        await removeBatteryObservers()
+        await MainActor.run {
+            removeAppObservers()
+            removeBatteryObservers()
+        }
     }
 }
 
@@ -599,25 +603,33 @@ extension Position {
     internal func updateLocationAccuracyIfNecessary() {
         if adjustLocationUseFromBatteryLevel == true {
             #if os(iOS)
-            switch UIDevice.current.batteryState {
-                case .full,
-                     .charging:
-                    _deviceLocationManager.trackingDesiredAccuracyActive = kCLLocationAccuracyNearestTenMeters
-                    _deviceLocationManager.trackingDesiredAccuracyBackground = kCLLocationAccuracyHundredMeters
-                    break
-                case .unplugged,
-                     .unknown:
-                    fallthrough
-                @unknown default:
-                    let batteryLevel: Float = UIDevice.current.batteryLevel
-                    if batteryLevel < 0.15 {
-                        _deviceLocationManager.trackingDesiredAccuracyActive = kCLLocationAccuracyThreeKilometers
-                        _deviceLocationManager.trackingDesiredAccuracyBackground = kCLLocationAccuracyThreeKilometers
-                    } else {
-                        _deviceLocationManager.trackingDesiredAccuracyActive = kCLLocationAccuracyHundredMeters
-                        _deviceLocationManager.trackingDesiredAccuracyBackground = kCLLocationAccuracyKilometer
-                    }
-                    break
+            Task { @MainActor in
+                switch UIDevice.current.batteryState {
+                    case .full,
+                         .charging:
+                        await self._deviceLocationManager.taskSetTrackingAccuracy(
+                            active: kCLLocationAccuracyNearestTenMeters,
+                            background: kCLLocationAccuracyHundredMeters
+                        )
+                        break
+                    case .unplugged,
+                         .unknown:
+                        fallthrough
+                    @unknown default:
+                        let batteryLevel: Float = UIDevice.current.batteryLevel
+                        if batteryLevel < 0.15 {
+                            await self._deviceLocationManager.taskSetTrackingAccuracy(
+                                active: kCLLocationAccuracyThreeKilometers,
+                                background: kCLLocationAccuracyThreeKilometers
+                            )
+                        } else {
+                            await self._deviceLocationManager.taskSetTrackingAccuracy(
+                                active: kCLLocationAccuracyHundredMeters,
+                                background: kCLLocationAccuracyKilometer
+                            )
+                        }
+                        break
+                }
             }
             #endif
         }
@@ -630,6 +642,7 @@ extension Position {
 
     // add / remove
 
+    @MainActor
     internal func addAppObservers() {
         #if os(iOS)
         NotificationCenter.default.addObserver(self, selector: #selector(handleApplicationDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: UIApplication.shared)
@@ -637,6 +650,7 @@ extension Position {
         #endif
     }
 
+    @MainActor
     internal func removeAppObservers() {
         #if os(iOS)
         NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: UIApplication.shared)
@@ -644,17 +658,19 @@ extension Position {
         #endif
     }
 
+    @MainActor
     internal func addBatteryObservers() {
         #if os(iOS)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleBatteryLevelChanged(_:)), name: UIDevice.batteryLevelDidChangeNotification, object: UIApplication.shared)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleBatteryStateChanged(_:)), name: UIDevice.batteryStateDidChangeNotification, object: UIApplication.shared)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleBatteryLevelChanged(_:)), name: UIDevice.batteryLevelDidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleBatteryStateChanged(_:)), name: UIDevice.batteryStateDidChangeNotification, object: nil)
         #endif
     }
 
+    @MainActor
     internal func removeBatteryObservers() {
         #if os(iOS)
-        NotificationCenter.default.removeObserver(self, name: UIDevice.batteryLevelDidChangeNotification, object: UIApplication.shared)
-        NotificationCenter.default.removeObserver(self, name: UIDevice.batteryStateDidChangeNotification, object: UIApplication.shared)
+        NotificationCenter.default.removeObserver(self, name: UIDevice.batteryLevelDidChangeNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIDevice.batteryStateDidChangeNotification, object: nil)
         #endif
     }
 
@@ -672,7 +688,7 @@ extension Position {
 
             // internally, locationManager will adjust desiredaccuracy to trackingDesiredAccuracyBackground
             if await self.adjustLocationUseWhenBackgrounded == true {
-                await self._deviceLocationManager.stopLowPowerUpdating()
+                self._deviceLocationManager.stopLowPowerUpdating()
             }
         }
     }
@@ -685,7 +701,7 @@ extension Position {
             }
 
             if await self.adjustLocationUseWhenBackgrounded == true {
-                await self._deviceLocationManager.startLowPowerUpdating()
+                self._deviceLocationManager.startLowPowerUpdating()
             }
 
             await self.updateLocationAccuracyIfNecessary()

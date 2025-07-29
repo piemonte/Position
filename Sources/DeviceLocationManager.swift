@@ -299,6 +299,12 @@ extension DeviceLocationManager {
 }
 
 extension DeviceLocationManager {
+    
+    /// Helper method to set tracking accuracy from an async context
+    internal func taskSetTrackingAccuracy(active: Double, background: Double) async {
+        self.trackingDesiredAccuracyActive = active
+        self.trackingDesiredAccuracyBackground = background
+    }
 
     internal func startUpdatingHeading() {
         #if os(iOS)
