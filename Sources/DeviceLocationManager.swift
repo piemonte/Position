@@ -133,7 +133,9 @@ extension DeviceLocationManager {
                     return .allowedAlways
                 case .authorizedWhenInUse:
                     return .allowedWhenInUse
-                case .denied, .restricted:
+                case .restricted:
+                    return .restricted
+                case .denied:
                     return .denied
                 case .notDetermined:
                     fallthrough

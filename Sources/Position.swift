@@ -82,6 +82,7 @@ public actor Position {
     public enum LocationAuthorizationStatus: Int, CustomStringConvertible, Sendable {
         case notDetermined = 0
         case notAvailable
+        case restricted
         case denied
         case allowedWhenInUse
         case allowedAlways
@@ -93,6 +94,8 @@ public actor Position {
                     return "Not Determined"
                 case .notAvailable:
                     return "Not Available"
+                case .restricted:
+                    return "Restricted"
                 case .denied:
                     return "Denied"
                 case .allowedWhenInUse:
@@ -446,13 +449,13 @@ extension Position {
         
         // If already authorized, return immediately
         let currentStatus = locationServicesStatus
-        if currentStatus == .allowedAlways || currentStatus == .denied {
+        if currentStatus == .allowedAlways || currentStatus == .denied || currentStatus == .restricted {
             return currentStatus
         }
         
         // Wait for authorization change
         for await status in authorizationUpdates {
-            if status == .allowedAlways || status == .denied {
+            if status == .allowedAlways || status == .denied || status == .restricted {
                 return status
             }
         }
@@ -474,13 +477,13 @@ extension Position {
         
         // If already authorized, return immediately
         let currentStatus = locationServicesStatus
-        if currentStatus == .allowedWhenInUse || currentStatus == .allowedAlways || currentStatus == .denied {
+        if currentStatus == .allowedWhenInUse || currentStatus == .allowedAlways || currentStatus == .denied || currentStatus == .restricted {
             return currentStatus
         }
         
         // Wait for authorization change
         for await status in authorizationUpdates {
-            if status == .allowedWhenInUse || status == .allowedAlways || status == .denied {
+            if status == .allowedWhenInUse || status == .allowedAlways || status == .denied || status == .restricted {
                 return status
             }
         }
@@ -590,11 +593,12 @@ extension Position {
     // Observer methods removed - use AsyncSequence instead
 
     internal func checkAuthorizationStatusForServices() {
-        if _deviceLocationManager.locationServicesStatus == .denied {
+        let status = _deviceLocationManager.locationServicesStatus
+        if status == .denied || status == .restricted {
             Task { [weak self] in
                 guard let self = self else { return }
                 if #available(iOS 15.0, *) {
-                    await self._authorizationContinuation?.yield(.denied)
+                    await self._authorizationContinuation?.yield(status)
                 }
             }
         }
