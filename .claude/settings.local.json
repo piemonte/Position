@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(swift --version)"
-    ],
-    "deny": []
-  }
-}
