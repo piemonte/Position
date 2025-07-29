@@ -1,35 +1,37 @@
 # Position
 
-`Position` is a lightweight, modern location positioning library for iOS and macOS, built with Swift.
+`Position` is a Swift 6-ready, actor-based location positioning library for iOS and macOS with modern async/await APIs and AsyncSequence support.
 
-[![Swift](https://img.shields.io/badge/Swift-5.9+-orange.svg?style=flat)](https://developer.apple.com/swift)
-[![Platforms](https://img.shields.io/badge/Platforms-iOS%2015.0+%20|%20macOS%2012.0+-blue.svg?style=flat)](https://developer.apple.com/swift)
+[![Swift](https://img.shields.io/badge/Swift-6.0+-orange.svg?style=flat)](https://developer.apple.com/swift)
+[![Platforms](https://img.shields.io/badge/Platforms-iOS%2015.0+%20|%20macOS%2011.0+-blue.svg?style=flat)](https://developer.apple.com/swift)
 [![Swift Package Manager](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg?style=flat)](https://swift.org/package-manager)
-[![CocoaPods](https://img.shields.io/cocoapods/v/Position.svg?style=flat)](https://cocoapods.org/pods/Position)
 [![License](https://img.shields.io/badge/License-MIT-lightgrey.svg?style=flat)](https://github.com/piemonte/Position/blob/main/LICENSE)
 
 ## Features
 
 | Feature | Description |
 |:-------:|:------------|
-| 📍 | One-shot customizable location requests with completion handlers |
-| 🌍 | Distance and time-based location filtering for efficient tracking |
+| 🚀 | **Swift 6** - Full concurrency support with actor isolation |
+| ⚡ | **Modern async/await** - One-shot location requests with async/await |
+| 🔄 | **AsyncSequence** - Reactive updates for location, heading, and authorization |
+| 🎭 | **Actor-based** - Thread-safe by design with Swift concurrency |
+| 📍 | Customizable location accuracy and filtering |
+| 🌍 | Distance and time-based location filtering |
 | 📡 | Continuous location tracking with configurable accuracy |
 | 🧭 | Device heading and compass support (iOS only) |
-| 🔐 | Permission management with status monitoring |
-| 📐 | Geospatial math utilities for distance and bearing calculations |
+| 🔐 | Permission management with async authorization requests |
+| 📐 | Geospatial utilities for distance and bearing calculations |
+| 🔋 | Battery-aware location accuracy adjustments |
+| 📍 | Visit monitoring for significant location changes |
+| 🏢 | Floor level detection in supported venues |
 | 🏢 | Place data formatting and geocoding utilities |
-| 🔋 | Automatic battery-aware location accuracy adjustments (iOS only) |
 | 📍 | vCard location sharing support |
-| 👥 | Observer pattern for multiple listeners |
-| 🏃 | Motion activity detection and tracking |
-| 📱 | Visit monitoring for significant location changes |
 
 ## Requirements
 
-- iOS 15.0+ / macOS 12.0+
-- Swift 5.9+
-- Xcode 15.0+
+- iOS 15.0+ / macOS 11.0+
+- Swift 6.0+ (also supports Swift 5 mode)
+- Xcode 16.0+
 
 ## Installation
 
@@ -49,19 +51,6 @@ dependencies: [
 ]
 ```
 
-### CocoaPods
-
-Add Position to your `Podfile`:
-
-```ruby
-pod 'Position', '~> 1.0.0'
-```
-
-Then run:
-```bash
-pod install
-```
-
 ## Quick Start
 
 ### 1. Configure Info.plist
@@ -74,92 +63,183 @@ Add the appropriate location usage descriptions to your app's `Info.plist`:
 
 <!-- Optional: For always authorization -->
 <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-<string>Your app needs location access even in the background to provide continuous tracking.</string>
+<string>Your app needs location access even in the background.</string>
 ```
 
-### 2. Basic Usage
+### 2. Basic Usage - Swift 6 Style
 
 ```swift
 import Position
 
-class LocationViewController: UIViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
+class LocationManager {
+    let position = Position()
+    
+    func setup() async {
+        // Check and request permissions
+        let status = await position.locationServicesStatus
         
-        // Check permission status
-        switch Position.shared.locationServicesStatus {
-        case .allowed, .allowedWhenInUse, .allowedAlways:
-            requestLocation()
+        switch status {
         case .notDetermined:
-            Position.shared.requestWhenInUseLocationAuthorization()
-        case .denied, .restricted:
-            showLocationServicesAlert()
-        @unknown default:
-            break
+            let newStatus = await position.requestWhenInUseLocationAuthorization()
+            print("Authorization result: \(newStatus)")
+            
+        case .allowedWhenInUse, .allowedAlways:
+            await requestLocation()
+            
+        case .denied, .notAvailable:
+            print("Location services unavailable")
         }
     }
     
-    func requestLocation() {
-        // One-shot location request
-        Position.shared.performOneShotLocationUpdate(withDesiredAccuracy: 100) { location, error in
-            if let location = location {
-                print("📍 Location: \(location.coordinate)")
-            } else if let error = error {
-                print("❌ Error: \(error)")
+    func requestLocation() async {
+        do {
+            // One-shot location request with async/await
+            let location = try await position.currentLocation()
+            print("📍 Location: \(location.coordinate)")
+            
+            // Or with custom accuracy
+            let preciseLocation = try await position.currentLocation(
+                desiredAccuracy: kCLLocationAccuracyBest
+            )
+            print("📍 Precise location: \(preciseLocation.coordinate)")
+        } catch {
+            print("❌ Location error: \(error)")
+        }
+    }
+}
+```
+
+### 3. Continuous Updates with AsyncSequence
+
+```swift
+import Position
+
+class LocationTracker {
+    let position = Position()
+    
+    func startTracking() async {
+        // Configure tracking parameters
+        await position.setDistanceFilter(10) // meters
+        position.trackingDesiredAccuracyWhenActive = kCLLocationAccuracyBest
+        
+        // Start location updates
+        await position.startUpdating()
+        
+        // Consume location updates
+        Task {
+            for await location in position.locationUpdates {
+                print("📍 New location: \(location.coordinate)")
+                updateUI(with: location)
+            }
+        }
+        
+        // Monitor authorization changes
+        Task {
+            for await status in position.authorizationUpdates {
+                print("🔐 Authorization changed: \(status)")
+                handleAuthorizationChange(status)
+            }
+        }
+        
+        // Track heading updates (iOS only)
+        Task {
+            for await heading in position.headingUpdates {
+                print("🧭 Heading: \(heading.trueHeading)°")
             }
         }
     }
+    
+    func stopTracking() async {
+        await position.stopUpdating()
+    }
 }
 ```
 
-### 3. Continuous Tracking
+### 4. SwiftUI Integration
 
 ```swift
+import SwiftUI
 import Position
 
-class TrackingViewController: UIViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        // Configure tracking parameters
-        Position.shared.distanceFilter = 10 // meters
-        Position.shared.desiredAccuracy = .bestForNavigation
-        Position.shared.activityType = .fitness
-        
-        // Add observer
-        Position.shared.addObserver(self)
-        
-        // Start tracking
-        Position.shared.startUpdatingLocation()
+@MainActor
+class LocationViewModel: ObservableObject {
+    @Published var currentLocation: CLLocation?
+    @Published var authorizationStatus: Position.LocationAuthorizationStatus = .notDetermined
+    
+    private let position = Position()
+    private var locationTask: Task<Void, Never>?
+    
+    func startLocationUpdates() {
+        locationTask = Task {
+            await position.startUpdating()
+            
+            for await location in position.locationUpdates {
+                currentLocation = location
+            }
+        }
     }
     
-    deinit {
-        Position.shared.stopUpdatingLocation()
-        Position.shared.removeObserver(self)
+    func stopLocationUpdates() async {
+        locationTask?.cancel()
+        await position.stopUpdating()
     }
 }
 
-// MARK: - PositionObserver
-extension TrackingViewController: PositionObserver {
-    func position(_ position: Position, didUpdateLocation location: CLLocation) {
-        print("📍 New location: \(location.coordinate)")
-    }
+struct LocationView: View {
+    @StateObject private var viewModel = LocationViewModel()
     
-    func position(_ position: Position, didUpdateHeading heading: CLHeading) {
-        print("🧭 Heading: \(heading.trueHeading)°")
-    }
-    
-    func position(_ position: Position, didChangeAuthorizationStatus status: LocationAuthorizationStatus) {
-        print("🔐 Authorization changed: \(status)")
-    }
-    
-    func position(_ position: Position, didFailWithError error: Error) {
-        print("❌ Error: \(error)")
+    var body: some View {
+        VStack {
+            if let location = viewModel.currentLocation {
+                Text("📍 \(location.coordinate.latitude), \(location.coordinate.longitude)")
+            } else {
+                Text("No location available")
+            }
+        }
+        .task {
+            viewModel.startLocationUpdates()
+        }
     }
 }
 ```
 
 ## Advanced Features
+
+### All Available AsyncSequences
+
+```swift
+let position = Position()
+
+// Location updates
+for await location in position.locationUpdates {
+    print("Location: \(location)")
+}
+
+// Heading updates (iOS only)
+for await heading in position.headingUpdates {
+    print("Heading: \(heading)")
+}
+
+// Authorization status changes
+for await status in position.authorizationUpdates {
+    print("Auth status: \(status)")
+}
+
+// Floor changes (when available)
+for await floor in position.floorUpdates {
+    print("Floor: \(floor.level)")
+}
+
+// Visit monitoring
+for await visit in position.visitUpdates {
+    print("Visit at: \(visit.coordinate)")
+}
+
+// Error handling
+for await error in position.errorUpdates {
+    print("Location error: \(error)")
+}
+```
 
 ### Geospatial Calculations
 
@@ -172,58 +252,156 @@ let location2 = CLLocation(latitude: 34.0522, longitude: -118.2437) // Los Angel
 
 // Calculate distance
 let distance = location1.distance(from: location2)
-print("Distance: \(distance.metersToKilometers) km")
+print("Distance: \(distance / 1000) km")
+
+// Or use Measurement API for type-safe conversions
+let measurement = Measurement(value: distance, unit: UnitLength.meters)
+let km = measurement.converted(to: .kilometers).value
+print("Distance: \(km) km")
 
 // Calculate bearing
-let bearing = location1.bearing(to: location2)
+let bearing = location1.bearing(toLocation: location2)
 print("Bearing: \(bearing)°")
 
-// Calculate midpoint
-let midpoint = location1.midpoint(to: location2)
-print("Midpoint: \(midpoint.coordinate)")
+// Calculate coordinate at bearing and distance
+let coordinate = location1.locationCoordinate(withBearing: 45, distanceMeters: 1000)
+print("New coordinate: \(coordinate)")
+
+// Pretty distance description (localized)
+let description = location1.prettyDistanceDescription(fromLocation: location2)
+print("Distance: \(description)")
 ```
 
-### Visit Monitoring
+### Battery-Aware Tracking
 
 ```swift
-// Start monitoring visits (significant location changes)
-Position.shared.startMonitoringVisits()
+let position = Position()
 
-// Handle visits in observer
-func position(_ position: Position, didVisit visit: CLVisit) {
-    print("📍 Visit at: \(visit.coordinate)")
-    print("⏰ Arrival: \(visit.arrivalDate)")
-    print("⏱️ Departure: \(visit.departureDate ?? Date())")
-}
-```
-
-### Location Sharing
-
-```swift
-// Create vCard from location
-if let vCardURL = currentLocation.vCard(withTitle: "My Location") {
-    // Share via UIActivityViewController (iOS)
-    let activityVC = UIActivityViewController(
-        activityItems: [vCardURL],
-        applicationActivities: nil
-    )
-    present(activityVC, animated: true)
-}
-```
-
-### Battery-Aware Tracking (iOS)
-
-Position automatically adjusts location accuracy based on battery level:
-
-```swift
 // Enable automatic battery management
-Position.shared.adjustLocationUpdateAccuracyForBatteryLevel = true
+await position.setAdjustLocationUseFromBatteryLevel(true)
 
-// Or manually adjust based on battery
-if UIDevice.current.batteryLevel < 0.2 {
-    Position.shared.desiredAccuracy = .hundredMeters
+// Manual accuracy adjustment based on app state
+await position.setAdjustLocationUseWhenBackgrounded(true)
+
+// Configure accuracy levels
+position.trackingDesiredAccuracyWhenActive = kCLLocationAccuracyBest
+position.trackingDesiredAccuracyWhenInBackground = kCLLocationAccuracyKilometer
+
+// The library will automatically adjust accuracy when:
+// - Battery level drops below 20% (switches to reduced accuracy)
+// - App enters background (uses trackingDesiredAccuracyWhenInBackground)
+// - App becomes active again (restores trackingDesiredAccuracyWhenActive)
+```
+
+### vCard Location Sharing
+
+```swift
+import Position
+import CoreLocation
+
+let location = CLLocation(latitude: 37.7749, longitude: -122.4194)
+
+// Create vCard for sharing location (async version)
+do {
+    let vCardURL = try await location.vCard(name: "Golden Gate Bridge")
+    // Share the vCard file URL
+    print("vCard created at: \(vCardURL)")
+} catch {
+    print("Failed to create vCard: \(error)")
 }
 ```
+
+### Placemark Utilities
+
+```swift
+import Position
+import CoreLocation
+
+// Format address components
+let address = CLPlacemark.shortStringFromAddressElements(
+    address: "1 Infinite Loop",
+    locality: "Cupertino",
+    administrativeArea: "CA"
+)
+print("Formatted address: \(address ?? "")")
+
+// Pretty descriptions from placemarks
+if let placemark = somePlacemark {
+    // Simple pretty description
+    let description = placemark.prettyDescription()
+    print("Location: \(description)")
+    
+    // Zoom-level aware description
+    let zoomDescription = placemark.prettyDescription(withZoomLevel: 14)
+    print("Location at zoom 14: \(zoomDescription)")
+    
+    // Full address string
+    let fullAddress = placemark.stringFromPlacemark()
+    print("Full address: \(fullAddress ?? "")")
+}
+```
+
+## Migration Guide from 0.x to 1.0
+
+### Major Changes
+
+1. **No More Singleton**
+   ```swift
+   // Old
+   Position.shared.performOneShotLocationUpdate(...)
+   
+   // New
+   let position = Position()
+   try await position.currentLocation()
+   ```
+
+2. **Async/Await Instead of Callbacks**
+   ```swift
+   // Old
+   Position.shared.performOneShotLocationUpdate(withDesiredAccuracy: 100) { result in
+       switch result {
+       case .success(let location):
+           print(location)
+       case .failure(let error):
+           print(error)
+       }
+   }
+   
+   // New
+   do {
+       let location = try await position.currentLocation(desiredAccuracy: 100)
+       print(location)
+   } catch {
+       print(error)
+   }
+   ```
+
+3. **AsyncSequence Instead of Observers**
+   ```swift
+   // Old
+   Position.shared.addObserver(self)
+   
+   func position(_ position: Position, didUpdateTrackingLocations locations: [CLLocation]?) {
+       // Handle update
+   }
+   
+   // New
+   for await location in position.locationUpdates {
+       // Handle update
+   }
+   ```
+
+4. **Actor-Based API**
+   ```swift
+   // Most Position methods are now async
+   await position.startUpdating()
+   await position.stopUpdating()
+   let status = await position.locationServicesStatus
+   ```
+
+### Backward Compatibility
+
+The observer pattern is maintained but deprecated. Update your code to use AsyncSequence for future compatibility.
 
 ## Platform Differences
 
@@ -234,35 +412,23 @@ if UIDevice.current.batteryLevel < 0.2 {
 | Visit Monitoring | ✅ | ✅ |
 | Battery Monitoring | ✅ | ❌ |
 | Background Updates | ✅ | ⚠️ Limited |
-| Activity Type | ✅ | ❌ |
+| Floor Detection | ✅ | ✅ |
 
 ## Best Practices
 
-1. **Privacy First**: Always respect user privacy and request only the permissions you need
-2. **Battery Life**: Use appropriate accuracy levels and stop updates when not needed
-3. **Background Usage**: Only request always authorization if truly necessary
-4. **Error Handling**: Always handle location errors gracefully
-5. **Testing**: Test with various permission states and location availability
+1. **Concurrency**: Position is an actor - use `await` when calling its methods
+2. **Lifecycle**: Create Position instances as needed, no singleton required
+3. **AsyncSequence**: Prefer AsyncSequence over deprecated observer pattern
+4. **Error Handling**: Always handle errors in location requests
+5. **Permissions**: Check authorization status before requesting location
 
 ## Documentation
 
-Complete API documentation is available at [piemonte.github.io/Position](https://piemonte.github.io/Position).
+Complete API documentation is available in the source code with comprehensive DocC comments.
 
 ## Contributing
 
 We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## Support
-
-- 🐛 Found a bug? Open an [issue](https://github.com/piemonte/Position/issues)
-- 💡 Feature idea? Open an [issue](https://github.com/piemonte/Position/issues)
-- 📖 Questions? Check our [documentation](https://piemonte.github.io/Position) or use [Stack Overflow](https://stackoverflow.com/questions/tagged/position-swift) with tag `position-swift`
 
 ## License
 

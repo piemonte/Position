@@ -160,7 +160,40 @@ extension CLLocation {
 
     /// Creates a Virtual Contact File (VCF) or vCard for the location.
     ///
-    /// - Returns: Local file path URL.
+    /// - Parameters:
+    ///   - name: The name for the location (default: "Location")
+    /// - Returns: URL to the created vCard file
+    /// - Throws: Error if unable to create the vCard file
+    @available(iOS 15.0, macOS 11.0, *)
+    public func vCard(name: String = "Location") async throws -> URL {
+        guard CLLocationCoordinate2DIsValid(coordinate) else {
+            throw CLError(.locationUnknown)
+        }
+        
+        let vCardString = """
+        BEGIN:VCARD
+        VERSION:3.0
+        N:;\(name);;;
+        FN:\(name)
+        item1.URL;type=pref:http://maps.apple.com/?ll=\(coordinate.latitude),\(coordinate.longitude)
+        item1.X-ABLabel:map url
+        END:VCARD
+        """
+        
+        let temporaryDirectory = FileManager.default.temporaryDirectory
+        let fileName = "\(name.replacingOccurrences(of: " ", with: "_")).loc.vcf"
+        let fileURL = temporaryDirectory.appendingPathComponent(fileName)
+        
+        try vCardString.write(to: fileURL, atomically: true, encoding: .utf8)
+        return fileURL
+    }
+    
+    /// Creates a Virtual Contact File (VCF) or vCard for the location (legacy version).
+    ///
+    /// - Parameter name: The name for the location
+    /// - Returns: Local file path URL, or nil if creation fails
+    /// - Note: Deprecated. Use the async throwing version instead.
+    @available(*, deprecated, message: "Use the async throwing version instead")
     public func vCard(name: String = "Location") -> URL? {
         guard let cachesPathString = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first else {
             return nil
