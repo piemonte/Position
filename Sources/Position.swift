@@ -27,19 +27,25 @@
 //
 
 import Foundation
-import CoreLocation
-import Combine
+@preconcurrency import CoreLocation
 #if canImport(UIKit)
 import UIKit
 #endif
 
+// MARK: - Legacy Observer Support (Deprecated)
+// These protocols are maintained for backwards compatibility but are deprecated in favor of AsyncSequence
+
 /// Position location authorization protocol.
+/// - Note: Deprecated. Use `authorizationUpdates` AsyncSequence instead.
+@available(*, deprecated, message: "Use authorizationUpdates AsyncSequence instead")
 public protocol PositionAuthorizationObserver: AnyObject {
     /// Permission change authorization status, this may be triggered on application resume if the app settings have changed
     func position(_ position: Position, didChangeLocationAuthorizationStatus status: Position.LocationAuthorizationStatus)
 }
 
 /// Position location updates protocol.
+/// - Note: Deprecated. Use `locationUpdates` AsyncSequence instead.
+@available(*, deprecated, message: "Use locationUpdates AsyncSequence instead")
 public protocol PositionObserver: AnyObject {
 
     /// Location positioning one-shot updates
@@ -61,17 +67,19 @@ public protocol PositionObserver: AnyObject {
 }
 
 /// Position heading updates protocol.
+/// - Note: Deprecated. Use `headingUpdates` AsyncSequence instead.
+@available(*, deprecated, message: "Use headingUpdates AsyncSequence instead")
 public protocol PositionHeadingObserver: AnyObject {
     func position(_ postiion: Position, didUpdateHeading newHeading: CLHeading)
 }
 
 /// 🛰 Position, Swift and efficient location positioning.
-open class Position {
+public actor Position {
 
     // MARK: - types
 
     /// Location authorization status
-    public enum LocationAuthorizationStatus: Int, CustomStringConvertible {
+    public enum LocationAuthorizationStatus: Int, CustomStringConvertible, Sendable {
         case notDetermined = 0
         case notAvailable
         case denied
@@ -97,13 +105,13 @@ open class Position {
     }
 
     /// Location accuracy authorization status
-    public enum LocationAccuracyAuthorizationStatus: Int {
+    public enum LocationAccuracyAuthorizationStatus: Int, Sendable {
         case fullAccuracy = 0
         case reducedAccuracy
     }
 
     /// Possible error types
-    public enum ErrorType: Error, CustomStringConvertible {
+    public enum ErrorType: Error, CustomStringConvertible, Sendable {
         case timedOut
         case restricted
         case cancelled
@@ -123,7 +131,7 @@ open class Position {
     }
 
     /// Completion handler for one-shot location requests
-    public typealias OneShotCompletionHandler = (Swift.Result<CLLocation, Error>) -> Void
+    public typealias OneShotCompletionHandler = @Sendable (Swift.Result<CLLocation, Error>) -> Void
 
     /// Time based filter constant
     public static let TimeFilterNone: TimeInterval      = 0.0
@@ -135,11 +143,6 @@ open class Position {
     /// A statute mile to be 8 furlongs or 1609.344 meters
     public static let MilesToMetersRatio: Double        = 1609.344
 
-    // MARK: - singleton
-
-    /// Shared singleton
-    public static let shared = Position()
-
     // MARK: - properties
 
     /// Distance in meters a device must move before updating location.
@@ -150,6 +153,11 @@ open class Position {
         set {
             _deviceLocationManager.distanceFilter = newValue
         }
+    }
+    
+    /// Sets the distance filter
+    public func setDistanceFilter(_ distance: Double) {
+        distanceFilter = distance
     }
 
     /// Time that must pass for a device before updating location.
@@ -163,21 +171,27 @@ open class Position {
     }
 
     /// When `true`, location will reduce power usage from adjusted accuracy when backgrounded.
-    public var adjustLocationUseWhenBackgrounded: Bool = false {
-        didSet {
+    private var _adjustLocationUseWhenBackgrounded: Bool = false
+    public var adjustLocationUseWhenBackgrounded: Bool {
+        get { _adjustLocationUseWhenBackgrounded }
+        set {
             if _deviceLocationManager.isUpdatingLowPowerLocation == true {
                 _deviceLocationManager.stopLowPowerUpdating()
                 _deviceLocationManager.startUpdating()
             }
+            _adjustLocationUseWhenBackgrounded = newValue
         }
     }
 
     /// When `true`, location will reduce power usage from adjusted accuracy based on the current battery level.
-    public var adjustLocationUseFromBatteryLevel: Bool = false {
-        didSet {
+    private var _adjustLocationUseFromBatteryLevel: Bool = false
+    public var adjustLocationUseFromBatteryLevel: Bool {
+        get { _adjustLocationUseFromBatteryLevel }
+        set {
             #if os(iOS)
-            UIDevice.current.isBatteryMonitoringEnabled = self.adjustLocationUseFromBatteryLevel
+            UIDevice.current.isBatteryMonitoringEnabled = newValue
             #endif
+            _adjustLocationUseFromBatteryLevel = newValue
         }
     }
 
@@ -218,54 +232,27 @@ open class Position {
 
     // MARK: - ivars
 
-    internal private(set) var _authorizationObservers: NSMapTable<AnyObject, AnyObject> = NSMapTable.strongToWeakObjects()
-    internal private(set) var _observers: NSMapTable<AnyObject, AnyObject> = NSMapTable.strongToWeakObjects()
-    internal private(set) var _headingObservers: NSMapTable<AnyObject, AnyObject> = NSMapTable.strongToWeakObjects()
-
-    internal private(set) var _deviceLocationManager: DeviceLocationManager = DeviceLocationManager()
+    internal let _deviceLocationManager: DeviceLocationManager = DeviceLocationManager()
     internal private(set) var _updating: Bool = false
     
-    // MARK: - Combine Publishers
-    
-    private lazy var _locationPublisherSubject = PassthroughSubject<CLLocation, Never>()
-    
-    private lazy var _headingPublisherSubject = PassthroughSubject<CLHeading, Never>()
-    
-    private lazy var _authorizationPublisherSubject = PassthroughSubject<LocationAuthorizationStatus, Never>()
-    
-    /// Publisher for location updates
-    @available(iOS 15.0, *)
-    public var locationPublisher: AnyPublisher<CLLocation, Never> {
-        _locationPublisherSubject.eraseToAnyPublisher()
-    }
-    
-    /// Publisher for heading updates
-    @available(iOS 15.0, *)
-    public var headingPublisher: AnyPublisher<CLHeading, Never> {
-        _headingPublisherSubject.eraseToAnyPublisher()
-    }
-    
-    /// Publisher for authorization status changes
-    @available(iOS 15.0, *)
-    public var authorizationPublisher: AnyPublisher<LocationAuthorizationStatus, Never> {
-        _authorizationPublisherSubject.eraseToAnyPublisher()
-    }
-    
     // MARK: - AsyncSequence Support
+    
+    private var _locationContinuation: AsyncStream<CLLocation>.Continuation?
+    private var _headingContinuation: AsyncStream<CLHeading>.Continuation?
+    private var _authorizationContinuation: AsyncStream<LocationAuthorizationStatus>.Continuation?
+    private var _floorContinuation: AsyncStream<CLFloor>.Continuation?
+    private var _visitContinuation: AsyncStream<CLVisit>.Continuation?
+    private var _errorContinuation: AsyncStream<Error>.Continuation?
     
     /// AsyncSequence for continuous location updates
     @available(iOS 15.0, *)
     public var locationUpdates: AsyncStream<CLLocation> {
         AsyncStream { continuation in
-            var cancellable: AnyCancellable?
-            
-            cancellable = locationPublisher
-                .sink { location in
-                    continuation.yield(location)
+            _locationContinuation = continuation
+            continuation.onTermination = { @Sendable _ in
+                Task { [weak self] in
+                    await self?.cleanupLocationContinuation()
                 }
-            
-            continuation.onTermination = { _ in
-                cancellable?.cancel()
             }
         }
     }
@@ -274,15 +261,11 @@ open class Position {
     @available(iOS 15.0, *)
     public var headingUpdates: AsyncStream<CLHeading> {
         AsyncStream { continuation in
-            var cancellable: AnyCancellable?
-            
-            cancellable = headingPublisher
-                .sink { heading in
-                    continuation.yield(heading)
+            _headingContinuation = continuation
+            continuation.onTermination = { @Sendable _ in
+                Task { [weak self] in
+                    await self?.cleanupHeadingContinuation()
                 }
-            
-            continuation.onTermination = { _ in
-                cancellable?.cancel()
             }
         }
     }
@@ -291,17 +274,76 @@ open class Position {
     @available(iOS 15.0, *)
     public var authorizationUpdates: AsyncStream<LocationAuthorizationStatus> {
         AsyncStream { continuation in
-            var cancellable: AnyCancellable?
-            
-            cancellable = authorizationPublisher
-                .sink { status in
-                    continuation.yield(status)
+            _authorizationContinuation = continuation
+            continuation.onTermination = { @Sendable _ in
+                Task { [weak self] in
+                    await self?.cleanupAuthorizationContinuation()
                 }
-            
-            continuation.onTermination = { _ in
-                cancellable?.cancel()
             }
         }
+    }
+    
+    private func cleanupLocationContinuation() {
+        _locationContinuation = nil
+    }
+    
+    private func cleanupHeadingContinuation() {
+        _headingContinuation = nil
+    }
+    
+    private func cleanupAuthorizationContinuation() {
+        _authorizationContinuation = nil
+    }
+    
+    /// AsyncSequence for floor updates
+    @available(iOS 15.0, *)
+    public var floorUpdates: AsyncStream<CLFloor> {
+        AsyncStream { continuation in
+            _floorContinuation = continuation
+            continuation.onTermination = { @Sendable _ in
+                Task { [weak self] in
+                    await self?.cleanupFloorContinuation()
+                }
+            }
+        }
+    }
+    
+    /// AsyncSequence for visit updates
+    @available(iOS 15.0, *)
+    public var visitUpdates: AsyncStream<CLVisit> {
+        AsyncStream { continuation in
+            _visitContinuation = continuation
+            continuation.onTermination = { @Sendable _ in
+                Task { [weak self] in
+                    await self?.cleanupVisitContinuation()
+                }
+            }
+        }
+    }
+    
+    /// AsyncSequence for error updates
+    @available(iOS 15.0, *)
+    public var errorUpdates: AsyncStream<Error> {
+        AsyncStream { continuation in
+            _errorContinuation = continuation
+            continuation.onTermination = { @Sendable _ in
+                Task { [weak self] in
+                    await self?.cleanupErrorContinuation()
+                }
+            }
+        }
+    }
+    
+    private func cleanupFloorContinuation() {
+        _floorContinuation = nil
+    }
+    
+    private func cleanupVisitContinuation() {
+        _visitContinuation = nil
+    }
+    
+    private func cleanupErrorContinuation() {
+        _errorContinuation = nil
     }
 
     // MARK: - object lifecycle
@@ -309,13 +351,16 @@ open class Position {
     public init() {
         _deviceLocationManager.delegate = self
 
-        addBatteryObservers()
-        addAppObservers()
+        Task {
+            await addBatteryObservers()
+            await addAppObservers()
+        }
     }
 
-    deinit {
-        removeAppObservers()
-        removeBatteryObservers()
+    // Clean up methods should be called before deinit
+    public func cleanup() async {
+        await removeAppObservers()
+        await removeBatteryObservers()
     }
 }
 
@@ -324,51 +369,51 @@ open class Position {
 extension Position {
 
     /// Adds an authorization observer.
-    ///
+    /// - Note: Deprecated. Use `authorizationUpdates` AsyncSequence instead.
     /// - Parameter observer: Observing instance.
+    @available(*, deprecated, message: "Use authorizationUpdates AsyncSequence instead")
     public func addAuthorizationObserver(_ observer: PositionAuthorizationObserver) {
-        let key = ObjectIdentifier(observer)
-        _authorizationObservers.setObject(observer, forKey: key as AnyObject)
+        // Legacy support - no longer functional
     }
 
     /// Removes an authorization observer.
-    ///
+    /// - Note: Deprecated. Use `authorizationUpdates` AsyncSequence instead.
     /// - Parameter observer: Observing instance.
+    @available(*, deprecated, message: "Use authorizationUpdates AsyncSequence instead")
     public func removeAuthorizationObserver(_ observer: PositionAuthorizationObserver) {
-        let key = ObjectIdentifier(observer)
-        _authorizationObservers.removeObject(forKey: key as AnyObject)
+        // Legacy support - no longer functional
     }
 
     /// Adds a position location observer.
-    ///
+    /// - Note: Deprecated. Use `locationUpdates` AsyncSequence instead.
     /// - Parameter observer: Observing instance.
+    @available(*, deprecated, message: "Use locationUpdates AsyncSequence instead")
     public func addObserver(_ observer: PositionObserver) {
-        let key = ObjectIdentifier(observer)
-        _observers.setObject(observer, forKey: key as AnyObject)
+        // Legacy support - no longer functional
     }
 
     /// Removes a position location observer.
-    ///
+    /// - Note: Deprecated. Use `locationUpdates` AsyncSequence instead.
     /// - Parameter observer: Observing instance.
+    @available(*, deprecated, message: "Use locationUpdates AsyncSequence instead")
     public func removeObserver(_ observer: PositionObserver) {
-        let key = ObjectIdentifier(observer)
-        _observers.removeObject(forKey: key as AnyObject)
+        // Legacy support - no longer functional
     }
 
     /// Adds a position heading observer.
-    ///
+    /// - Note: Deprecated. Use `headingUpdates` AsyncSequence instead.
     /// - Parameter observer: Observing instance.
+    @available(*, deprecated, message: "Use headingUpdates AsyncSequence instead")
     public func addHeadingObserver(_ observer: PositionHeadingObserver) {
-        let key = ObjectIdentifier(observer)
-        _headingObservers.setObject(observer, forKey: key as AnyObject)
+        // Legacy support - no longer functional
     }
 
     /// Removes a position heading observer.
-    ///
+    /// - Note: Deprecated. Use `headingUpdates` AsyncSequence instead.
     /// - Parameter observer: Observing instance.
+    @available(*, deprecated, message: "Use headingUpdates AsyncSequence instead")
     public func removeHeadingObserver(_ observer: PositionHeadingObserver) {
-        let key = ObjectIdentifier(observer)
-        _headingObservers.removeObject(forKey: key as AnyObject)
+        // Legacy support - no longer functional
     }
 
 
@@ -392,27 +437,23 @@ extension Position {
     /// - Returns: The resulting authorization status after the request
     @available(iOS 15.0, *)
     public func requestAlwaysLocationAuthorization() async -> LocationAuthorizationStatus {
-        await withCheckedContinuation { continuation in
-            var cancellable: AnyCancellable?
-            
-            // Subscribe to authorization changes
-            cancellable = authorizationPublisher
-                .first()
-                .sink { status in
-                    continuation.resume(returning: status)
-                    cancellable?.cancel()
-                }
-            
-            // Request authorization
-            _deviceLocationManager.requestAlwaysAuthorization()
-            
-            // If already authorized, return immediately
-            let currentStatus = locationServicesStatus
-            if currentStatus == .allowedAlways || currentStatus == .denied {
-                cancellable?.cancel()
-                continuation.resume(returning: currentStatus)
+        // Request authorization
+        _deviceLocationManager.requestAlwaysAuthorization()
+        
+        // If already authorized, return immediately
+        let currentStatus = locationServicesStatus
+        if currentStatus == .allowedAlways || currentStatus == .denied {
+            return currentStatus
+        }
+        
+        // Wait for authorization change
+        for await status in authorizationUpdates {
+            if status == .allowedAlways || status == .denied {
+                return status
             }
         }
+        
+        return locationServicesStatus
     }
 
     /// Request location authorization for in app use only.
@@ -424,27 +465,23 @@ extension Position {
     /// - Returns: The resulting authorization status after the request
     @available(iOS 15.0, *)
     public func requestWhenInUseLocationAuthorization() async -> LocationAuthorizationStatus {
-        await withCheckedContinuation { continuation in
-            var cancellable: AnyCancellable?
-            
-            // Subscribe to authorization changes
-            cancellable = authorizationPublisher
-                .first()
-                .sink { status in
-                    continuation.resume(returning: status)
-                    cancellable?.cancel()
-                }
-            
-            // Request authorization
-            _deviceLocationManager.requestWhenInUseAuthorization()
-            
-            // If already authorized, return immediately
-            let currentStatus = locationServicesStatus
-            if currentStatus == .allowedWhenInUse || currentStatus == .allowedAlways || currentStatus == .denied {
-                cancellable?.cancel()
-                continuation.resume(returning: currentStatus)
+        // Request authorization
+        _deviceLocationManager.requestWhenInUseAuthorization()
+        
+        // If already authorized, return immediately
+        let currentStatus = locationServicesStatus
+        if currentStatus == .allowedWhenInUse || currentStatus == .allowedAlways || currentStatus == .denied {
+            return currentStatus
+        }
+        
+        // Wait for authorization change
+        for await status in authorizationUpdates {
+            if status == .allowedWhenInUse || status == .allowedAlways || status == .denied {
+                return status
             }
         }
+        
+        return locationServicesStatus
     }
 
     public var locationAccuracyAuthorizationStatus: LocationAccuracyAuthorizationStatus {
@@ -452,7 +489,7 @@ extension Position {
     }
 
     /// Request one time accuracy authorization. Be sure to include "FullAccuracyPurpose" to your Info.plist.
-    public func requestOneTimeFullAccuracyAuthorization(_ completionHandler: ((Bool) -> Void)? = nil) {
+    public func requestOneTimeFullAccuracyAuthorization(_ completionHandler: (@Sendable (Bool) -> Void)? = nil) {
         _deviceLocationManager.requestAccuracyAuthorization { completed in
             completionHandler?(completed)
         }
@@ -480,27 +517,36 @@ extension Position {
     /// - Parameters:
     ///   - desiredAccuracy: Minimum accuracy to meet before for request.
     ///   - completionHandler: Completion handler for when the location is determined.
+    ///
+    /// - Note: For Swift 6+, consider using the async version instead:
+    /// ```swift
+    /// let location = try await Position.shared.currentLocation()
+    /// // or with custom accuracy:
+    /// let location = try await Position.shared.currentLocation(desiredAccuracy: kCLLocationAccuracyNearestTenMeters)
+    /// ```
     public func performOneShotLocationUpdate(withDesiredAccuracy desiredAccuracy: Double, completionHandler: Position.OneShotCompletionHandler? = nil) {
         _deviceLocationManager.performOneShotLocationUpdate(withDesiredAccuracy: desiredAccuracy, completionHandler: completionHandler)
     }
     
-    /// Async version of performOneShotLocationUpdate
+    /// Swift 6-style async version of performOneShotLocationUpdate
+    /// This is the recommended way to get a one-shot location in Swift 6+
     ///
     /// - Parameter desiredAccuracy: Minimum accuracy to meet before for request.
     /// - Returns: The location if successful
     /// - Throws: Position.ErrorType if the request fails
     @available(iOS 15.0, *)
     public func performOneShotLocationUpdate(withDesiredAccuracy desiredAccuracy: Double) async throws -> CLLocation {
-        try await withCheckedThrowingContinuation { continuation in
-            performOneShotLocationUpdate(withDesiredAccuracy: desiredAccuracy) { result in
-                switch result {
-                case .success(let location):
-                    continuation.resume(returning: location)
-                case .failure(let error):
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
+        try await _deviceLocationManager.performOneShotLocationUpdate(withDesiredAccuracy: desiredAccuracy)
+    }
+    
+    /// Convenient Swift 6-style method to get current location with default accuracy
+    /// 
+    /// - Parameter desiredAccuracy: Minimum accuracy to meet (defaults to kCLLocationAccuracyBest)
+    /// - Returns: The current location
+    /// - Throws: Position.ErrorType if the request fails
+    @available(iOS 15.0, *)
+    public func currentLocation(desiredAccuracy: Double = kCLLocationAccuracyBest) async throws -> CLLocation {
+        try await performOneShotLocationUpdate(withDesiredAccuracy: desiredAccuracy)
     }
 
     /// Start positioning updates.
@@ -537,32 +583,14 @@ extension Position {
 
 extension Position {
     
-    private func getObservers<T>() -> [T] {
-        var observers: [T] = []
-        if let enumerator = _observers.objectEnumerator() {
-            while let observer = enumerator.nextObject() as? T {
-                observers.append(observer)
-            }
-        }
-        return observers
-    }
-    
-    private func getHeadingObservers<T>() -> [T] {
-        var observers: [T] = []
-        if let enumerator = _headingObservers.objectEnumerator() {
-            while let observer = enumerator.nextObject() as? T {
-                observers.append(observer)
-            }
-        }
-        return observers
-    }
+    // Observer methods removed - use AsyncSequence instead
 
     internal func checkAuthorizationStatusForServices() {
         if _deviceLocationManager.locationServicesStatus == .denied {
-            DispatchQueue.main.async { [weak self] in
+            Task { [weak self] in
                 guard let self = self else { return }
-                for observer in self.getObservers() as [PositionAuthorizationObserver] {
-                    observer.position(self, didChangeLocationAuthorizationStatus: .denied)
+                if #available(iOS 15.0, *) {
+                    await self._authorizationContinuation?.yield(.denied)
                 }
             }
         }
@@ -633,49 +661,57 @@ extension Position {
     // handlers
 
     @objc
-    private func handleApplicationDidBecomeActive(_ notification: Notification) {
-        checkAuthorizationStatusForServices()
+    private nonisolated func handleApplicationDidBecomeActive(_ notification: Notification) {
+        Task { @MainActor in
+            await self.checkAuthorizationStatusForServices()
 
-        // if position is not updating, don't modify state
-        if _updating == false {
-            return
-        }
+            // if position is not updating, don't modify state
+            if await self._updating == false {
+                return
+            }
 
-        // internally, locationManager will adjust desiredaccuracy to trackingDesiredAccuracyBackground
-        if adjustLocationUseWhenBackgrounded == true {
-            _deviceLocationManager.stopLowPowerUpdating()
+            // internally, locationManager will adjust desiredaccuracy to trackingDesiredAccuracyBackground
+            if await self.adjustLocationUseWhenBackgrounded == true {
+                await self._deviceLocationManager.stopLowPowerUpdating()
+            }
         }
     }
 
     @objc
-    private func handleApplicationWillResignActive(_ notification: Notification) {
-        if _updating == true {
-            return
-        }
+    private nonisolated func handleApplicationWillResignActive(_ notification: Notification) {
+        Task { @MainActor in
+            if await self._updating == true {
+                return
+            }
 
-        if adjustLocationUseWhenBackgrounded == true {
-            _deviceLocationManager.startLowPowerUpdating()
-        }
+            if await self.adjustLocationUseWhenBackgrounded == true {
+                await self._deviceLocationManager.startLowPowerUpdating()
+            }
 
-        updateLocationAccuracyIfNecessary()
+            await self.updateLocationAccuracyIfNecessary()
+        }
     }
 
     @objc
-    private func handleBatteryLevelChanged(_ notification: Notification) {
-        #if os(iOS)
-        let batteryLevel = UIDevice.current.batteryLevel
-        if batteryLevel < 0 {
-            return
+    private nonisolated func handleBatteryLevelChanged(_ notification: Notification) {
+        Task { @MainActor in
+            #if os(iOS)
+            let batteryLevel = UIDevice.current.batteryLevel
+            if batteryLevel < 0 {
+                return
+            }
+            await updateLocationAccuracyIfNecessary()
+            #endif
         }
-        updateLocationAccuracyIfNecessary()
-        #endif
     }
 
     @objc
-    private func handleBatteryStateChanged(_ notification: Notification) {
-        #if os(iOS)
-        updateLocationAccuracyIfNecessary()
-        #endif
+    private nonisolated func handleBatteryStateChanged(_ notification: Notification) {
+        Task { @MainActor in
+            #if os(iOS)
+            await updateLocationAccuracyIfNecessary()
+            #endif
+        }
     }
 
 }
@@ -684,73 +720,65 @@ extension Position {
 
 extension Position: DeviceLocationManagerDelegate {
 
-    internal func deviceLocationManager(_ deviceLocationManager: DeviceLocationManager, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
-        DispatchQueue.main.async { [weak self] in
+    internal nonisolated func deviceLocationManager(_ deviceLocationManager: DeviceLocationManager, didChangeLocationAuthorizationStatus status: LocationAuthorizationStatus) {
+        Task { [weak self] in
             guard let self = self else { return }
-            for observer in self.getObservers() as [PositionAuthorizationObserver] {
-                observer.position(self, didChangeLocationAuthorizationStatus: status)
-            }
             if #available(iOS 15.0, *) {
-                self._authorizationPublisherSubject.send(status)
+                await self._authorizationContinuation?.yield(status)
             }
         }
     }
 
-    internal func deviceLocationManager(_ deviceLocationManager: DeviceLocationManager, didFailWithError error: Error?) {
-        DispatchQueue.main.async { [weak self] in
+    internal nonisolated func deviceLocationManager(_ deviceLocationManager: DeviceLocationManager, didFailWithError error: Error?) {
+        Task { [weak self] in
             guard let self = self else { return }
-            for observer in self.getObservers() as [PositionObserver] {
-                observer.position(self, didFailWithError: error)
+            if #available(iOS 15.0, *), let error = error {
+                await self._errorContinuation?.yield(error)
             }
         }
     }
 
-    internal func deviceLocationManager(_ deviceLocationManager: DeviceLocationManager, didUpdateOneShotLocation location: CLLocation?) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            for observer in self.getObservers() as [PositionObserver] {
-                observer.position(self, didUpdateOneShotLocation: location)
-            }
-        }
+    internal nonisolated func deviceLocationManager(_ deviceLocationManager: DeviceLocationManager, didUpdateOneShotLocation location: CLLocation?) {
+        // One-shot locations are handled via async/await API
     }
 
-    internal func deviceLocationManager(_ deviceLocationManager: DeviceLocationManager, didUpdateTrackingLocations locations: [CLLocation]?) {
-        DispatchQueue.main.async { [weak self] in
+    internal nonisolated func deviceLocationManager(_ deviceLocationManager: DeviceLocationManager, didUpdateTrackingLocations locations: [CLLocation]?) {
+        Task { [weak self] in
             guard let self = self else { return }
-            for observer in self.getObservers() as [PositionObserver] {
-                observer.position(self, didUpdateTrackingLocations: locations)
-            }
             if #available(iOS 15.0, *), let location = locations?.first {
-                self._locationPublisherSubject.send(location)
+                await self._locationContinuation?.yield(location)
             }
         }
     }
 
-    func deviceLocationManager(_ deviceLocationManager: DeviceLocationManager, didUpdateHeading newHeading: CLHeading) {
-       for observer in self.getHeadingObservers() as [PositionHeadingObserver] {
-            observer.position(self, didUpdateHeading: newHeading)
-        }
-        if #available(iOS 15.0, *) {
-            _headingPublisherSubject.send(newHeading)
-        }
-    }
-
-    internal func deviceLocationManager(_ deviceLocationManager: DeviceLocationManager, didUpdateFloor floor: CLFloor) {
-        DispatchQueue.main.async { [weak self] in
+    nonisolated func deviceLocationManager(_ deviceLocationManager: DeviceLocationManager, didUpdateHeading newHeading: CLHeading) {
+        let heading = newHeading // Capture immediately
+        Task { @Sendable [weak self] in
             guard let self = self else { return }
-            for observer in self.getObservers() as [PositionObserver] {
-                observer.position(self, didUpdateFloor: floor)
+            if #available(iOS 15.0, *) {
+                await self._headingContinuation?.yield(heading)
             }
         }
     }
 
-    internal func deviceLocationManager(_ deviceLocationManager: DeviceLocationManager, didVisit visit: CLVisit?) {
-        DispatchQueue.main.async { [weak self] in
+    internal nonisolated func deviceLocationManager(_ deviceLocationManager: DeviceLocationManager, didUpdateFloor floor: CLFloor) {
+        let floorData = floor // Capture immediately
+        Task { @Sendable [weak self] in
             guard let self = self else { return }
-            let observers = self.getObservers() as [PositionObserver]
-            observers.forEach({ observer in
-                observer.position(self, didVisit: visit)
-            })
+            if #available(iOS 15.0, *) {
+                await self._floorContinuation?.yield(floorData)
+            }
+        }
+    }
+
+    internal nonisolated func deviceLocationManager(_ deviceLocationManager: DeviceLocationManager, didVisit visit: CLVisit?) {
+        guard let visit = visit else { return }
+        let visitData = visit // Capture immediately
+        Task { @Sendable [weak self] in
+            guard let self = self else { return }
+            if #available(iOS 15.0, *) {
+                await self._visitContinuation?.yield(visitData)
+            }
         }
     }
 

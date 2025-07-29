@@ -27,7 +27,7 @@
 //
 
 import Foundation
-import CoreLocation
+@preconcurrency import CoreLocation
 
 // MARK: -
 // MARK: - Internal
@@ -50,7 +50,7 @@ internal protocol DeviceLocationManagerDelegate: AnyObject {
 // MARK: - DeviceLocationManager
 
 /// Internal location manager used by Position
-internal class DeviceLocationManager: NSObject {
+internal class DeviceLocationManager: NSObject, @unchecked Sendable {
 
     // MARK: - types
 
@@ -95,7 +95,7 @@ internal class DeviceLocationManager: NSObject {
     // MARK: - ivars
 
     internal var _locationManager: CLLocationManager = CLLocationManager()
-    internal var _locationRequests: [PositionLocationRequest] = []
+    internal let _requestManager = LocationRequestManager()
     internal var _requestQueue: DispatchQueue
     internal var _locations: [CLLocation]?
 
@@ -164,7 +164,7 @@ extension DeviceLocationManager {
         _locationManager.requestWhenInUseAuthorization()
     }
 
-    internal func requestAccuracyAuthorization(_ completionHandler: ((Bool) -> Void)? = nil) {
+    internal func requestAccuracyAuthorization(_ completionHandler: (@Sendable (Bool) -> Void)? = nil) {
         guard _locationManager.accuracyAuthorization != .fullAccuracy else {
             DispatchQueue.main.async {
                 completionHandler?(true)
@@ -194,16 +194,19 @@ extension DeviceLocationManager {
         switch locationServicesStatus {
         case .allowedAlways, .allowedWhenInUse, .notDetermined:
             _requestQueue.async {
-                let request = PositionLocationRequest()
-                request.desiredAccuracy = desiredAccuracy
-                request.lifespan = DeviceLocationManager.OneShotRequestDefaultTimeOut
-                request.timeOutHandler = { [weak self] in
-                    guard let self = self else { return }
-                    self.processLocationRequests()
+                guard let completionHandler = completionHandler else { return }
+                
+                let request = PositionLocationRequest(
+                    desiredAccuracy: desiredAccuracy,
+                    completionHandler: completionHandler
+                )
+                
+                Task {
+                    await self._requestManager.addRequest(request) { [weak self] in
+                        guard let self = self else { return }
+                        self.processLocationRequests()
+                    }
                 }
-                request.completionHandler = completionHandler
-
-                self._locationRequests.append(request)
 
                 self.startLowPowerUpdating()
                 self._locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -219,6 +222,21 @@ extension DeviceLocationManager {
         default:
             DispatchQueue.main.async {
                 completionHandler?(.failure(Position.ErrorType.restricted))
+            }
+        }
+    }
+    
+    /// Swift 6-style async version of performOneShotLocationUpdate
+    @available(iOS 15.0, *)
+    internal func performOneShotLocationUpdate(withDesiredAccuracy desiredAccuracy: Double) async throws -> CLLocation {
+        try await withCheckedThrowingContinuation { continuation in
+            performOneShotLocationUpdate(withDesiredAccuracy: desiredAccuracy) { result in
+                switch result {
+                case .success(let location):
+                    continuation.resume(returning: location)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
             }
         }
     }
@@ -303,85 +321,66 @@ extension DeviceLocationManager {
 
     // only called from the request queue
     internal func processLocationRequests() {
-        guard self._locationRequests.count > 0 else {
-            DispatchQueue.main.async {
-                self.delegate?.deviceLocationManager(self, didUpdateTrackingLocations: self._locations)
-            }
-            return
-        }
-
-        let completeRequests: [PositionLocationRequest] = self._locationRequests.filter { request -> Bool in
-            // check if a request completed, meaning expired or met horizontal accuracy
-            // print("desiredAccuracy \(request.desiredAccuracy) horizontal \(self.location?.horizontalAccuracy)")
-            if let location = self._locations?.first {
-                guard request.isExpired == true || location.horizontalAccuracy < request.desiredAccuracy else {
-                    return false
+        Task {
+            let requests = await _requestManager.getAllRequests()
+            guard !requests.isEmpty else {
+                DispatchQueue.main.async {
+                    self.delegate?.deviceLocationManager(self, didUpdateTrackingLocations: self._locations)
                 }
-                return true
+                return
             }
-            return false
-        }
 
-        for request in completeRequests {
-            guard request.isCompleted == false else {
-                continue
-            }
-            request.isCompleted = true
-
-            DispatchQueue.main.async {
-                if request.isExpired {
-                    request.completionHandler?(.failure(Position.ErrorType.timedOut))
-                } else {
-                    if let location = self._locations?.first {
-                        request.completionHandler?(.success(location))
+            let completedRequests = await _requestManager.processCompletedRequests(with: self._locations?.first)
+            
+            for (_, handler) in completedRequests {
+                DispatchQueue.main.async {
+                    if let location = self._locations?.first, location.horizontalAccuracy > 0 {
+                        handler(.success(location))
                     } else {
-                        request.completionHandler?(.failure(Position.ErrorType.timedOut))
+                        handler(.failure(Position.ErrorType.timedOut))
                     }
                 }
             }
-        }
 
-        let pendingRequests: [PositionLocationRequest] = _locationRequests.filter { request -> Bool in
-            request.isCompleted == false
-        }
-        _locationRequests = pendingRequests
+            let remainingRequests = await _requestManager.getAllRequests()
+            if remainingRequests.isEmpty {
+                updateLocationManagerStateIfNeeded()
 
-        if _locationRequests.isEmpty {
-            updateLocationManagerStateIfNeeded()
+                if isUpdatingLocation == false {
+                    stopUpdating()
+                }
 
-            if isUpdatingLocation == false {
-                stopUpdating()
-            }
-
-            if isUpdatingLowPowerLocation == false {
-                stopLowPowerUpdating()
+                if isUpdatingLowPowerLocation == false {
+                    stopLowPowerUpdating()
+                }
             }
         }
     }
 
     internal func completeLocationRequests(withError error: Error?) {
-        for locationRequest in _locationRequests {
-            locationRequest.cancelRequest()
-            guard let handler = locationRequest.completionHandler else {
-                continue
-            }
-
-            DispatchQueue.main.async {
-                handler(.failure(error ?? Position.ErrorType.cancelled))
+        Task {
+            let handlers = await _requestManager.cancelAllRequests()
+            for handler in handlers {
+                DispatchQueue.main.async {
+                    handler(.failure(error ?? Position.ErrorType.cancelled))
+                }
             }
         }
     }
 
     internal func updateLocationManagerStateIfNeeded() {
-        // when not processing requests, set desired accuracy appropriately
-        if _locationRequests.count > 0 {
-            if isUpdatingLocation == true {
-                _locationManager.desiredAccuracy = trackingDesiredAccuracyActive
-            } else if isUpdatingLowPowerLocation == true {
-                _locationManager.desiredAccuracy = trackingDesiredAccuracyBackground
-            }
+        Task {
+            let requests = await _requestManager.getAllRequests()
+            // when not processing requests, set desired accuracy appropriately
+            if !requests.isEmpty {
+                if isUpdatingLocation == true {
+                    _locationManager.desiredAccuracy = trackingDesiredAccuracyActive
+                } else if isUpdatingLowPowerLocation == true {
+                    _locationManager.desiredAccuracy = trackingDesiredAccuracyBackground
+                }
 
-            _locationManager.distanceFilter = distanceFilter
+                _locationManager.distanceFilter = distanceFilter
+            }
         }
     }
 }
@@ -456,76 +455,89 @@ extension DeviceLocationManager: CLLocationManagerDelegate {
 
 // MARK: - PositionLocationRequest
 
-internal class PositionLocationRequest {
-
-    // MARK: - types
-
-    internal typealias TimeOutCompletionHandler = () -> Void
-
-    // MARK: - properties
-
-    internal var desiredAccuracy: Double = kCLLocationAccuracyBest
-    internal var lifespan: TimeInterval = DeviceLocationManager.OneShotRequestDefaultTimeOut {
-        didSet {
-            isExpired = false
-            _expirationTimer?.invalidate()
-            _expirationTimer = Timer.scheduledTimer(timeInterval: self.lifespan,
-                                                    target: self,
-                                                    selector: #selector(handleTimerFired(_:)),
-                                                    userInfo: nil,
-                                                    repeats: false)
-        }
+/// A value type representing a location request
+internal struct PositionLocationRequest: Sendable {
+    let id = UUID()
+    let desiredAccuracy: Double
+    let lifespan: TimeInterval
+    let startTime = Date()
+    let completionHandler: @Sendable (Swift.Result<CLLocation, Error>) -> Void
+    
+    var isExpired: Bool {
+        Date().timeIntervalSince(startTime) > lifespan
     }
-    internal var isCompleted: Bool = false
-    internal var isExpired: Bool = false
-
-    internal var timeOutHandler: TimeOutCompletionHandler?
-    internal var completionHandler: Position.OneShotCompletionHandler?
-
-    // MARK: - ivars
-
-    internal var _expirationTimer: Timer?
-
-    // MARK: - object lifecycle
-
-    deinit {
-        isExpired = true
-        _expirationTimer?.invalidate()
-        _expirationTimer = nil
-
-        timeOutHandler = nil
-        completionHandler = nil
-    }
-
-    // MARK: - funcs
-
-    internal func cancelRequest() {
-        isExpired = true
-        _expirationTimer?.invalidate()
-        _expirationTimer = nil
-
-        timeOutHandler = nil
-        // Note: completion handler will be processed on the request process loop
+    
+    init(desiredAccuracy: Double = kCLLocationAccuracyBest,
+         lifespan: TimeInterval = DeviceLocationManager.OneShotRequestDefaultTimeOut,
+         completionHandler: @escaping @Sendable (Swift.Result<CLLocation, Error>) -> Void) {
+        self.desiredAccuracy = desiredAccuracy
+        self.lifespan = lifespan
+        self.completionHandler = completionHandler
     }
 }
 
-// MARK: - Timer
+// MARK: - LocationRequestManager
 
-extension PositionLocationRequest {
-
-    @objc
-    internal func handleTimerFired(_ timer: Timer) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            self.isExpired = true
-            self._expirationTimer?.invalidate()
-            self._expirationTimer = nil
-
-            if let timeOutHandler = self.timeOutHandler {
-                timeOutHandler()
+/// Actor that manages location requests in a thread-safe manner
+internal actor LocationRequestManager {
+    private var requests: [UUID: PositionLocationRequest] = [:]
+    private var timers: [UUID: Timer] = [:]
+    
+    func addRequest(_ request: PositionLocationRequest, timeoutHandler: @escaping @Sendable () -> Void) {
+        requests[request.id] = request
+        
+        // Schedule timeout
+        let timer = Timer.scheduledTimer(withTimeInterval: request.lifespan, repeats: false) { _ in
+            Task {
+                await self.handleTimeout(for: request.id, handler: timeoutHandler)
             }
-            self.timeOutHandler = nil
+        }
+        timers[request.id] = timer
+    }
+    
+    func removeRequest(_ id: UUID) {
+        requests.removeValue(forKey: id)
+        timers[id]?.invalidate()
+        timers.removeValue(forKey: id)
+    }
+    
+    func getAllRequests() -> [PositionLocationRequest] {
+        Array(requests.values)
+    }
+    
+    func processCompletedRequests(with location: CLLocation?) -> [(UUID, @Sendable (Swift.Result<CLLocation, Error>) -> Void)] {
+        var completedRequests: [(UUID, @Sendable (Swift.Result<CLLocation, Error>) -> Void)] = []
+        
+        for (id, request) in requests {
+            if request.isExpired {
+                completedRequests.append((id, request.completionHandler))
+            } else if let location = location, location.horizontalAccuracy < request.desiredAccuracy {
+                completedRequests.append((id, request.completionHandler))
+            }
+        }
+        
+        // Remove completed requests
+        for (id, _) in completedRequests {
+            removeRequest(id)
+        }
+        
+        return completedRequests
+    }
+    
+    func cancelAllRequests() -> [@Sendable (Swift.Result<CLLocation, Error>) -> Void] {
+        let handlers = requests.values.map { $0.completionHandler }
+        
+        // Clean up
+        for id in requests.keys {
+            removeRequest(id)
+        }
+        
+        return handlers
+    }
+    
+    private func handleTimeout(for id: UUID, handler: @Sendable () -> Void) {
+        if requests[id] != nil {
+            handler()
         }
     }
-
 }

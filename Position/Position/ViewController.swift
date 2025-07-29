@@ -37,6 +37,7 @@ public class ViewController: UIViewController {
     private var _mapView: MKMapView?
     private var _permissionLocationButton: UIButton?
     private var _locationLookupButton: UIButton?
+    private let position = Position()
 
     // MARK: - object lifecycle
 
@@ -56,37 +57,75 @@ public class ViewController: UIViewController {
         self.view.autoresizingMask = ([.flexibleWidth, .flexibleHeight])
         self.view.backgroundColor = UIColor.lightGray
 
-        self._mapView = MKMapView(frame: self.view.bounds)
+        // Setup map view
+        self._mapView = MKMapView()
         if let mapView = self._mapView {
+            mapView.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(mapView)
         }
 
         let buttonHeight: CGFloat = 60
 
-        self._locationLookupButton = UIButton(frame: CGRect(x: 0, y: self.view.bounds.size.height - buttonHeight, width: self.view.bounds.size.width, height: buttonHeight))
+        // Setup location button
+        self._locationLookupButton = UIButton(type: .system)
         if let locationButton = self._locationLookupButton {
-            locationButton.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
+            locationButton.translatesAutoresizingMaskIntoConstraints = false
             locationButton.setTitle("Request Location", for: .normal)
             locationButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
             locationButton.backgroundColor = UIColor(red: 115/255, green: 57/255, blue: 248/255, alpha: 1)
+            locationButton.setTitleColor(.white, for: .normal)
             locationButton.addTarget(self, action: #selector(handleOneShotLocationButton(_:)), for: .touchUpInside)
             self.view.addSubview(locationButton)
         }
 
-        self._permissionLocationButton = UIButton(frame: CGRect(x: 0, y: self.view.bounds.size.height - (buttonHeight * 2), width: self.view.bounds.size.width, height: buttonHeight))
+        // Setup permission button
+        self._permissionLocationButton = UIButton(type: .system)
         if let permissionLocationButton = self._permissionLocationButton {
+            permissionLocationButton.translatesAutoresizingMaskIntoConstraints = false
             permissionLocationButton.setTitle("Request Permission", for: .normal)
             permissionLocationButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
             permissionLocationButton.backgroundColor = UIColor(red: 50/255, green: 153/255, blue: 252/255, alpha: 1)
+            permissionLocationButton.setTitleColor(.white, for: .normal)
             permissionLocationButton.addTarget(self, action: #selector(handleLocationPermissionButton(_:)), for: .touchUpInside)
             self.view.addSubview(permissionLocationButton)
         }
+        
+        // Setup constraints
+        setupConstraints(buttonHeight: buttonHeight)
 
         // setup position
-
-        let position = Position.shared
-        position.addObserver(self)
-        position.distanceFilter = 20
+        Task {
+            await position.addObserver(self)
+            await position.setDistanceFilter(20)
+        }
+    }
+    
+    private func setupConstraints(buttonHeight: CGFloat) {
+        guard let mapView = _mapView,
+              let locationButton = _locationLookupButton,
+              let permissionButton = _permissionLocationButton else {
+            return
+        }
+        
+        NSLayoutConstraint.activate([
+            // Map view constraints - fills the entire view
+            mapView.topAnchor.constraint(equalTo: view.topAnchor),
+            mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            // Location button constraints - respects safe area at bottom
+            locationButton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            locationButton.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            locationButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            locationButton.heightAnchor.constraint(equalToConstant: buttonHeight),
+            
+            // Permission button constraints - above location button
+            permissionButton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            permissionButton.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            permissionButton.bottomAnchor.constraint(equalTo: locationButton.topAnchor),
+            permissionButton.heightAnchor.constraint(equalToConstant: buttonHeight)
+        ])
     }
 }
 
@@ -96,31 +135,29 @@ extension ViewController {
 
     @objc
     internal func handleLocationPermissionButton(_ button: UIButton) {
-        // request permissions based on the type of location support required.
-        let position = Position.shared
-        if position.locationServicesStatus == .allowedWhenInUse ||
-            position.locationServicesStatus == .allowedAlways {
-            print("app has permission")
-        } else {
-            // request permission using async/await
-            if #available(iOS 15.0, *) {
-                Task {
+        Task {
+            // request permissions based on the type of location support required.
+            let currentStatus = await position.locationServicesStatus
+            if currentStatus == .allowedWhenInUse || currentStatus == .allowedAlways {
+                print("app has permission")
+            } else {
+                // request permission using async/await
+                if #available(iOS 15.0, *) {
                     let status = await position.requestWhenInUseLocationAuthorization()
                     print("Authorization status after request: \(status)")
+                } else {
+                    await position.requestWhenInUseLocationAuthorization()
                 }
-            } else {
-                position.requestWhenInUseLocationAuthorization()
             }
         }
     }
 
     @objc
     internal func handleOneShotLocationButton(_ button: UIButton) {
-        let position = Position.shared
-        if position.locationServicesStatus == .allowedWhenInUse ||
-           position.locationServicesStatus == .allowedAlways {
-            if #available(iOS 15.0, *) {
-                Task {
+        Task {
+            let currentStatus = await position.locationServicesStatus
+            if currentStatus == .allowedWhenInUse || currentStatus == .allowedAlways {
+                if #available(iOS 15.0, *) {
                     do {
                         let location = try await position.performOneShotLocationUpdate(withDesiredAccuracy: 150)
                         if location.horizontalAccuracy > 0 {
@@ -132,24 +169,24 @@ extension ViewController {
                     } catch {
                         print("Location update failed: \(error)")
                     }
-                }
-            } else {
-                position.performOneShotLocationUpdate(withDesiredAccuracy: 150) { result in
-                    switch result {
-                    case .success(let location):
-                        if location.horizontalAccuracy > 0 {
-                            let region = MKCoordinateRegion(center: location.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
-                            DispatchQueue.main.async {
-                                self._mapView?.setRegion(region, animated: true)
+                } else {
+                    await position.performOneShotLocationUpdate(withDesiredAccuracy: 150) { result in
+                        switch result {
+                        case .success(let location):
+                            if location.horizontalAccuracy > 0 {
+                                let region = MKCoordinateRegion(center: location.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
+                                DispatchQueue.main.async {
+                                    self._mapView?.setRegion(region, animated: true)
+                                }
                             }
+                        case .failure(let error):
+                            print("Location update failed: \(error)")
                         }
-                    case .failure(let error):
-                        print("Location update failed: \(error)")
                     }
                 }
+            } else if currentStatus == .notAvailable {
+                print("location is not available")
             }
-        } else if position.locationServicesStatus == .notAvailable {
-            print("location is not available")
         }
     }
 

@@ -29,7 +29,6 @@
 import SwiftUI
 import MapKit
 import CoreLocation
-import Combine
 
 @available(iOS 15.0, *)
 struct SwiftUIExampleView: View {
@@ -144,13 +143,15 @@ struct SwiftUIExampleView: View {
     }
     
     private func requestPermission() {
-        Position.shared.requestWhenInUseLocationAuthorization()
+        Task {
+            await locationManager.position.requestWhenInUseLocationAuthorization()
+        }
     }
     
     private func requestLocation() {
         Task {
             do {
-                let location = try await Position.shared.performOneShotLocationUpdate(withDesiredAccuracy: kCLLocationAccuracyBest)
+                let location = try await locationManager.position.performOneShotLocationUpdate(withDesiredAccuracy: kCLLocationAccuracyBest)
                 withAnimation {
                     region.center = location.coordinate
                 }
@@ -176,60 +177,71 @@ class LocationManager: ObservableObject {
     @Published var authorizationStatus: Position.LocationAuthorizationStatus = .notDetermined
     @Published var isTracking = false
     
-    private var cancellables = Set<AnyCancellable>()
-    private let position = Position.shared
+    let position = Position()
+    private var locationTask: Task<Void, Never>?
+    private var headingTask: Task<Void, Never>?
+    private var authorizationTask: Task<Void, Never>?
     
     init() {
-        // subscribe to location updates
-        position.locationPublisher
-            .sink { [weak self] location in
-                self?.currentLocation = location
-            }
-            .store(in: &cancellables)
-        
-        // subscribe to heading updates
-        position.headingPublisher
-            .sink { [weak self] heading in
-                self?.currentHeading = heading
-            }
-            .store(in: &cancellables)
-        
-        // subscribe to authorization changes
-        position.authorizationPublisher
-            .sink { [weak self] status in
-                self?.authorizationStatus = status
-            }
-            .store(in: &cancellables)
-        
         // set initial authorization status
-        authorizationStatus = position.locationServicesStatus
+        Task {
+            authorizationStatus = await position.locationServicesStatus
+        }
+        
+        // Start monitoring authorization changes
+        authorizationTask = Task {
+            for await status in position.authorizationUpdates {
+                await MainActor.run {
+                    self.authorizationStatus = status
+                }
+            }
+        }
     }
     
     func startTracking() {
-        position.startUpdating()
-        position.startUpdatingHeading()
-        isTracking = true
-        
-        // example of using AsyncSequence for location updates
         Task {
+            await position.startUpdating()
+            await position.startUpdatingHeading()
+            isTracking = true
+        }
+        
+        // Start location updates
+        locationTask = Task {
             for await location in position.locationUpdates {
-                print("AsyncSequence location update: \(location.coordinate)")
-                // Could update UI or process location here
+                await MainActor.run {
+                    self.currentLocation = location
+                }
             }
         }
         
-        // example of using AsyncSequence for heading updates
-        Task {
+        // Start heading updates
+        headingTask = Task {
             for await heading in position.headingUpdates {
-                print("AsyncSequence heading update: \(heading.trueHeading)°")
+                await MainActor.run {
+                    self.currentHeading = heading
+                }
             }
         }
     }
     
     func stopTracking() {
-        position.stopUpdating()
-        position.stopUpdatingHeading()
-        isTracking = false
+        Task {
+            await position.stopUpdating()
+            await position.stopUpdatingHeading()
+            isTracking = false
+        }
+        
+        // Cancel the tasks
+        locationTask?.cancel()
+        headingTask?.cancel()
+        locationTask = nil
+        headingTask = nil
+    }
+    
+    deinit {
+        locationTask?.cancel()
+        headingTask?.cancel()
+        authorizationTask?.cancel()
     }
 }
 
