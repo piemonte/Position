@@ -7,7 +7,6 @@
 [![Swift Package Manager](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg?style=flat)](https://swift.org/package-manager)
 [![CocoaPods](https://img.shields.io/cocoapods/v/Position.svg?style=flat)](https://cocoapods.org/pods/Position)
 [![License](https://img.shields.io/badge/License-MIT-lightgrey.svg?style=flat)](https://github.com/piemonte/Position/blob/main/LICENSE)
-[![CI Status](https://img.shields.io/github/actions/workflow/status/piemonte/Position/swift.yml?branch=main&style=flat)](https://github.com/piemonte/Position/actions)
 
 ## Features
 
