@@ -124,10 +124,6 @@ extension DeviceLocationManager {
 
     internal var locationServicesStatus: Position.LocationAuthorizationStatus {
         get {
-            guard CLLocationManager.locationServicesEnabled() == true else {
-                return .notAvailable
-            }
-
             switch _locationManager.authorizationStatus {
                 case .authorizedAlways:
                     return .allowedAlways
