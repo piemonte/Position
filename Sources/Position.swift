@@ -1,11 +1,7 @@
 //
 //  Position.swift
 //
-//  Created by patrick piemonte on 3/1/15.
-//
-//  The MIT License (MIT)
-//
-//  Copyright (c) 2015-present patrick piemonte (http://patrickpiemonte.com/)
+//  Copyright (c) 2015-present patrick piemonte (https://patrickpiemonte.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -446,20 +442,20 @@ extension Position {
     public func requestAlwaysLocationAuthorization() async -> LocationAuthorizationStatus {
         // Request authorization
         _deviceLocationManager.requestAlwaysAuthorization()
-        
+
         // If already authorized, return immediately
         let currentStatus = locationServicesStatus
-        if currentStatus == .allowedAlways || currentStatus == .denied || currentStatus == .restricted {
+        if currentStatus == .allowedAlways || currentStatus == .allowedWhenInUse || currentStatus == .denied || currentStatus == .restricted {
             return currentStatus
         }
-        
+
         // Wait for authorization change
         for await status in authorizationUpdates {
-            if status == .allowedAlways || status == .denied || status == .restricted {
+            if status == .allowedAlways || status == .allowedWhenInUse || status == .denied || status == .restricted {
                 return status
             }
         }
-        
+
         return locationServicesStatus
     }
 
