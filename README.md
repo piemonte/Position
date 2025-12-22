@@ -29,7 +29,7 @@
 
 ## Requirements
 
-- iOS 15.0+ / macOS 11.0+
+- iOS 16.0+ / macOS 13.0+
 - Swift 6.0+ (also supports Swift 5 mode)
 - Xcode 16.0+
 
